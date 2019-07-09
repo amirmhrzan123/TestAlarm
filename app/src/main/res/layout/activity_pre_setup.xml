@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/br_on_boarding_bottom"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="16dp"
+            android:text="@string/tv_previous"
+            android:textAllCaps="true"
+            />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/ib_on_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/bg_round_8dp" />
+
+            <ImageButton
+                android:id="@+id/ib_groups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/bg_round_8dp" />
+
+            <ImageButton
+                android:id="@+id/ib_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/bg_round_8dp" />
+
+            <ImageButton
+                android:id="@+id/ib_messaging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/bg_round_8dp" />
+
+            <ImageButton
+                android:id="@+id/ib_permissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/bg_round_8dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="16dp"
+            android:text="@string/tv_next"
+            android:textAllCaps="true"
+            android:textColor="@color/color_blue_3cacd6" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ll_bottom"
+        android:minHeight="180dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_desc_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="true"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            tools:text="@string/app_name" />
+
+        <Button
+            android:id="@+id/btn_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_marginTop="16dp"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:text="Grant permissions"
+            android:layout_below="@+id/tv_desc_title"/>
+
+        <TextView
+            android:id="@+id/tv_desc_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_desc_title"
+            android:gravity="center"
+            android:padding="24dp"
+            android:textSize="14sp"
+            tools:text="This is text! How are you?" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_description">
+
+        <TextView
+            android:id="@+id/tvPermissions"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/rl_images"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:text="You need to grant the permission for messages and location in order to go ahead" />
+
+
+
+        <ImageView
+            android:id="@+id/iv_on_boarding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            />
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rl_images"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/iv_mid_circle"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:contentDescription="@null"
+                android:src="@drawable/shape_circle_on_boarding_main"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_guest_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transition_event"
+                android:contentDescription="@null"
+                android:padding="24dp"
+                app:layout_constraintCircle="@id/iv_mid_circle"
+                app:layout_constraintCircleAngle="60"
+                app:layout_constraintCircleRadius="80dp" />
+
+            <ImageView
+                android:id="@+id/iv_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transition_group"
+                android:contentDescription="@null"
+                android:padding="24dp"
+                app:layout_constraintCircle="@id/iv_mid_circle"
+                app:layout_constraintCircleAngle="180"
+                app:layout_constraintCircleRadius="80dp" />
+
+            <ImageView
+                android:id="@+id/iv_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transition_messaging"
+                android:contentDescription="@null"
+                android:padding="24dp"
+                app:layout_constraintCircle="@id/iv_mid_circle"
+                app:layout_constraintCircleAngle="300"
+                app:layout_constraintCircleRadius="80dp" />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,72 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--CardView-->
+    <style name="cardViewStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">#ffffff</item>
+        <item name="cardCornerRadius">5dp</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0.0px</item>
+        <item name="android:clipChildren">false</item>
+        <item name="cardElevation">15dp</item>
+        <item name="cardPreventCornerOverlap">false</item>
+    </style>
+
+    <!--For Buttons-->
+    <style name="buttonStyle" >
+        <item name="android:background">@drawable/background_blue_button</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_height">50dp</item>
+    </style>
+
+    <style name="AppTheme.TranslucentNavigation" parent="AppTheme">
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="landingPageTheme" parent="AppTheme">
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:statusBarColor" tools:targetApi="23">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">false</item>
+        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">false</item>
+    </style>
+
+    <style name="CommonToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">#ffffff</item>
+    </style>
+
+
+    <style name="AppIntroStyle" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+    </style>
+
+    <style name="progressDialogTheme">
+        <item name="colorAccent">#ffffff</item>
+    </style>
+
+    <style name="AppIntroButtonStyleCompat" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:minHeight">@dimen/appintro_button_minheight</item>
+        <item name="android:minWidth">@dimen/appintro_button_minwidth</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_margin">@dimen/appintro_button_margin</item>
+    </style>
+
+    <style name="AppIntroIndicatorContainer">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_margin">@dimen/appintro_indicator_margin</item>
+    </style>
+
+    <style name="AppLoginTheme" parent="Theme.AccountKit"/>
+
+</resources>

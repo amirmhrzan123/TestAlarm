@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1003225736159",
+    "firebase_url": "https://sialarm.firebaseio.com",
+    "project_id": "sialarm",
+    "storage_bucket": "sialarm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003225736159:android:51443506079fca1b",
+        "android_client_info": {
+          "package_name": "com.example.sialarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1003225736159-pjuimvqqlv5tmvslv98nq5b5cv12f0si.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7m2DNGpFt8vbQ5Ah6uzz5z3T3Jcst9Yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1003225736159-pjuimvqqlv5tmvslv98nq5b5cv12f0si.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="appintro_statusbar_color">#22000000</color>
+    <color name="appintro_background_color">#222222</color>
+    <color name="appintro_title_color">#FFFFFF</color>
+    <color name="appintro_desc_color">#FFFFFF</color>
+    <color name="appintro_separator_color">#22000000</color>
+    <color name="appintro_bar_color">@android:color/transparent</color>
+    <color name="appintro_default_fab_background_color">#59000000</color>
+    <color name="appintro_icon_tint">#FFFFFF</color>
+    <color name="appintro_default_unselected_color">#22000000</color>
+    <color name="appintro_default_selected_color">#FFFFFF</color>
+    <color name="appintro_navbar_color">#000000</color>
+    <color name="appintro_ripple_color">#1FFFFFFF</color>
+    <color name="colorBackground">#0097E3</color>
+    <color name="color_grey_cacaca">#cacaca</color>
+    <color name="color_blue_3cacd6">#3cacd6</color>
+    <color name="color_blue_2c8baf">#2c8baf</color>
+    <color name="color_blue_2590b8">#2590b8</color>
+    <color name="color_grey_hint_color">#C5C8D7</color>
+    <color name="color_grey_on_boarding">#EAEAEA</color>
+    <color name="color_light_yellow_e4d048">#DDC839</color>
+    <color name="color_red_on_boarding">#FF6564</color>
+    <color name="color_light_green_04ae9e">#2590b8</color>
+
+
+    <array name="tab_colors">
+        <item name="tab_1">#455C65</item>
+        <item name="tab_2">#00886A</item>
+        <item name="tab_3">#8B6B62</item>
+        <item name="tab_4">#6C4A42</item>
+    </array>
+
+    <color name="color_tab_1">#455C65</color>
+    <color name="color_tab_2">#00886A</color>
+    <color name="color_tab_3">#8B6B62</color>
+    <color name="color_tab_4">#6C4A42</color>
+    <color name="color_tab_5">#F63D2B</color>
+
+    <color name="color_notification_back">#ffcd33</color>
+    <color name="color_notification_text">#3E4757</color>
+    <color name="light_blue">#4EB6E8</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="white">#ffffff</color>
+    <color name="dark_grey">#7E7E7E</color>
+    <color name="light_grey">#D6D6D6</color>
+
+
+</resources>

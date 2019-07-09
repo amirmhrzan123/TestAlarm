@@ -1,0 +1,34 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Main Strings -->
+    <string name="app_name">sialarm</string>
+    <string name="drawer_header">Drawer Header</string>
+    <string name="launch_demo">Launch Demo</string>
+
+    <string name="app_intro_skip_button">SKIP</string>
+    <string name="app_intro_next_button" tools:ignore="MissingTranslation">NEXT</string>
+    <string name="app_intro_back_button" tools:ignore="MissingTranslation">BACK</string>
+    <string name="app_intro_done_button">DONE</string>
+    <string name="app_intro_image_content_description" tools:ignore="MissingTranslation">graphics</string>
+
+
+    <string name="FACEBOOK_APP_ID">2374128209542321</string>
+    <string name="ACCOUNT_KIT_CLIENT_TOKEN">d7e75d5854a4f1025b17ee369fc1ec83</string>
+
+    <string name="default_notification_channel_id">SiAlarm</string>
+
+
+    <!-- 2nd Tab Group -->
+    <string name="perms_intro1">This demonstrates the ability to request permission on any slide specified. Tap the button below to launch the demo.</string>
+    <string name="perms_intro2">This demonstrates the ability to request permission on any slide specified, only it\'s using the second slide layout. Tap the button below to launch the demo.</string>
+    <string name="tv_previous">Prev</string>
+    <string name="tv_next">Next</string>
+    <string name="tv_on_boarding_desc">Register</string>
+    <string name="tv_register">Register</string>
+    <string name="tv_add_contacts">Add friends</string>
+    <string name="tv_send_alert">Send alert</string>
+    <string name="tv_done">Done</string>
+    <string name="tv_permissions">Permissions</string>
+    <string name="write_your_username">Write your username</string>
+    <string name="tv_ok">Ok</string>
+    <string name="cancel">Cancel</string>
+</resources>
