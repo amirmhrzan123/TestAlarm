@@ -27,3 +27,9 @@ exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWr
 
 
 });
+
+let user = functions.database.ref('/users');
+
+exports.testApi = functions.https.onRequest((req,res) =>{
+    res.status(200).json(user);
+})
