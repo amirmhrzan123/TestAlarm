@@ -3,9 +3,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable
-            name="viewModel"
-            type="com.example.sialarm.ui.test.NotificationTestViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

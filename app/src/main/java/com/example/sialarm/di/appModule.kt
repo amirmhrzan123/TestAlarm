@@ -2,10 +2,11 @@ package com.example.sialarm.di
 
 import android.content.Context
 import android.content.res.Resources
+import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.ui.homepage.contacts.ContactsRepository
+import com.example.sialarm.ui.homepage.notification.NotificationRepository
 import com.example.sialarm.ui.landingScreen.LandingRepository
-import com.example.sialarm.ui.test.NotificationRepository
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ val appModule = module {
     single { CoroutineScope(Dispatchers.Main + Job()) }
     single { provideLandingRepository(get(),get(),get())}
     single { provideContactsRepository(get(),get(),get()) }
-    single { provideNotificationRepository(get(),get(),get())}
+    single { provideNotificationRepository(get(),get(),get(),get())}
 }
 
 fun provideResources(context: Context): Resources = context.resources
@@ -36,5 +37,5 @@ fun provideContactsRepository(viewModelScope:CoroutineScope,
 = ContactsRepository(firebaseDatabase,viewModelScope,prefsManager)
 
 fun provideNotificationRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
-                                  prefsManager: PrefsManager): NotificationRepository
-= NotificationRepository(viewModelScope,firebaseDatabase,prefsManager)
+                                  prefsManager: PrefsManager,apiServices: ApiServices): NotificationRepository
+= NotificationRepository(viewModelScope,prefsManager,apiServices,firebaseDatabase)

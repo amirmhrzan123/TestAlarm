@@ -22,7 +22,7 @@ val apiModule = module {
 
 
 object DataSourceProperties {
-    const val SERVER_URL = "https://au-api.basiq.io"
+    const val SERVER_URL = "https://us-central1-sialarm.cloudfunctions.net"
 }
 
 fun createOkHttpClient(): OkHttpClient {
@@ -36,7 +36,7 @@ fun createOkHttpClient(): OkHttpClient {
 
 inline fun <reified T> createWebService(okHttpClient: OkHttpClient): T {
     val retrofit = Retrofit.Builder()
-            .baseUrl("https://au-api.basiq.io")
+            .baseUrl("https://us-central1-sialarm.cloudfunctions.net")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(LiveDataCallAdapterFactory())

@@ -39,12 +39,10 @@ class HomeFragment:Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         runnable = Runnable{
             btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
         }
             btnUrgent.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
                         if(counDownTimer==null){
@@ -62,7 +60,6 @@ class HomeFragment:Fragment() {
                                     progress.progress = total
                                     Log.d("time",total.toString())
                                 }
-
                             }.start()
                         }
                         btnUrgent.setBackgroundResource(R.drawable.button_pressed)
@@ -82,6 +79,5 @@ class HomeFragment:Fragment() {
                 }
                 false
             })
-
     }
 }

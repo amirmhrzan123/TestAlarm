@@ -18,5 +18,8 @@ interface ApiServices {
 class EndPoint {
     object API {
         const val LOGIN = "auth/login"
+        const val SENDFRIENDREQUEST = "sendFriendRequest"
+        const val SENDALERTMESSAGES = "sendAlertMessages"
+        const val ACCEPTDENYINVITATION = "acceptDenyInvitation"
     }
 }
