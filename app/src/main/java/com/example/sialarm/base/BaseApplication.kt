@@ -3,6 +3,7 @@ package com.example.sialarm.base
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.example.sialarm.di.apiModule
 import com.example.sialarm.di.appModule
 import com.example.sialarm.di.persistenceDataModule
 import com.example.sialarm.di.viewModelModule
@@ -26,7 +27,7 @@ class BaseApplication : MultiDexApplication() {
                 .enableDumpapp(SampleDumperPluginProvider(this))
                 .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                 .build());
-        startKoin(this, listOf(appModule,  persistenceDataModule,  viewModelModule), mapOf(), true)
+        startKoin(this, listOf(appModule, apiModule, persistenceDataModule,  viewModelModule), mapOf(), true)
     }
 
     private class SampleDumperPluginProvider(private val mContext: Context) : DumperPluginsProvider {
