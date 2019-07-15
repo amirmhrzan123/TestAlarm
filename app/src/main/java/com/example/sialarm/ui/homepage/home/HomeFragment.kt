@@ -42,7 +42,6 @@ class HomeFragment:Fragment() {
 
         runnable = Runnable{
             btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
-            Toast.makeText(activity!!, "3 sec reached", Toast.LENGTH_SHORT).show()
         }
             btnUrgent.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
 
