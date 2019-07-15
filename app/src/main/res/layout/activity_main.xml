@@ -15,9 +15,32 @@
         android:layout_width="match_parent"
         android:animateLayoutChanges="true"
         android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+            <com.example.sialarm.utils.customViews.CenteredToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:theme="@style/CommonToolbarTheme"
+                app:elevation="0dp"
+                app:title="Alert"
+                app:layout_collapseMode="pin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+               />
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
@@ -34,6 +57,7 @@
 
         <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
             android:id="@+id/bottom_navigation"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

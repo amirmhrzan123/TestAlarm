@@ -21,6 +21,14 @@ fun ViewModel.getCurrentTimeStamp(): String {
     return System.currentTimeMillis().toString()
 }
 
+fun String.getNumber():String{
+    var replacenumber = ""
+    if(contains("+977")){
+        replacenumber = replace("+977","")
+    }
+    return replacenumber.replace(" ","").replace("-","")
+}
+
 fun View.hideViewWithFadeOutAnimation(viewVisibility: Int = View.INVISIBLE) {
     animate()
             .alpha(0.0f)

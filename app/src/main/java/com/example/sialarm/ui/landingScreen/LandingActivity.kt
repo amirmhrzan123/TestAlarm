@@ -77,9 +77,8 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
             }else{
                 showLoading("")
                 landingViewModel.userName = etUserName.text!!.trim().toString()
-                landingViewModel.number = "+9779841866002"
+                landingViewModel.number = "++9779849276763"
                 landingViewModel.isValid.value = true
-
 
                 /* val intent = Intent(applicationContext, AccountKitActivity::class.java)
                  val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(

@@ -65,9 +65,10 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val enabledTranslucentNavigation = getSharedPreferences("shared", Context.MODE_PRIVATE)
-            .getBoolean("translucentNavigation", false)
-        setTheme(if (enabledTranslucentNavigation) R.style.AppTheme_TranslucentNavigation else R.style.AppTheme)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        toolbar.title = "Alert"
         initUI()
     }
 
@@ -88,6 +89,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         viewPager = findViewById(R.id.view_pager)
+        bottomNavigation.accentColor = resources.getColor(R.color.green)
 
         floating_action_button.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
@@ -99,7 +101,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
             navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)
             navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)
 
-        bottomNavigation.isTranslucentNavigationEnabled = true
+       // bottomNavigation.isTranslucentNavigationEnabled = true
 
         viewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
@@ -125,6 +127,21 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
             if (currentFragment == null) {
                 return@OnTabSelectedListener true
+            }
+
+            when(position){
+                0->{
+                    toolbar.title = "Alert"
+                }
+                1->{
+                    toolbar.title = "My SI Friends"
+                }
+                2->{
+                    toolbar.title = "Notifications"
+                }
+                3->{
+                    toolbar.title = "More"
+                }
             }
 
             if(position==1){
@@ -154,20 +171,6 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
 
         //bottomNavigation.setDefaultBackgroundResource(R.drawable.bottom_navigation_background);
-    }
-
-    /**
-     * Update the bottom navigation colored param
-     */
-    fun updateBottomNavigationColor(isColored: Boolean) {
-        bottomNavigation.isColored = isColored
-    }
-
-    /**
-     * Return if the bottom navigation is colored
-     */
-    fun isBottomNavigationColored(): Boolean {
-        return bottomNavigation.isColored
     }
 
     /**
@@ -241,61 +244,65 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-
         if (requestCode == 1) {
+
            val uriContact = data?.data
-            var contactNumber = ""
-            var contactID =  ""
+            if(uriContact!=null){
+                var contactNumber = ""
+                var contactID =  ""
 
-        // getting contacts ID
-            val cursorID = contentResolver.query(uriContact!!,
-                arrayOf(ContactsContract.Contacts._ID),null,null,null)
+                // getting contacts ID
+                val cursorID = contentResolver.query(uriContact!!,
+                    arrayOf(ContactsContract.Contacts._ID),null,null,null)
 
-        if (cursorID!!.moveToFirst()) {
+                if (cursorID!!.moveToFirst()) {
 
-            contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID))
-            Log.d("", "Contact ID: " + contactID)
+                    contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID))
+                    Log.d("", "Contact ID: " + contactID)
 
-        }
+                }
 
-        cursorID.close()
-
-
-        // Using the contact ID now we will get contact phone number
-            val cursorPhone = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
-                        ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
-                        ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
-                arrayOf(contactID),null)
+                cursorID.close()
 
 
+                // Using the contact ID now we will get contact phone number
+                val cursorPhone = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
+                            ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
+                            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
+                    arrayOf(contactID),null)
 
-        if (cursorPhone!!.moveToFirst()) {
-            contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-            homeViewModel.contactNumber = contactNumber
-        }
 
-        cursorPhone.close()
-        Log.d("ContactNumber", "Contact Phone Number: " + contactNumber);
 
-            var contactName = ""
+                if (cursorPhone!!.moveToFirst()) {
+                    contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                    homeViewModel.contactNumber = contactNumber
+                }
 
-            // querying contact data store
-            val cursor = getContentResolver().query(uriContact, null, null, null, null);
+                cursorPhone.close()
+                Log.d("ContactNumber", "Contact Phone Number: " + contactNumber);
 
-            if (cursor!!.moveToFirst()) {
+                var contactName = ""
 
-                // DISPLAY_NAME = The display name for the contact.
-                // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
-                contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                homeViewModel.contactName = contactName
+                // querying contact data store
+                val cursor = getContentResolver().query(uriContact, null, null, null, null);
+
+                if (cursor!!.moveToFirst()) {
+
+                    // DISPLAY_NAME = The display name for the contact.
+                    // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
+                    contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                    homeViewModel.contactName = contactName
+                }
+
+                cursor.close()
+                homeViewModel.contactTrigger.value = true
+
+                Log.d("Contactname", "Contact Name: " + contactName)
+
+
             }
-
-            cursor.close()
-            homeViewModel.contactTrigger.value = true
-
-            Log.d("Contactname", "Contact Name: " + contactName)
-        }
+            }
     }
 }
