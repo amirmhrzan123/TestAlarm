@@ -11,7 +11,6 @@ import com.example.sialarm.databinding.ItemRequestBinding
 
 
 class ContactsAdapter constructor(
-    private val click: (String) -> Unit,
     private val contacts: MutableList<Friends> = mutableListOf<Friends>()
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -22,22 +21,25 @@ class ContactsAdapter constructor(
         const val DENY = 4
 
     }
+    lateinit var listener : ContactClickListener
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             ACCEPTED->{
-                AcceptedViewHolder(ItemAcceptedBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
+                AcceptedViewHolder(ItemAcceptedBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             }
             PENDING->{
-                PendingViewHolder(ItemPendingBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
+                PendingViewHolder(ItemPendingBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             }
             REQUEST->{
-                RequestViewHolder(ItemRequestBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
+                RequestViewHolder(ItemRequestBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             }
             DENY->{
-                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
+                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             }
             else -> {
-                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
+                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false))
             }
         }
     }
@@ -66,9 +68,7 @@ class ContactsAdapter constructor(
     }
 
     inner class PendingViewHolder constructor(
-        private val itemPendingBinding: ItemPendingBinding,
-        private val click: (String) -> Unit
-    ) :
+        private val itemPendingBinding: ItemPendingBinding) :
         RecyclerView.ViewHolder(itemPendingBinding.root) {
 
         fun onBind(position: Int) {
@@ -79,9 +79,7 @@ class ContactsAdapter constructor(
     }
 
     inner class AcceptedViewHolder constructor(
-        private val itemAcceptedBinding: ItemAcceptedBinding,
-        private val click: (String) -> Unit
-    ) :
+        private val itemAcceptedBinding: ItemAcceptedBinding) :
         RecyclerView.ViewHolder(itemAcceptedBinding.root) {
         fun onBind(position: Int) {
             with(itemAcceptedBinding) {
@@ -91,9 +89,7 @@ class ContactsAdapter constructor(
     }
 
     inner class DenyViewHolder constructor(
-        private val itemDenyBinding: ItemDenyBinding,
-        private val click: (String) -> Unit
-    ) :
+        private val itemDenyBinding: ItemDenyBinding) :
         RecyclerView.ViewHolder(itemDenyBinding.root) {
         fun onBind(position: Int) {
             with(itemDenyBinding) {
@@ -104,9 +100,7 @@ class ContactsAdapter constructor(
     }
 
     inner class RequestViewHolder constructor(
-        private val itemRequestBinding: ItemRequestBinding,
-        private val click: (String) -> Unit
-    ) :
+        private val itemRequestBinding: ItemRequestBinding) :
         RecyclerView.ViewHolder(itemRequestBinding.root) {
 
         fun onBind(position: Int) {
@@ -120,6 +114,11 @@ class ContactsAdapter constructor(
         contacts.clear()
         contacts.addAll(list)
         notifyDataSetChanged()
+    }
+
+    interface ContactClickListener{
+        fun onAcceptDeniedClicked(contact:Friends,accept:Boolean)
+        fun onFriendsContact(contact:Friends)
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.sialarm.ui.homepage.contacts
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.sialarm.data.api.AcceptDenyRequestModel
 import com.example.sialarm.data.firebase.Friends
 import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.data.prefs.PrefsManager
@@ -96,6 +97,13 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
         })
 
         return friendsListResponse
+    }
+
+    fun acceptDenyInvitation(acceptDenyRequestModel: AcceptDenyRequestModel):LiveData<Resource<String>>{
+        val acceptDenyResponse = MutableLiveData<Resource<String>>()
+
+
+        return acceptDenyResponse
     }
 
 }

@@ -9,9 +9,14 @@ import retrofit2.http.*
 interface ApiServices {
 
 
+    @POST(EndPoint.API.ACCEPTDENYINVITATION)
+    fun acceptDenyInvitation(@Body acceptDenyRequestModel: AcceptDenyRequestModel): Deferred<String>
 
+    @POST(EndPoint.API.SENDFRIENDREQUEST)
+    fun sendFriendRequest(@Body sendFriendRequest: SendFriendRequest):Deferred<String>
 
-
+    @POST(EndPoint.API.SENDALERTMESSAGES)
+    fun sendAlertMessages(@Body sendAlertMessages: SendAlertMessages):Deferred<String>
 
 }
 

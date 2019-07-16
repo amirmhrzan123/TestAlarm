@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
+import com.example.sialarm.data.firebase.Friends
 import com.example.sialarm.databinding.FragmentContactsBinding
 import com.example.sialarm.ui.homepage.HomeViewModel
 import com.example.sialarm.utils.Status
@@ -23,11 +24,7 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
     }
 
     private val contactsAdapter : ContactsAdapter by lazy{
-        ContactsAdapter({
-            run {
-
-            }
-        })
+        ContactsAdapter()
 
     }
 
@@ -74,6 +71,20 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                     rv_friendsList.layoutManager = layoutManager
                     rv_friendsList.adapter = contactsAdapter
                     contactsAdapter.setFriendsList(it.data!!)
+                    contactsAdapter.listener = object: ContactsAdapter.ContactClickListener{
+                        override fun onAcceptDeniedClicked(contact: Friends, accept: Boolean) {
+                            if(accept){
+
+                            }else{
+
+                            }
+                        }
+
+                        override fun onFriendsContact(contact: Friends) {
+                            //view friend profile
+                        }
+
+                    }
                 }
                 else ->{
 

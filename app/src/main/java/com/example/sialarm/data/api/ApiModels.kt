@@ -14,7 +14,7 @@ data class SendAlertMessages(
     val userName:String
 )
 
-data class sendFriendRequest(
+data class SendFriendRequest(
     val sender_id:String,
     val receiver_id:String,
     val notification_type_id:String,

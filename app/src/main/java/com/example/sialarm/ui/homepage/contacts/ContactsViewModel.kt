@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.sialarm.base.BaseViewModel
+import com.example.sialarm.data.api.AcceptDenyRequestModel
 import com.example.sialarm.data.firebase.Friends
 import com.example.sialarm.utils.AbsentLiveData
 import com.example.sialarm.utils.Resource
+import javax.xml.transform.TransformerFactory
 
 class ContactsViewModel constructor(private val repository:ContactsRepository):BaseViewModel<IContactsInterface>() {
 
@@ -14,6 +16,7 @@ class ContactsViewModel constructor(private val repository:ContactsRepository):B
     var contactName = ""
     var insertContactValid = MutableLiveData<Boolean>()
     var getContactsValid = MutableLiveData<Boolean>()
+    var acceptDenyValid = MutableLiveData<AcceptDenyRequestModel>()
 
 
 
@@ -36,6 +39,11 @@ class ContactsViewModel constructor(private val repository:ContactsRepository):B
                 AbsentLiveData.create()
             }
 
+        }
+
+    val acceptDenyInvitation : LiveData<Resource<String>> = Transformations
+        .switchMap(acceptDenyValid){
+            repository.acceptDenyInvitation(acceptDenyRequestModel = it)
         }
 
 
