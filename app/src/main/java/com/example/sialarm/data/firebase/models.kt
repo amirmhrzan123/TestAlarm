@@ -24,6 +24,7 @@ data class Friends(
     val number:String="",
     val status:Int=0,
     val message:Boolean=false,
-    val name:String=""
+    val name:String="",
+    val notification:Boolean = false
 )
 
