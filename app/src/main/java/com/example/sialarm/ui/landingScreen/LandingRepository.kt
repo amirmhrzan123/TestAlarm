@@ -32,10 +32,8 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                 override fun onDataChange(p0: DataSnapshot) {
                     if(!p0.exists()){
                         viewModelScope.launch {
-                            withContext(IO){
                                 try{
 
-                                    val key = userDatabase.getReference(FireKey.USERS).push().key .toString()
                                     val user = Users(active = true,
                                         address = "",
                                         latitude = "",
@@ -43,23 +41,22 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         email = "",
                                         phone_number = number,
                                         username = userName,
-                                        id = key,
                                         notification_token = token,
                                         device = "")
 
-                                    userDatabase.getReference(FireKey.USERS).child(key).setValue(user).addOnCompleteListener {
+                                    userDatabase.getReference(FireKey.USERS).child(number).setValue(user).addOnCompleteListener {
                                         prefsManager.setLoginStatus(true)
-                                        prefsManager.setUserId(key)
+                                        prefsManager.setUserId(number)
                                         prefsManager.setPhoneNumber(number)
                                         insertResponse.postValue(Resource.success("","",""))
 
                                     }
 
                                 }catch(e:Throwable){
-
+                                    insertResponse.postValue(Resource.error("","",null))
                                 }
                             }
-                        }
+
 
                     }else{
                         Log.d("childrenCount",p0.childrenCount.toString())
@@ -68,8 +65,8 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                             user = data.getValue(Users::class.java)
                         }
 
-                        userDatabase.getReference(FireKey.USERS).child(user!!.id)
-                            .setValue(Users(user.active,user.address,
+                        userDatabase.getReference(FireKey.USERS).child(number)
+                            .setValue(Users(user!!.active,user.address,
                                 user.email,user.id,
                                 user.latitude,user.longitude,
                                 token,user.phone_number,

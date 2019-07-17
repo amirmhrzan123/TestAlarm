@@ -46,11 +46,21 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                         val key = friendDatabase.child(user!!.id).push().key
                         receiverId = user.id
                         friendDatabase.child(user.id).child(key.toString())
-                            .setValue(Friends(prefs.getUserId(),prefs.getPhoneNumber(),3,false,prefs.getUserName(),true)).addOnCompleteListener {
+                            .setValue(Friends(prefs.getUserId(),
+                                prefs.getPhoneNumber(),
+                                3,
+                                false,
+                                prefs.getUserName(),
+                                true)).addOnCompleteListener {
                                 //insert into the user who send request
                                 val friendKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
                                 friendDatabase.child(prefs.getUserId()).child(friendKey.toString())
-                                    .setValue(Friends(user.id,user.phone_number,2,false,user.username,false))
+                                    .setValue(Friends(user.id,
+                                        user.phone_number,
+                                        2,
+                                        false,
+                                        user.username,
+                                        false))
                                     .addOnCompleteListener {
                                         friendsResponse.postValue(Resource.success("","",null,null))
                                     }
@@ -63,10 +73,20 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                                 phone_number = number,username = userName)).addOnCompleteListener {
                                 val friendKey = friendDatabase.child(key).push().key.toString()
                                         friendDatabase.child(key).child(friendKey)
-                                    .setValue(Friends(prefs.getUserId(),prefs.getPhoneNumber(),3,false,prefs.getUserName(),false)).addOnCompleteListener {
+                                    .setValue(Friends(prefs.getUserId(),
+                                        prefs.getPhoneNumber(),
+                                        3,
+                                        false,
+                                        prefs.getUserName(),
+                                        false)).addOnCompleteListener {
                                         val nextKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
                                         friendDatabase.child(prefs.getUserId()).child(nextKey.toString())
-                                            .setValue(Friends(key,number,2,false,userName,true))
+                                            .setValue(Friends(key,
+                                                number,
+                                                2,
+                                                false,
+                                                userName,
+                                                true))
                                             .addOnCompleteListener {
                                                 friendsResponse.postValue(Resource.success("","",null,null))
                                             }

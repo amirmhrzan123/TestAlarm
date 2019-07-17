@@ -26,7 +26,7 @@ fun String.getNumber():String{
     if(contains("+977")){
         replacenumber = replace("+977","")
     }
-    return replacenumber.replace(" ","").replace("-","")
+    return replacenumber.replace(" ","").replace("-","").replace("(","").replace(")","")
 }
 
 fun View.hideViewWithFadeOutAnimation(viewVisibility: Int = View.INVISIBLE) {

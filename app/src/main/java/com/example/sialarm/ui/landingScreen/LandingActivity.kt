@@ -17,6 +17,7 @@ import com.example.sialarm.R
 import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.utils.Status
+import com.example.sialarm.utils.extensions.getNumber
 import com.facebook.accountkit.*
 import com.facebook.accountkit.ui.AccountKitActivity
 import com.facebook.accountkit.ui.AccountKitConfiguration
@@ -76,11 +77,11 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
                 Toast.makeText(this,"Please enter username.",Toast.LENGTH_SHORT).show()
             }else{
                 showLoading("")
-                landingViewModel.userName = etUserName.text!!.trim().toString()
+                /*landingViewModel.userName = etUserName.text!!.trim().toString()
                 landingViewModel.number = "++9779849276763"
-                landingViewModel.isValid.value = true
+                landingViewModel.isValid.value = true*/
 
-                /* val intent = Intent(applicationContext, AccountKitActivity::class.java)
+                 val intent = Intent(applicationContext, AccountKitActivity::class.java)
                  val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(
                      LoginType.PHONE,
                      AccountKitActivity.ResponseType.TOKEN
@@ -101,7 +102,7 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
                      configurationBuilder.build()
                  )
                  showLoading("")
-                 startActivityForResult(intent, APP_REQUEST_CODE)*/
+                 startActivityForResult(intent, APP_REQUEST_CODE)
             }
         }
     }
@@ -143,8 +144,8 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
                         override fun onSuccess(account: Account) {
                             val accountKitId = account.id
                             val phoneNumber = account.phoneNumber
-                            Log.d("phoneNumber",phoneNumber.toString())
-                            landingViewModel.number = phoneNumber.toString()
+                            Log.d("phoneNumber",phoneNumber.toString().getNumber())
+                            landingViewModel.number = phoneNumber.toString().getNumber()
                             landingViewModel.userName = etUserName.text.toString()
                             val phoneNumberString = phoneNumber.toString()
                             FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this@LandingActivity) { instanceIdResult ->
