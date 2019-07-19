@@ -178,6 +178,8 @@ dependencies {
     //Facebook sdk
     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"
+    implementation 'com.google.android.gms:play-services-location:11.0.1'
+
 
     //Circular ImageView
     implementation "de.hdodenhof:circleimageview:$circle_imageview_version"

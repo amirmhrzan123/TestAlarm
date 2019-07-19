@@ -106,7 +106,14 @@ class ContactsAdapter constructor(
         fun onBind(position: Int) {
             with(itemRequestBinding) {
                 model = contacts[position]
+                ivAccept.setOnClickListener {
+                    listener.onAcceptDeniedClicked(model!!,true)
+                }
+                ivDeny.setOnClickListener {
+                    listener.onAcceptDeniedClicked(model!!,false)
+                }
             }
+
         }
     }
 

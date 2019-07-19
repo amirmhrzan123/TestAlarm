@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="data"
+            name="model"
             type="com.example.sialarm.ui.homepage.notification.NotificationResponseModel" />
     </data>
 

@@ -20,7 +20,7 @@ val appModule = module {
     single { provideResources(get()) }
     single { CoroutineScope(Dispatchers.Main + Job()) }
     single { provideLandingRepository(get(),get(),get())}
-    single { provideContactsRepository(get(),get(),get()) }
+    single { provideContactsRepository(get(),get(),get(),get()) }
     single { provideNotificationRepository(get(),get(),get(),get())}
 }
 
@@ -33,8 +33,8 @@ fun provideLandingRepository(viewModelScope:CoroutineScope,
 
 fun provideContactsRepository(viewModelScope:CoroutineScope,
                               prefsManager: PrefsManager,
-                              firebaseDatabase: FirebaseDatabase):ContactsRepository
-= ContactsRepository(firebaseDatabase,viewModelScope,prefsManager)
+                              firebaseDatabase: FirebaseDatabase,apiServices: ApiServices):ContactsRepository
+= ContactsRepository(firebaseDatabase,viewModelScope,prefsManager,apiServices)
 
 fun provideNotificationRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
                                   prefsManager: PrefsManager,apiServices: ApiServices): NotificationRepository

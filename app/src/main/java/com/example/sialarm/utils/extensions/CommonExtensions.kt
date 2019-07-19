@@ -25,6 +25,8 @@ fun String.getNumber():String{
     var replacenumber = ""
     if(contains("+977")){
         replacenumber = replace("+977","")
+    }else{
+        replacenumber = this
     }
     return replacenumber.replace(" ","").replace("-","").replace("(","").replace(")","")
 }

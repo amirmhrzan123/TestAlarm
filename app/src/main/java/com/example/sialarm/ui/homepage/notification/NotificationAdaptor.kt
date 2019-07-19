@@ -3,7 +3,6 @@ package com.example.sialarm.ui.homepage.notification
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sialarm.BR.data
 import com.example.sialarm.BR.model
 import com.example.sialarm.databinding.ItemNotificationBinding
 
@@ -23,7 +22,7 @@ class NotificationAdaptor constructor(private val listNotification:List<Notifica
     inner class Viewholder(private val itemNotificationBinding:ItemNotificationBinding):RecyclerView.ViewHolder(itemNotificationBinding.root){
         fun onBind(position:Int){
             with(itemNotificationBinding){
-                data= listNotification[position]
+                model= listNotification[position]
             }
         }
     }

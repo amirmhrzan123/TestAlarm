@@ -41,6 +41,7 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         email = "",
                                         phone_number = number,
                                         username = userName,
+                                        id = number,
                                         notification_token = token,
                                         device = "")
 
@@ -48,6 +49,7 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         prefsManager.setLoginStatus(true)
                                         prefsManager.setUserId(number)
                                         prefsManager.setPhoneNumber(number)
+                                        prefsManager.setUserName(userName)
                                         insertResponse.postValue(Resource.success("","",""))
 
                                     }
@@ -66,13 +68,13 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                         }
 
                         userDatabase.getReference(FireKey.USERS).child(number)
-                            .setValue(Users(user!!.active,user.address,
+                            .setValue(Users(true,user!!.address,
                                 user.email,user.id,
                                 user.latitude,user.longitude,
                                 token,user.phone_number,
                                 userName,user.device,user.timeStamp)).addOnCompleteListener {
                                 prefsManager.setLoginStatus(true)
-                                prefsManager.setUserId(user.id)
+                                prefsManager.setUserId(number)
                                 prefsManager.setUserName(user.username)
                                 prefsManager.setPhoneNumber(number)
                                 insertResponse.postValue(Resource.success("","",""))

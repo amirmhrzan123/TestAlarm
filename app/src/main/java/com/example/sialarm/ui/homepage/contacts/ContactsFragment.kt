@@ -1,17 +1,22 @@
 package com.example.sialarm.ui.homepage.contacts
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
+import com.example.sialarm.data.api.AcceptDenyRequestModel
 import com.example.sialarm.data.firebase.Friends
+import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.FragmentContactsBinding
 import com.example.sialarm.ui.homepage.HomeViewModel
 import com.example.sialarm.utils.Status
+import com.example.sialarm.utils.extensions.getNumber
 import kotlinx.android.synthetic.main.fragment_contacts.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -27,6 +32,8 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
         ContactsAdapter()
 
     }
+
+    private val prefs:PrefsManager by inject()
 
     private val contactsViewModel : ContactsViewModel by viewModel()
 
@@ -57,6 +64,24 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                 Status.SUCCESS->{
                     hideLoading()
                 }
+                Status.ERROR->{
+                    hideLoading()
+                }
+            }
+        })
+
+        contactsViewModel.acceptDenyInvitation.observe(this,Observer{
+            when(it.status){
+                Status.LOADING->{
+                    showLoading("")
+                }
+                Status.SUCCESS->{
+                    hideLoading()
+
+                }
+                Status.ERROR->{
+                    hideLoading()
+                }
             }
         })
 
@@ -73,10 +98,21 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                     contactsAdapter.setFriendsList(it.data!!)
                     contactsAdapter.listener = object: ContactsAdapter.ContactClickListener{
                         override fun onAcceptDeniedClicked(contact: Friends, accept: Boolean) {
+                            println("receiverNumber "+ contact.number)
                             if(accept){
-
+                                val acceptDenyRequestModel = AcceptDenyRequestModel(sender_id = prefs.getUserId(),
+                                    receiver_id = contact.number,
+                                    accept =  true,
+                                    notification_type_id = "3",
+                                    senderUserName = prefs.getUserName())
+                                contactsViewModel.acceptDenyValid.value = acceptDenyRequestModel
                             }else{
-
+                                val acceptDenyRequestModel = AcceptDenyRequestModel(senderUserName = prefs.getUserName(),
+                                    sender_id = prefs.getUserId(),
+                                    receiver_id = contact.number,
+                                    accept = false,
+                                    notification_type_id = "3")
+                                contactsViewModel.acceptDenyValid.value = acceptDenyRequestModel
                             }
                         }
 

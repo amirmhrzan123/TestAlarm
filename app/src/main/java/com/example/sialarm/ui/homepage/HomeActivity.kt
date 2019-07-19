@@ -26,6 +26,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.databinding.ActivityMainBinding
+import com.example.sialarm.utils.extensions.getNumber
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -277,7 +278,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
                 if (cursorPhone!!.moveToFirst()) {
                     contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    homeViewModel.contactNumber = contactNumber
+                    homeViewModel.contactNumber = contactNumber.getNumber()
                 }
 
                 cursorPhone.close()

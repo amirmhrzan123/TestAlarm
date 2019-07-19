@@ -5,8 +5,7 @@ data class AcceptDenyRequestModel(
     val receiver_id:String,
     val notification_type_id:String,
     val accept:Boolean,
-    val userName:String
-)
+    val senderUserName:String)
 
 
 data class SendAlertMessages(

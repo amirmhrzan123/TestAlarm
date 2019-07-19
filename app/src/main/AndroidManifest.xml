@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
           package="com.example.sialarm">
 
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -28,6 +29,11 @@
         <meta-data android:name="com.facebook.accountkit.ClientToken"
             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
 
+        <service
+            android:name=".service.LocationJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+
 
 
         <activity android:name=".ui.landingScreen.LandingActivity">
@@ -35,9 +41,6 @@
 
         </activity>
 
-        <activity android:name=".ui.test.NotificationTestActivity">
-
-        </activity>
 
         <activity
             android:name="com.facebook.accountkit.ui.AccountKitActivity"

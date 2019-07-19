@@ -37,15 +37,16 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
-
                 override fun onDataChange(p0: DataSnapshot) {
 
                     val friendDatabase = firebaseDatabase.getReference(FireKey.FRIENDS)
                     if(p0.exists()){
-                        val user = p0.getValue(Users::class.java)
-                        val key = friendDatabase.child(user!!.id).push().key
-                        receiverId = user.id
-                        friendDatabase.child(user.id).child(key.toString())
+                        var user:Users?=null
+                        for(data in p0.children){
+                            user = data.getValue(Users::class.java)
+                        }
+                        receiverId = user!!.phone_number
+                        friendDatabase.child(user.id).child(prefs.getUserId())
                             .setValue(Friends(prefs.getUserId(),
                                 prefs.getPhoneNumber(),
                                 3,
@@ -53,8 +54,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                                 prefs.getUserName(),
                                 true)).addOnCompleteListener {
                                 //insert into the user who send request
-                                val friendKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
-                                friendDatabase.child(prefs.getUserId()).child(friendKey.toString())
+                                friendDatabase.child(prefs.getUserId()).child(number)
                                     .setValue(Friends(user.id,
                                         user.phone_number,
                                         2,
@@ -67,21 +67,18 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                             }
 
                     }else{
-                        val key = firebaseDatabase.getReference(FireKey.USERS).push().key.toString()
-                        firebaseDatabase.getReference(FireKey.USERS).child(key)
-                            .setValue(Users(id = key,active = false,
+                        firebaseDatabase.getReference(FireKey.USERS).child(number)
+                            .setValue(Users(id = number,active = false,
                                 phone_number = number,username = userName)).addOnCompleteListener {
-                                val friendKey = friendDatabase.child(key).push().key.toString()
-                                        friendDatabase.child(key).child(friendKey)
+                                        friendDatabase.child(number).child(prefs.getUserId())
                                     .setValue(Friends(prefs.getUserId(),
                                         prefs.getPhoneNumber(),
                                         3,
                                         false,
                                         prefs.getUserName(),
                                         false)).addOnCompleteListener {
-                                        val nextKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
-                                        friendDatabase.child(prefs.getUserId()).child(nextKey.toString())
-                                            .setValue(Friends(key,
+                                        friendDatabase.child(prefs.getUserId()).child(number)
+                                            .setValue(Friends(number,
                                                 number,
                                                 2,
                                                 false,
@@ -93,7 +90,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                                     }
 
                             }
-                        receiverId = key
+                        receiverId = number
 
                     }
                     viewModelScope.launch {
@@ -118,6 +115,8 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
     fun getFriendsList():LiveData<Resource<List<Friends>>>{
         val friendsListResponse = MutableLiveData<Resource<List<Friends>>>()
         friendsListResponse.postValue(Resource.loading(null))
+        println("number"+prefs.getUserId())
+
         firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).addValueEventListener(object:ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -126,6 +125,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
             override fun onDataChange(p0: DataSnapshot) {
                 listContacts.clear()
                 if(p0.exists()){
+                    println(p0.children.count())
                     for(data in p0.children){
                         val friend : Friends? = data.getValue(Friends::class.java)
                         listContacts.add(friend!!)
