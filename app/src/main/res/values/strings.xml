@@ -31,4 +31,10 @@
     <string name="write_your_username">Write your username</string>
     <string name="tv_ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="last_update_time_label">Last updated value</string>
+    <string name="permission_rationale">Permission</string>
+    <string name="permission_denied_explanation">Permission denied</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -29,14 +29,19 @@
         <meta-data android:name="com.facebook.accountkit.ClientToken"
             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
 
-        <service
-            android:name=".service.LocationJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
+      <activity android:name=".MainActivity">
+          <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <action android:name="android.intent.action.MAIN"/>
 
+              <category android:name="android.intent.category.LAUNCHER"/>
+          </intent-filter>
+
+      </activity>
 
 
         <activity android:name=".ui.landingScreen.LandingActivity">
+
 
 
         </activity>
@@ -48,12 +53,6 @@
             tools:replace="android:theme" />
 
         <activity android:name=".ui.PreSetupActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
 
 
         </activity>

@@ -16,6 +16,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 
+/*
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class LocationJobService : JobService(),GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
 
@@ -58,4 +59,4 @@ class LocationJobService : JobService(),GoogleApiClient.ConnectionCallbacks,Goog
 
     override fun onConnectionFailed(p0: ConnectionResult) {
     }
-}
+}*/
