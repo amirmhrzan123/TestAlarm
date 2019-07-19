@@ -42,12 +42,11 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
         var senderId = req.body.sender_id;
         var receiverId = req.body.receiver_id;
         var notificationTypeId = req.body.notification_type_id;
-        var userName = "";
+        var userName = req.body.userName;
         var notificationToken = "";
 
-        admin.database().ref('/users/' + senderId).once("value", function (snap) {
+        admin.database().ref('/users/' + receiverId).once("value", function (snap) {
             if (snap.exists) {
-                userName = snap.child('username').val()
                 notificationToken = snap.child('notification_token').val()
 
                 var payload = {
@@ -131,17 +130,17 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
         var senderId = req.body.sender_id;
         console.log("senderId", senderId);
         var receiverId = req.body.receiver_id;
+        console.log("receiverId",receiverId)
         var notificationTypeId = req.body.notification_type_id;
         var accept = req.body.accept
-        var userName = "";
+        var userName = req.body.senderUserName;
         var notificationToken = "";
+        var message = ""
        
 
-        admin.database().ref('/users/' + senderId).once("value", function (snap) {
+        admin.database().ref('/users/' + receiverId).once("value", function (snap) {
             if (snap.exists) {
-                userName = snap.child('username').val()
                 notificationToken = snap.child('notification_token').val()
-                var message = ""
                 if (accept) {
                     message = userName + " has accepted your request."
                 } else {
@@ -167,7 +166,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                     var newData = {
                         "notification_type_id": notificationTypeId,
                         "sender_id": senderId,
-                        "message": userName + " has sent you friend request."
+                        "message": message
                     }
                     admin.database().ref("Notification").child(receiverId).push(newData)
                     return admin.messaging().sendToDevice(notificationToken, payload)

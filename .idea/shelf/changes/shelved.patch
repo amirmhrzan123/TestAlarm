@@ -1,0 +1,512 @@
+Index: app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.homepage.contacts\r\n\r\nimport androidx.lifecycle.LiveData\r\nimport androidx.lifecycle.MutableLiveData\r\nimport com.example.sialarm.data.api.AcceptDenyRequestModel\r\nimport com.example.sialarm.data.api.ApiServices\r\nimport com.example.sialarm.data.api.SendFriendRequest\r\nimport com.example.sialarm.data.firebase.Friends\r\nimport com.example.sialarm.data.firebase.Users\r\nimport com.example.sialarm.data.prefs.PrefsManager\r\nimport com.example.sialarm.utils.FireKey\r\nimport com.example.sialarm.utils.Resource\r\nimport com.google.firebase.database.DataSnapshot\r\nimport com.google.firebase.database.DatabaseError\r\nimport com.google.firebase.database.FirebaseDatabase\r\nimport com.google.firebase.database.ValueEventListener\r\nimport com.google.firebase.firestore.FirebaseFirestore\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.launch\r\nimport java.lang.Exception\r\n\r\n\r\n\r\nclass ContactsRepository constructor(private val firebaseDatabase: FirebaseDatabase,\r\n                                     private val viewModelScope:CoroutineScope,\r\n                                     private val prefs:PrefsManager,\r\n                                     private val apiServices: ApiServices){\r\n\r\n    var listContacts: MutableList<Friends> = mutableListOf()\r\n\r\n    fun insertFriends(userName:String,number:String):LiveData<Resource<List<Friends>>>{\r\n        val friendsResponse = MutableLiveData<Resource<List<Friends>>>()\r\n        friendsResponse.postValue(Resource.loading(null))\r\n        var receiverId = \"\"\r\n        firebaseDatabase.getReference(FireKey.USERS).orderByChild(\"phone_number\").equalTo(number)\r\n            .addListenerForSingleValueEvent(object:ValueEventListener{\r\n                override fun onCancelled(p0: DatabaseError) {\r\n\r\n                }\r\n\r\n                override fun onDataChange(p0: DataSnapshot) {\r\n\r\n                    val friendDatabase = firebaseDatabase.getReference(FireKey.FRIENDS)\r\n                    if(p0.exists()){\r\n                        val user = p0.getValue(Users::class.java)\r\n                        val key = friendDatabase.child(user!!.id).push().key\r\n                        receiverId = user.id\r\n                        friendDatabase.child(user.id).child(key.toString())\r\n                            .setValue(Friends(prefs.getUserId(),\r\n                                prefs.getPhoneNumber(),\r\n                                3,\r\n                                false,\r\n                                prefs.getUserName(),\r\n                                true)).addOnCompleteListener {\r\n                                //insert into the user who send request\r\n                                val friendKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key\r\n                                friendDatabase.child(prefs.getUserId()).child(friendKey.toString())\r\n                                    .setValue(Friends(user.id,\r\n                                        user.phone_number,\r\n                                        2,\r\n                                        false,\r\n                                        user.username,\r\n                                        false))\r\n                                    .addOnCompleteListener {\r\n                                        friendsResponse.postValue(Resource.success(\"\",\"\",null,null))\r\n                                    }\r\n                            }\r\n\r\n                    }else{\r\n                        val key = firebaseDatabase.getReference(FireKey.USERS).push().key.toString()\r\n                        firebaseDatabase.getReference(FireKey.USERS).child(key)\r\n                            .setValue(Users(id = key,active = false,\r\n                                phone_number = number,username = userName)).addOnCompleteListener {\r\n                                val friendKey = friendDatabase.child(key).push().key.toString()\r\n                                        friendDatabase.child(key).child(friendKey)\r\n                                    .setValue(Friends(prefs.getUserId(),\r\n                                        prefs.getPhoneNumber(),\r\n                                        3,\r\n                                        false,\r\n                                        prefs.getUserName(),\r\n                                        false)).addOnCompleteListener {\r\n                                        val nextKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key\r\n                                        friendDatabase.child(prefs.getUserId()).child(nextKey.toString())\r\n                                            .setValue(Friends(key,\r\n                                                number,\r\n                                                2,\r\n                                                false,\r\n                                                userName,\r\n                                                true))\r\n                                            .addOnCompleteListener {\r\n                                                friendsResponse.postValue(Resource.success(\"\",\"\",null,null))\r\n                                            }\r\n                                    }\r\n\r\n                            }\r\n                        receiverId = key\r\n\r\n                    }\r\n                    viewModelScope.launch {\r\n                        try{\r\n                            friendsResponse.postValue(Resource.loading(null))\r\n                            val response = apiServices.sendFriendRequest(sendFriendRequest = SendFriendRequest(prefs.getUserId(),receiverId,\"3\",prefs.getUserName()) )\r\n                            friendsResponse.postValue(Resource.success(\"\",\"\",null))\r\n\r\n                        }catch(e:Exception){\r\n                            friendsResponse.postValue(Resource.error(\"\",\"\",null))\r\n                        }\r\n                    }\r\n                }\r\n\r\n\r\n\r\n            })\r\n\r\n        return friendsResponse\r\n    }\r\n\r\n    fun getFriendsList():LiveData<Resource<List<Friends>>>{\r\n        val friendsListResponse = MutableLiveData<Resource<List<Friends>>>()\r\n        friendsListResponse.postValue(Resource.loading(null))\r\n        firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).addValueEventListener(object:ValueEventListener{\r\n            override fun onCancelled(p0: DatabaseError) {\r\n\r\n            }\r\n\r\n            override fun onDataChange(p0: DataSnapshot) {\r\n                listContacts.clear()\r\n                if(p0.exists()){\r\n                    for(data in p0.children){\r\n                        val friend : Friends? = data.getValue(Friends::class.java)\r\n                        listContacts.add(friend!!)\r\n                    }\r\n                    friendsListResponse.postValue(Resource.success(\"\",\"\",listContacts,null))\r\n                }else{\r\n                    friendsListResponse.postValue(Resource.success(\"\",\"\",listContacts,null))\r\n\r\n                }\r\n\r\n            }\r\n\r\n        })\r\n\r\n        return friendsListResponse\r\n    }\r\n\r\n    fun acceptDenyInvitation(acceptDenyRequestModel: AcceptDenyRequestModel):LiveData<Resource<String>>{\r\n        val acceptDenyResponse = MutableLiveData<Resource<String>>()\r\n        val taskMap = HashMap<String, Any>()\r\n        if(acceptDenyRequestModel.accept){\r\n            taskMap[\"status\"]=1\r\n            taskMap[\"notification\"]=true\r\n            taskMap[\"message\"]=false\r\n        }else{\r\n            taskMap[\"status\"]=4\r\n            taskMap[\"notification\"]=false\r\n            taskMap[\"message\"]=false\r\n        }\r\n        firebaseDatabase.getReference(\"friends\").child(acceptDenyRequestModel.sender_id).child(acceptDenyRequestModel.receiver_id).updateChildren(taskMap)\r\n        firebaseDatabase.getReference(\"friends\").child(acceptDenyRequestModel.receiver_id).child(acceptDenyRequestModel.sender_id).updateChildren(taskMap)\r\n        viewModelScope.launch {\r\n            try{\r\n                acceptDenyResponse.postValue(Resource.loading(null))\r\n                val response = apiServices.acceptDenyInvitation(acceptDenyRequestModel).await()\r\n                acceptDenyResponse.postValue(Resource.success(\"\",\"\",response))\r\n\r\n            }catch(e:Exception){\r\n                acceptDenyResponse.postValue(Resource.error(\"\",\"\",\"\"))\r\n            }\r\n        }\r\n        return acceptDenyResponse\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsRepository.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsRepository.kt	(date 1563372893433)
+@@ -37,15 +37,16 @@
+                 override fun onCancelled(p0: DatabaseError) {
+ 
+                 }
+-
+                 override fun onDataChange(p0: DataSnapshot) {
+ 
+                     val friendDatabase = firebaseDatabase.getReference(FireKey.FRIENDS)
+                     if(p0.exists()){
+-                        val user = p0.getValue(Users::class.java)
+-                        val key = friendDatabase.child(user!!.id).push().key
+-                        receiverId = user.id
+-                        friendDatabase.child(user.id).child(key.toString())
++                        var user:Users?=null
++                        for(data in p0.children){
++                            user = data.getValue(Users::class.java)
++                        }
++                        receiverId = user!!.phone_number
++                        friendDatabase.child(user.id).child(prefs.getUserId())
+                             .setValue(Friends(prefs.getUserId(),
+                                 prefs.getPhoneNumber(),
+                                 3,
+@@ -53,8 +54,7 @@
+                                 prefs.getUserName(),
+                                 true)).addOnCompleteListener {
+                                 //insert into the user who send request
+-                                val friendKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
+-                                friendDatabase.child(prefs.getUserId()).child(friendKey.toString())
++                                friendDatabase.child(prefs.getUserId()).child(number)
+                                     .setValue(Friends(user.id,
+                                         user.phone_number,
+                                         2,
+@@ -67,21 +67,18 @@
+                             }
+ 
+                     }else{
+-                        val key = firebaseDatabase.getReference(FireKey.USERS).push().key.toString()
+-                        firebaseDatabase.getReference(FireKey.USERS).child(key)
+-                            .setValue(Users(id = key,active = false,
++                        firebaseDatabase.getReference(FireKey.USERS).child(number)
++                            .setValue(Users(id = number,active = false,
+                                 phone_number = number,username = userName)).addOnCompleteListener {
+-                                val friendKey = friendDatabase.child(key).push().key.toString()
+-                                        friendDatabase.child(key).child(friendKey)
++                                        friendDatabase.child(number).child(prefs.getUserId())
+                                     .setValue(Friends(prefs.getUserId(),
+                                         prefs.getPhoneNumber(),
+                                         3,
+                                         false,
+                                         prefs.getUserName(),
+                                         false)).addOnCompleteListener {
+-                                        val nextKey = firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).push().key
+-                                        friendDatabase.child(prefs.getUserId()).child(nextKey.toString())
+-                                            .setValue(Friends(key,
++                                        friendDatabase.child(prefs.getUserId()).child(number)
++                                            .setValue(Friends(number,
+                                                 number,
+                                                 2,
+                                                 false,
+@@ -93,7 +90,7 @@
+                                     }
+ 
+                             }
+-                        receiverId = key
++                        receiverId = number
+ 
+                     }
+                     viewModelScope.launch {
+@@ -118,6 +115,8 @@
+     fun getFriendsList():LiveData<Resource<List<Friends>>>{
+         val friendsListResponse = MutableLiveData<Resource<List<Friends>>>()
+         friendsListResponse.postValue(Resource.loading(null))
++        println("number"+prefs.getUserId())
++
+         firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).addValueEventListener(object:ValueEventListener{
+             override fun onCancelled(p0: DatabaseError) {
+ 
+@@ -126,6 +125,7 @@
+             override fun onDataChange(p0: DataSnapshot) {
+                 listContacts.clear()
+                 if(p0.exists()){
++                    println(p0.children.count())
+                     for(data in p0.children){
+                         val friend : Friends? = data.getValue(Friends::class.java)
+                         listContacts.add(friend!!)
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" xmlns:tools=\"http://schemas.android.com/tools\"\r\n          package=\"com.example.sialarm\">\r\n\r\n    <uses-permission android:name=\"android.permission.VIBRATE\" />\r\n    <uses-permission android:name=\"android.permission.INTERNET\"/>\r\n    <uses-permission android:name=\"android.permission.SEND_SMS\" />\r\n    <uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.READ_CONTACTS\"/>\r\n    <uses-feature android:name=\"android.hardware.location.gps\"/>\r\n    <uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" />\r\n\r\n\r\n    <application\r\n        android:name=\".base.BaseApplication\"\r\n        android:allowBackup=\"false\"\r\n            android:icon=\"@mipmap/ic_launcher\"\r\n            android:label=\"@string/app_name\"\r\n            android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n            android:supportsRtl=\"true\"\r\n            android:theme=\"@style/AppTheme\">\r\n\r\n        <meta-data android:name=\"com.facebook.accountkit.ApplicationName\"\r\n            android:value=\"@string/app_name\" />\r\n        <meta-data android:name=\"com.facebook.sdk.ApplicationId\"\r\n            android:value=\"@string/FACEBOOK_APP_ID\" />\r\n        <meta-data android:name=\"com.facebook.accountkit.ClientToken\"\r\n            android:value=\"@string/ACCOUNT_KIT_CLIENT_TOKEN\" />\r\n\r\n\r\n\r\n        <activity android:name=\".ui.landingScreen.LandingActivity\">\r\n\r\n\r\n        </activity>\r\n\r\n        <activity android:name=\".ui.test.NotificationTestActivity\">\r\n\r\n        </activity>\r\n\r\n        <activity\r\n            android:name=\"com.facebook.accountkit.ui.AccountKitActivity\"\r\n            android:theme=\"@style/AppLoginTheme\"\r\n            tools:replace=\"android:theme\" />\r\n\r\n        <activity android:name=\".ui.PreSetupActivity\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.VIEW\" />\r\n                <action android:name=\"android.intent.action.MAIN\"/>\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\"/>\r\n            </intent-filter>\r\n\r\n\r\n        </activity>\r\n\r\n        <activity android:name=\".ui.homepage.HomeActivity\"\r\n            >\r\n\r\n\r\n        </activity>\r\n\r\n        <service\r\n            android:name=\".data.firebase.MyFirebaseMessagingService\"\r\n            android:exported=\"false\">\r\n            <intent-filter>\r\n                <action android:name=\"com.google.firebase.MESSAGING_EVENT\" />\r\n            </intent-filter>\r\n        </service>\r\n        <!--\r\n Set custom default icon. This is used when no icon is set for incoming notification messages.\r\n     See README(https://goo.gl/l4GJaQ) for more.\r\n        -->\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_icon\"\r\n            android:resource=\"@drawable/ic_setting\" />\r\n        <!--\r\n Set color used with incoming notification messages. This is used when no color is set for the incoming\r\n             notification message. See README(https://goo.gl/6BKBk7) for more.\r\n        -->\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_color\"\r\n            android:resource=\"@color/colorAccent\" /> <!-- [START fcm_default_channel] -->\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_channel_id\"\r\n            android:value=\"@string/default_notification_channel_id\" />\r\n\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/AndroidManifest.xml	(date 1563454261032)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
+           package="com.example.sialarm">
+ 
+     <uses-permission android:name="android.permission.VIBRATE" />
+@@ -28,6 +29,11 @@
+         <meta-data android:name="com.facebook.accountkit.ClientToken"
+             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+ 
++        <service
++            android:name=".service.LocationJobService"
++            android:permission="android.permission.BIND_JOB_SERVICE"
++            android:exported="true"/>
++
+ 
+ 
+         <activity android:name=".ui.landingScreen.LandingActivity">
+@@ -35,9 +41,6 @@
+ 
+         </activity>
+ 
+-        <activity android:name=".ui.test.NotificationTestActivity">
+-
+-        </activity>
+ 
+         <activity
+             android:name="com.facebook.accountkit.ui.AccountKitActivity"
+Index: app/src/main/java/com/example/sialarm/ui/landingScreen/LandingRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.landingScreen\r\n\r\nimport android.util.Log\r\nimport androidx.lifecycle.LiveData\r\nimport androidx.lifecycle.MutableLiveData\r\nimport com.example.sialarm.data.firebase.Friends\r\nimport com.example.sialarm.data.firebase.PhoneNumber\r\nimport com.example.sialarm.data.firebase.Users\r\nimport com.example.sialarm.data.prefs.PrefsManager\r\nimport com.example.sialarm.utils.FireKey\r\nimport com.example.sialarm.utils.FirebaseData\r\nimport com.example.sialarm.utils.Resource\r\nimport com.google.firebase.database.*\r\nimport com.google.firebase.firestore.auth.User\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers.IO\r\nimport kotlinx.coroutines.launch\r\nimport kotlinx.coroutines.withContext\r\n\r\nclass LandingRepository constructor(private val viewModelScope:CoroutineScope,\r\n                                    private val prefsManager: PrefsManager,\r\n                                    private val userDatabase: FirebaseDatabase) {\r\n\r\n    fun insertUsers(userName:String, number:String, token:String):LiveData<Resource<String>>{\r\n        val insertResponse = MutableLiveData<Resource<String>>()\r\n        userDatabase.getReference(FireKey.USERS).orderByChild(\"phone_number\").equalTo(number)\r\n            .addListenerForSingleValueEvent(object:ValueEventListener{\r\n                override fun onCancelled(p0: DatabaseError) {\r\n                    Log.d(\"error\",\"error\")\r\n                }\r\n\r\n                override fun onDataChange(p0: DataSnapshot) {\r\n                    if(!p0.exists()){\r\n                        viewModelScope.launch {\r\n                                try{\r\n\r\n                                    val user = Users(active = true,\r\n                                        address = \"\",\r\n                                        latitude = \"\",\r\n                                        longitude = \"\",\r\n                                        email = \"\",\r\n                                        phone_number = number,\r\n                                        username = userName,\r\n                                        notification_token = token,\r\n                                        device = \"\")\r\n\r\n                                    userDatabase.getReference(FireKey.USERS).child(number).setValue(user).addOnCompleteListener {\r\n                                        prefsManager.setLoginStatus(true)\r\n                                        prefsManager.setUserId(number)\r\n                                        prefsManager.setPhoneNumber(number)\r\n                                        insertResponse.postValue(Resource.success(\"\",\"\",\"\"))\r\n\r\n                                    }\r\n\r\n                                }catch(e:Throwable){\r\n                                    insertResponse.postValue(Resource.error(\"\",\"\",null))\r\n                                }\r\n                            }\r\n\r\n\r\n                    }else{\r\n                        Log.d(\"childrenCount\",p0.childrenCount.toString())\r\n                        var user:Users?=null\r\n                        for(data in p0.children){\r\n                            user = data.getValue(Users::class.java)\r\n                        }\r\n\r\n                        userDatabase.getReference(FireKey.USERS).child(number)\r\n                            .setValue(Users(user!!.active,user.address,\r\n                                user.email,user.id,\r\n                                user.latitude,user.longitude,\r\n                                token,user.phone_number,\r\n                                userName,user.device,user.timeStamp)).addOnCompleteListener {\r\n                                prefsManager.setLoginStatus(true)\r\n                                prefsManager.setUserId(user.id)\r\n                                prefsManager.setUserName(user.username)\r\n                                prefsManager.setPhoneNumber(number)\r\n                                insertResponse.postValue(Resource.success(\"\",\"\",\"\"))\r\n\r\n                            }\r\n                    }\r\n                }\r\n\r\n            })\r\n\r\n        return insertResponse\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/landingScreen/LandingRepository.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/landingScreen/LandingRepository.kt	(date 1563373414803)
+@@ -41,6 +41,7 @@
+                                         email = "",
+                                         phone_number = number,
+                                         username = userName,
++                                        id = number,
+                                         notification_token = token,
+                                         device = "")
+ 
+@@ -48,6 +49,7 @@
+                                         prefsManager.setLoginStatus(true)
+                                         prefsManager.setUserId(number)
+                                         prefsManager.setPhoneNumber(number)
++                                        prefsManager.setUserName(userName)
+                                         insertResponse.postValue(Resource.success("","",""))
+ 
+                                     }
+@@ -66,13 +68,13 @@
+                         }
+ 
+                         userDatabase.getReference(FireKey.USERS).child(number)
+-                            .setValue(Users(user!!.active,user.address,
++                            .setValue(Users(true,user!!.address,
+                                 user.email,user.id,
+                                 user.latitude,user.longitude,
+                                 token,user.phone_number,
+                                 userName,user.device,user.timeStamp)).addOnCompleteListener {
+                                 prefsManager.setLoginStatus(true)
+-                                prefsManager.setUserId(user.id)
++                                prefsManager.setUserId(number)
+                                 prefsManager.setUserName(user.username)
+                                 prefsManager.setPhoneNumber(number)
+                                 insertResponse.postValue(Resource.success("","",""))
+Index: app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.homepage.contacts\r\n\r\nimport android.os.Bundle\r\nimport android.view.View\r\nimport androidx.lifecycle.Observer\r\nimport androidx.recyclerview.widget.LinearLayoutManager\r\nimport com.example.sialarm.BR\r\nimport com.example.sialarm.R\r\nimport com.example.sialarm.base.BaseFragment\r\nimport com.example.sialarm.data.firebase.Friends\r\nimport com.example.sialarm.databinding.FragmentContactsBinding\r\nimport com.example.sialarm.ui.homepage.HomeViewModel\r\nimport com.example.sialarm.utils.Status\r\nimport kotlinx.android.synthetic.main.fragment_contacts.*\r\nimport org.koin.androidx.viewmodel.ext.android.sharedViewModel\r\nimport org.koin.androidx.viewmodel.ext.android.viewModel\r\n\r\nclass ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>() {\r\n\r\n    companion object {\r\n        fun newInstance():ContactsFragment{\r\n            return ContactsFragment()\r\n        }\r\n    }\r\n\r\n    private val contactsAdapter : ContactsAdapter by lazy{\r\n        ContactsAdapter()\r\n\r\n    }\r\n\r\n    private val contactsViewModel : ContactsViewModel by viewModel()\r\n\r\n    override fun getLayoutId(): Int = R.layout.fragment_contacts\r\n\r\n    override fun getViewModel(): ContactsViewModel = contactsViewModel\r\n\r\n    private val mainViewMOdel : HomeViewModel by sharedViewModel()\r\n\r\n    override fun getBindingVariable(): Int = BR.viewModel\r\n\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        contactsViewModel.getContactsValid.value = true\r\n        mainViewMOdel.contactTrigger.observe(this, Observer {\r\n            contactsViewModel.contactName = mainViewMOdel.contactName\r\n            contactsViewModel.contactNumber = mainViewMOdel.contactNumber\r\n            contactsViewModel.insertContactValid.value = true\r\n        })\r\n\r\n        contactsViewModel.insertContacts.observe(this, Observer {\r\n            when(it.status){\r\n                Status.LOADING->{\r\n                    showLoading(\"\")\r\n                }\r\n                Status.SUCCESS->{\r\n                    hideLoading()\r\n                }\r\n            }\r\n        })\r\n\r\n        contactsViewModel.getContacts.observe(this,Observer{\r\n            when(it.status){\r\n                Status.ERROR->{\r\n                    showLoading(\"\")\r\n                }\r\n                Status.SUCCESS->{\r\n                    hideLoading()\r\n                    val layoutManager = LinearLayoutManager(context)\r\n                    rv_friendsList.layoutManager = layoutManager\r\n                    rv_friendsList.adapter = contactsAdapter\r\n                    contactsAdapter.setFriendsList(it.data!!)\r\n                    contactsAdapter.listener = object: ContactsAdapter.ContactClickListener{\r\n                        override fun onAcceptDeniedClicked(contact: Friends, accept: Boolean) {\r\n                            if(accept){\r\n\r\n                            }else{\r\n\r\n                            }\r\n                        }\r\n\r\n                        override fun onFriendsContact(contact: Friends) {\r\n                            //view friend profile\r\n                        }\r\n\r\n                    }\r\n                }\r\n                else ->{\r\n\r\n                }\r\n            }\r\n        })\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsFragment.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsFragment.kt	(date 1563375742608)
+@@ -1,17 +1,22 @@
+ package com.example.sialarm.ui.homepage.contacts
+ 
+ import android.os.Bundle
++import android.util.Log
+ import android.view.View
+ import androidx.lifecycle.Observer
+ import androidx.recyclerview.widget.LinearLayoutManager
+ import com.example.sialarm.BR
+ import com.example.sialarm.R
+ import com.example.sialarm.base.BaseFragment
++import com.example.sialarm.data.api.AcceptDenyRequestModel
+ import com.example.sialarm.data.firebase.Friends
++import com.example.sialarm.data.prefs.PrefsManager
+ import com.example.sialarm.databinding.FragmentContactsBinding
+ import com.example.sialarm.ui.homepage.HomeViewModel
+ import com.example.sialarm.utils.Status
++import com.example.sialarm.utils.extensions.getNumber
+ import kotlinx.android.synthetic.main.fragment_contacts.*
++import org.koin.android.ext.android.inject
+ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+ import org.koin.androidx.viewmodel.ext.android.viewModel
+ 
+@@ -28,6 +33,8 @@
+ 
+     }
+ 
++    private val prefs:PrefsManager by inject()
++
+     private val contactsViewModel : ContactsViewModel by viewModel()
+ 
+     override fun getLayoutId(): Int = R.layout.fragment_contacts
+@@ -56,6 +63,24 @@
+                 }
+                 Status.SUCCESS->{
+                     hideLoading()
++                }
++                Status.ERROR->{
++                    hideLoading()
++                }
++            }
++        })
++
++        contactsViewModel.acceptDenyInvitation.observe(this,Observer{
++            when(it.status){
++                Status.LOADING->{
++                    showLoading("")
++                }
++                Status.SUCCESS->{
++                    hideLoading()
++
++                }
++                Status.ERROR->{
++                    hideLoading()
+                 }
+             }
+         })
+@@ -73,10 +98,21 @@
+                     contactsAdapter.setFriendsList(it.data!!)
+                     contactsAdapter.listener = object: ContactsAdapter.ContactClickListener{
+                         override fun onAcceptDeniedClicked(contact: Friends, accept: Boolean) {
++                            println("receiverNumber "+ contact.number)
+                             if(accept){
+-
++                                val acceptDenyRequestModel = AcceptDenyRequestModel(sender_id = prefs.getUserId(),
++                                    receiver_id = contact.number,
++                                    accept =  true,
++                                    notification_type_id = "3",
++                                    senderUserName = prefs.getUserName())
++                                contactsViewModel.acceptDenyValid.value = acceptDenyRequestModel
+                             }else{
+-
++                                val acceptDenyRequestModel = AcceptDenyRequestModel(senderUserName = prefs.getUserName(),
++                                    sender_id = prefs.getUserId(),
++                                    receiver_id = contact.number,
++                                    accept = false,
++                                    notification_type_id = "3")
++                                contactsViewModel.acceptDenyValid.value = acceptDenyRequestModel
+                             }
+                         }
+ 
+Index: app/src/main/java/com/example/sialarm/utils/extensions/CommonExtensions.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.utils.extensions\r\n\r\nimport android.animation.Animator\r\nimport android.animation.AnimatorListenerAdapter\r\nimport android.text.format.DateFormat\r\nimport android.view.View\r\nimport androidx.lifecycle.ViewModel\r\nimport java.text.ParseException\r\nimport java.text.SimpleDateFormat\r\nimport java.util.*\r\n\r\n/**\r\nCreated by Prajeet on 1/16/2019, 4:08 PM\r\n **/\r\n\r\n\r\n\r\n\r\n\r\nfun ViewModel.getCurrentTimeStamp(): String {\r\n    return System.currentTimeMillis().toString()\r\n}\r\n\r\nfun String.getNumber():String{\r\n    var replacenumber = \"\"\r\n    if(contains(\"+977\")){\r\n        replacenumber = replace(\"+977\",\"\")\r\n    }\r\n    return replacenumber.replace(\" \",\"\").replace(\"-\",\"\").replace(\"(\",\"\").replace(\")\",\"\")\r\n}\r\n\r\nfun View.hideViewWithFadeOutAnimation(viewVisibility: Int = View.INVISIBLE) {\r\n    animate()\r\n            .alpha(0.0f)\r\n            .setDuration(400)\r\n            .setListener(object : AnimatorListenerAdapter() {\r\n                override fun onAnimationEnd(animation: Animator) {\r\n                    super.onAnimationEnd(animation)\r\n                    visibility = viewVisibility\r\n                }\r\n            })\r\n}\r\n\r\nfun View.showViewWithFadeInAnimation() {\r\n    animate()\r\n            .alpha(1.0f)\r\n            .setDuration(10)\r\n            .setListener(object : AnimatorListenerAdapter() {\r\n                override fun onAnimationEnd(animation: Animator) {\r\n                    super.onAnimationEnd(animation)\r\n                    visibility = View.VISIBLE\r\n                }\r\n            })\r\n}\r\n\r\nprivate val SECOND_MILLIS = 1000\r\nprivate val MINUTE_MILLIS = 60 * SECOND_MILLIS\r\nprivate val HOUR_MILLIS = 60 * MINUTE_MILLIS\r\nprivate val DAY_MILLIS = 24 * HOUR_MILLIS\r\n\r\n\r\nfun String.getMessageDateTime(isMilliseconds: Boolean = false): String {\r\n    val messageTime = Calendar.getInstance()\r\n    if (!isMilliseconds)\r\n        messageTime.timeInMillis = this.milliseconds()\r\n    else\r\n        messageTime.timeInMillis = this.toLong()\r\n    // get Currunt time\r\n    val now = Calendar.getInstance()\r\n\r\n    val strTimeFormate = \"h:mm aa\"\r\n    val strDateFormate = \"dd/MM/yyyy h:mm aa\"\r\n\r\n    return if (now.get(Calendar.DATE) === messageTime.get(Calendar.DATE)\r\n            &&\r\n            now.get(Calendar.MONTH) === messageTime.get(Calendar.MONTH)\r\n            &&\r\n            now.get(Calendar.YEAR) === messageTime.get(Calendar.YEAR)) {\r\n\r\n\r\n        val now = now.timeInMillis\r\n        val millis2 = messageTime.timeInMillis\r\n        val diff = now - millis2\r\n        when {\r\n            diff < MINUTE_MILLIS -> \"Just now\"\r\n            diff < 2 * MINUTE_MILLIS -> \"A minute ago\"\r\n            diff < 50 * MINUTE_MILLIS -> \"${diff / MINUTE_MILLIS}  minutes ago\"\r\n            diff < 90 * MINUTE_MILLIS -> \"An hour ago\"\r\n            diff < 24 * HOUR_MILLIS -> \"${diff / HOUR_MILLIS}  hours ago\"\r\n            diff < 48 * HOUR_MILLIS -> \"Yesterday\"\r\n            else -> \"${diff / DAY_MILLIS} days ago\"\r\n        }\r\n\r\n//        \"Today at \" + DateFormat.format(strTimeFormate, messageTime)\r\n\r\n    } else if (now.get(Calendar.DATE) - messageTime.get(Calendar.DATE) === 1\r\n            &&\r\n            now.get(Calendar.MONTH) === messageTime.get(Calendar.MONTH)\r\n            &&\r\n            now.get(Calendar.YEAR) === messageTime.get(Calendar.YEAR)) {\r\n        \"Yesterday at \" + DateFormat.format(strTimeFormate, messageTime)\r\n    } else {\r\n        \"\" + DateFormat.format(strDateFormate, messageTime)\r\n    }\r\n}\r\n\r\nfun String.milliseconds(): Long {\r\n    //String date_ = date;\r\n    val sdf = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\")\r\n    try {\r\n        sdf.timeZone = TimeZone.getTimeZone(\"UTC\")\r\n        val mDate = sdf.parse(this)\r\n        val timeInMilliseconds = mDate.time\r\n        println(\"Date in milli :: $timeInMilliseconds\")\r\n        return timeInMilliseconds\r\n    } catch (e: ParseException) {\r\n        // TODO Auto-generated catch block\r\n        e.printStackTrace()\r\n    }\r\n\r\n    return 0\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/utils/extensions/CommonExtensions.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/utils/extensions/CommonExtensions.kt	(date 1563368238769)
+@@ -25,6 +25,8 @@
+     var replacenumber = ""
+     if(contains("+977")){
+         replacenumber = replace("+977","")
++    }else{
++        replacenumber = this
+     }
+     return replacenumber.replace(" ","").replace("-","").replace("(","").replace(")","")
+ }
+Index: app/src/main/java/com/example/sialarm/service/LocationJobService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/service/LocationJobService.kt	(date 1563500717407)
++++ app/src/main/java/com/example/sialarm/service/LocationJobService.kt	(date 1563500717407)
+@@ -0,0 +1,61 @@
++package com.example.sialarm.service
++
++import android.app.job.JobParameters
++import android.app.job.JobService
++import android.content.BroadcastReceiver
++import android.content.Context
++import android.content.Intent
++import android.location.Location
++import android.os.Build
++import android.os.Bundle
++import android.os.Handler
++import androidx.annotation.RequiresApi
++import com.google.android.gms.common.ConnectionResult
++import com.google.android.gms.common.api.GoogleApiClient
++import com.google.android.gms.location.FusedLocationProviderClient
++import com.google.android.gms.location.LocationCallback
++import com.google.android.gms.location.LocationRequest
++
++@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
++class LocationJobService : JobService(),GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
++
++    lateinit var handler: Handler
++    lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
++    lateinit var mLocationRequest: LocationRequest
++    lateinit var mLocationCallback: LocationCallback
++    lateinit var jobParameters: JobParameters
++    var isJobRunning = false
++    lateinit var mGoogleApiClient: GoogleApiClient
++    var updatesList = ArrayList<Location>()
++
++
++    companion object {
++        const val LOCATION_SERVICE_JOB_ID = 111
++        const val ACTION_STOP_JOB = "actionStopJob"
++    }
++
++    private val stopJobReceiver = object : BroadcastReceiver(){
++        override fun onReceive(context: Context?, intent: Intent?) {
++            if(intent?.action!=null && intent.action.equals(ACTION_STOP_JOB)){
++
++            }
++        }
++
++    }
++
++    override fun onStopJob(p0: JobParameters?): Boolean {
++
++    }
++
++    override fun onStartJob(p0: JobParameters?): Boolean {
++    }
++
++    override fun onConnected(p0: Bundle?) {
++    }
++
++    override fun onConnectionSuspended(p0: Int) {
++    }
++
++    override fun onConnectionFailed(p0: ConnectionResult) {
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/homepage/HomeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.homepage\r\n\r\nimport android.Manifest\r\nimport android.annotation.SuppressLint\r\nimport android.app.Activity\r\nimport android.content.Context\r\nimport android.content.Intent\r\nimport android.os.Build\r\nimport android.os.Bundle\r\nimport android.os.Handler\r\nimport android.provider.ContactsContract\r\nimport android.util.Log\r\nimport android.view.View\r\nimport androidx.appcompat.app.AppCompatDelegate\r\nimport androidx.core.content.ContextCompat\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.viewpager.widget.ViewPager\r\nimport androidx.work.Constraints\r\nimport androidx.work.NetworkType\r\nimport androidx.work.OneTimeWorkRequest\r\nimport androidx.work.WorkManager\r\nimport com.app.dwell.base.BaseActivity\r\nimport com.aurelhubert.ahbottomnavigation.AHBottomNavigation\r\nimport com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter\r\nimport com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem\r\nimport com.example.sialarm.BR\r\nimport com.example.sialarm.R\r\nimport com.example.sialarm.databinding.ActivityMainBinding\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton\r\nimport kotlinx.android.synthetic.main.activity_main.*\r\nimport org.koin.androidx.viewmodel.ext.android.viewModel\r\nimport java.util.*\r\n\r\n\r\nclass HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {\r\n\r\n    lateinit var adapter: HomePagerAdapter\r\n    lateinit var navigationAdapter: AHBottomNavigationAdapter\r\n    private val bottomNavigationItems = ArrayList<AHBottomNavigationItem>()\r\n    private val useMenuResource = true\r\n    lateinit var tabColors: IntArray\r\n    private val handler = Handler()\r\n    private var currentFragment: Fragment?= null\r\n\r\n    // UI\r\n    lateinit var viewPager: ViewPager\r\n    lateinit var bottomNavigation: AHBottomNavigation\r\n    lateinit var floatingActionButton: FloatingActionButton\r\n\r\n\r\n    private val homeViewModel: HomeViewModel by viewModel()\r\n\r\n    override fun getLayoutId(): Int  = R.layout.activity_main\r\n\r\n    override fun getViewModel(): HomeViewModel = homeViewModel\r\n\r\n    override fun getBindingVariable(): Int = BR.viewModel\r\n\r\n    companion object {\r\n        fun newInstance(activity: Activity){\r\n            val intent = Intent(activity,HomeActivity::class.java)\r\n            activity.startActivity(intent)\r\n        }\r\n    }\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setSupportActionBar(toolbar)\r\n        supportActionBar?.setHomeButtonEnabled(true)\r\n        supportActionBar?.setDisplayShowTitleEnabled(false)\r\n        toolbar.title = \"Alert\"\r\n        initUI()\r\n    }\r\n\r\n    override fun onDestroy() {\r\n        super.onDestroy()\r\n        handler.removeCallbacksAndMessages(null)\r\n    }\r\n\r\n    /**\r\n     * Init UI\r\n     */\r\n    @SuppressLint(\"RestrictedApi\")\r\n    private fun initUI() {\r\n\r\n        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {\r\n            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)\r\n        }\r\n\r\n        bottomNavigation = findViewById(R.id.bottom_navigation)\r\n        viewPager = findViewById(R.id.view_pager)\r\n        bottomNavigation.accentColor = resources.getColor(R.color.green)\r\n\r\n        floating_action_button.setOnClickListener {\r\n            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)\r\n            intent.putExtra(\"finishActivityOnSaveCompleted\", true)\r\n            startActivityForResult(intent, 1)\r\n        }\r\n\r\n            tabColors = applicationContext.resources.getIntArray(R.array.tab_colors)\r\n            navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)\r\n            navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)\r\n\r\n       // bottomNavigation.isTranslucentNavigationEnabled = true\r\n\r\n        viewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{\r\n            override fun onPageScrollStateChanged(state: Int) {\r\n            }\r\n\r\n            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {\r\n            }\r\n\r\n            override fun onPageSelected(position: Int) {\r\n                bottomNavigation.currentItem = position\r\n            }\r\n\r\n        })\r\n\r\n        bottomNavigation.setOnTabSelectedListener(AHBottomNavigation.OnTabSelectedListener { position, wasSelected ->\r\n            if (currentFragment == null) {\r\n                currentFragment = adapter.getCurrentFragment(position)\r\n            }\r\n\r\n\r\n            viewPager.setCurrentItem(position, true)\r\n\r\n\r\n            if (currentFragment == null) {\r\n                return@OnTabSelectedListener true\r\n            }\r\n\r\n            when(position){\r\n                0->{\r\n                    toolbar.title = \"Alert\"\r\n                }\r\n                1->{\r\n                    toolbar.title = \"My SI Friends\"\r\n                }\r\n                2->{\r\n                    toolbar.title = \"Notifications\"\r\n                }\r\n                3->{\r\n                    toolbar.title = \"More\"\r\n                }\r\n            }\r\n\r\n            if(position==1){\r\n                floating_action_button.visibility = View.VISIBLE\r\n            }else{\r\n                floating_action_button.visibility = View.GONE\r\n            }\r\n\r\n           // currentFragment.willBeDisplayed()\r\n\r\n\r\n\r\n            true\r\n        })\r\n\r\n        /*\r\n\t\tbottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {\r\n\t\t\t@Override public void onPositionChange(int y) {\r\n\t\t\t\tLog.d(\"DemoActivity\", \"BottomNavigation Position: \" + y);\r\n\t\t\t}\r\n\t\t});\r\n\t\t*/\r\n\r\n        viewPager.offscreenPageLimit = 3\r\n        adapter = HomePagerAdapter(supportFragmentManager)\r\n        viewPager.adapter = adapter\r\n\r\n\r\n        //bottomNavigation.setDefaultBackgroundResource(R.drawable.bottom_navigation_background);\r\n    }\r\n\r\n    /**\r\n     * Add or remove items of the bottom navigation\r\n     */\r\n    fun updateBottomNavigationItems(addItems: Boolean) {\r\n\r\n        if (useMenuResource) {\r\n                navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)\r\n                navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)\r\n                bottomNavigation.setNotification(\"1\", 3)\r\n\r\n\r\n        } else {\r\n            if (addItems) {\r\n                val item4 = AHBottomNavigationItem(\r\n                   \"Menu\",\r\n                    ContextCompat.getDrawable(this, R.drawable.ic_setting),\r\n                    ContextCompat.getColor(this, R.color.color_tab_4)\r\n                )\r\n\r\n                bottomNavigation.addItem(item4)\r\n                bottomNavigation.setNotification(\"1\", 3)\r\n            } else {\r\n                bottomNavigation.removeAllItems()\r\n                bottomNavigation.addItems(bottomNavigationItems)\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Show or hide the bottom navigation with animation\r\n     */\r\n    fun showOrHideBottomNavigation(show: Boolean) {\r\n        if (show) {\r\n            bottomNavigation.restoreBottomNavigation(true)\r\n        } else {\r\n            bottomNavigation.hideBottomNavigation(true)\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Show or hide selected item background\r\n     */\r\n    fun updateSelectedBackgroundVisibility(isVisible: Boolean) {\r\n        bottomNavigation.setSelectedBackgroundVisible(isVisible)\r\n    }\r\n\r\n    /**\r\n     * Set title state for bottomNavigation\r\n     */\r\n    fun setTitleState(titleState: AHBottomNavigation.TitleState) {\r\n        bottomNavigation.titleState = titleState\r\n    }\r\n\r\n    /**\r\n     * Reload activity\r\n     */\r\n    fun reload() {\r\n        startActivity(Intent(this, HomeActivity::class.java))\r\n        finish()\r\n    }\r\n\r\n    /**\r\n     * Return the number of items in the bottom navigation\r\n     */\r\n    fun getBottomNavigationNbItems(): Int {\r\n        return bottomNavigation.itemsCount\r\n    }\r\n\r\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\r\n        super.onActivityResult(requestCode, resultCode, data)\r\n\r\n        if (requestCode == 1) {\r\n\r\n           val uriContact = data?.data\r\n            if(uriContact!=null){\r\n                var contactNumber = \"\"\r\n                var contactID =  \"\"\r\n\r\n                // getting contacts ID\r\n                val cursorID = contentResolver.query(uriContact!!,\r\n                    arrayOf(ContactsContract.Contacts._ID),null,null,null)\r\n\r\n                if (cursorID!!.moveToFirst()) {\r\n\r\n                    contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID))\r\n                    Log.d(\"\", \"Contact ID: \" + contactID)\r\n\r\n                }\r\n\r\n                cursorID.close()\r\n\r\n\r\n                // Using the contact ID now we will get contact phone number\r\n                val cursorPhone = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,\r\n                    arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),\r\n                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + \" = ? AND \" +\r\n                            ContactsContract.CommonDataKinds.Phone.TYPE + \" = \" +\r\n                            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,\r\n                    arrayOf(contactID),null)\r\n\r\n\r\n\r\n                if (cursorPhone!!.moveToFirst()) {\r\n                    contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))\r\n                    homeViewModel.contactNumber = contactNumber\r\n                }\r\n\r\n                cursorPhone.close()\r\n                Log.d(\"ContactNumber\", \"Contact Phone Number: \" + contactNumber);\r\n\r\n                var contactName = \"\"\r\n\r\n                // querying contact data store\r\n                val cursor = getContentResolver().query(uriContact, null, null, null, null);\r\n\r\n                if (cursor!!.moveToFirst()) {\r\n\r\n                    // DISPLAY_NAME = The display name for the contact.\r\n                    // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.\r\n                    contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))\r\n                    homeViewModel.contactName = contactName\r\n                }\r\n\r\n                cursor.close()\r\n                homeViewModel.contactTrigger.value = true\r\n\r\n                Log.d(\"Contactname\", \"Contact Name: \" + contactName)\r\n\r\n\r\n            }\r\n            }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/homepage/HomeActivity.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/homepage/HomeActivity.kt	(date 1563367566137)
+@@ -26,6 +26,7 @@
+ import com.example.sialarm.BR
+ import com.example.sialarm.R
+ import com.example.sialarm.databinding.ActivityMainBinding
++import com.example.sialarm.utils.extensions.getNumber
+ import com.google.android.material.floatingactionbutton.FloatingActionButton
+ import kotlinx.android.synthetic.main.activity_main.*
+ import org.koin.androidx.viewmodel.ext.android.viewModel
+@@ -277,7 +278,7 @@
+ 
+                 if (cursorPhone!!.moveToFirst()) {
+                     contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+-                    homeViewModel.contactNumber = contactNumber
++                    homeViewModel.contactNumber = contactNumber.getNumber()
+                 }
+ 
+                 cursorPhone.close()
+Index: app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.homepage.contacts\r\n\r\nimport android.view.LayoutInflater\r\nimport android.view.ViewGroup\r\nimport androidx.recyclerview.widget.RecyclerView\r\nimport com.example.sialarm.data.firebase.Friends\r\nimport com.example.sialarm.databinding.ItemAcceptedBinding\r\nimport com.example.sialarm.databinding.ItemDenyBinding\r\nimport com.example.sialarm.databinding.ItemPendingBinding\r\nimport com.example.sialarm.databinding.ItemRequestBinding\r\n\r\n\r\nclass ContactsAdapter constructor(\r\n    private val contacts: MutableList<Friends> = mutableListOf<Friends>()\r\n) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {\r\n\r\n    companion object {\r\n        const val ACCEPTED = 1\r\n        const val PENDING = 2\r\n        const val REQUEST = 3\r\n        const val DENY = 4\r\n\r\n    }\r\n    lateinit var listener : ContactClickListener\r\n\r\n\r\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {\r\n        return when(viewType){\r\n            ACCEPTED->{\r\n                AcceptedViewHolder(ItemAcceptedBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n            }\r\n            PENDING->{\r\n                PendingViewHolder(ItemPendingBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n            }\r\n            REQUEST->{\r\n                RequestViewHolder(ItemRequestBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n            }\r\n            DENY->{\r\n                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n            }\r\n            else -> {\r\n                DenyViewHolder(ItemDenyBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun getItemViewType(position: Int): Int {\r\n       return when(contacts[position].status){\r\n            1-> ACCEPTED\r\n            2-> PENDING\r\n            3-> REQUEST\r\n            4-> DENY\r\n           else -> DENY\r\n       }\r\n    }\r\n\r\n    override fun getItemCount(): Int {\r\n       return contacts.size\r\n    }\r\n\r\n    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {\r\n        when(holder){\r\n           is AcceptedViewHolder->holder.onBind(position)\r\n           is PendingViewHolder->holder.onBind(position)\r\n           is RequestViewHolder->holder.onBind(position)\r\n           is DenyViewHolder->holder.onBind(position)\r\n        }\r\n    }\r\n\r\n    inner class PendingViewHolder constructor(\r\n        private val itemPendingBinding: ItemPendingBinding) :\r\n        RecyclerView.ViewHolder(itemPendingBinding.root) {\r\n\r\n        fun onBind(position: Int) {\r\n            with(itemPendingBinding) {\r\n                model = contacts[position]\r\n            }\r\n        }\r\n    }\r\n\r\n    inner class AcceptedViewHolder constructor(\r\n        private val itemAcceptedBinding: ItemAcceptedBinding) :\r\n        RecyclerView.ViewHolder(itemAcceptedBinding.root) {\r\n        fun onBind(position: Int) {\r\n            with(itemAcceptedBinding) {\r\n                model = contacts[position]\r\n            }\r\n        }\r\n    }\r\n\r\n    inner class DenyViewHolder constructor(\r\n        private val itemDenyBinding: ItemDenyBinding) :\r\n        RecyclerView.ViewHolder(itemDenyBinding.root) {\r\n        fun onBind(position: Int) {\r\n            with(itemDenyBinding) {\r\n                model = contacts[position]\r\n\r\n            }\r\n        }\r\n    }\r\n\r\n    inner class RequestViewHolder constructor(\r\n        private val itemRequestBinding: ItemRequestBinding) :\r\n        RecyclerView.ViewHolder(itemRequestBinding.root) {\r\n\r\n        fun onBind(position: Int) {\r\n            with(itemRequestBinding) {\r\n                model = contacts[position]\r\n            }\r\n        }\r\n    }\r\n\r\n    fun setFriendsList(list:List<Friends>){\r\n        contacts.clear()\r\n        contacts.addAll(list)\r\n        notifyDataSetChanged()\r\n    }\r\n\r\n    interface ContactClickListener{\r\n        fun onAcceptDeniedClicked(contact:Friends,accept:Boolean)\r\n        fun onFriendsContact(contact:Friends)\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsAdapter.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/homepage/contacts/ContactsAdapter.kt	(date 1563375323605)
+@@ -106,7 +106,14 @@
+         fun onBind(position: Int) {
+             with(itemRequestBinding) {
+                 model = contacts[position]
++                ivAccept.setOnClickListener {
++                    listener.onAcceptDeniedClicked(model!!,true)
++                }
++                ivDeny.setOnClickListener {
++                    listener.onAcceptDeniedClicked(model!!,false)
++                }
+             }
++
+         }
+     }
+ 
+Index: app/src/main/res/layout/item_notification.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<layout xmlns:tools=\"http://schemas.android.com/tools\"\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\">\r\n\r\n    <data>\r\n        <variable\r\n            name=\"data\"\r\n            type=\"com.example.sialarm.ui.homepage.notification.NotificationResponseModel\" />\r\n    </data>\r\n\r\n    <androidx.cardview.widget.CardView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"60dp\"\r\n        app:cardCornerRadius=\"5dp\"\r\n        android:layout_margin=\"8dp\"\r\n        app:cardElevation=\"5dp\">\r\n\r\n        <androidx.constraintlayout.widget.ConstraintLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:background=\"@color/light_grey\"\r\n            android:layout_height=\"match_parent\">\r\n\r\n\r\n            <TextView\r\n                android:id=\"@+id/textView4\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginStart=\"16dp\"\r\n                android:layout_marginTop=\"16dp\"\r\n                android:text=\"@{model.message}\"\r\n                android:layout_marginEnd=\"8dp\"\r\n                app:layout_constraintEnd_toEndOf=\"parent\"\r\n                app:layout_constraintHorizontal_bias=\"0.0\"\r\n                app:layout_constraintStart_toStartOf=\"parent\"\r\n                app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/textView5\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginEnd=\"16dp\"\r\n                android:layout_marginBottom=\"8dp\"\r\n                android:text=\"TextView\"\r\n                app:layout_constraintBottom_toBottomOf=\"parent\"\r\n                app:layout_constraintEnd_toEndOf=\"parent\" />\r\n        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n\r\n    </androidx.cardview.widget.CardView>\r\n\r\n\r\n</layout>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/item_notification.xml	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/res/layout/item_notification.xml	(date 1563366350785)
+@@ -5,7 +5,7 @@
+ 
+     <data>
+         <variable
+-            name="data"
++            name="model"
+             type="com.example.sialarm.ui.homepage.notification.NotificationResponseModel" />
+     </data>
+ 
+Index: app/src/main/java/com/example/sialarm/di/appModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.di\r\n\r\nimport android.content.Context\r\nimport android.content.res.Resources\r\nimport com.example.sialarm.data.api.ApiServices\r\nimport com.example.sialarm.data.prefs.PrefsManager\r\nimport com.example.sialarm.ui.homepage.contacts.ContactsRepository\r\nimport com.example.sialarm.ui.homepage.notification.NotificationRepository\r\nimport com.example.sialarm.ui.landingScreen.LandingRepository\r\nimport com.google.firebase.database.FirebaseDatabase\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.Job\r\nimport org.koin.dsl.module.module\r\n\r\n/**\r\n * app module koin\r\n */\r\nval appModule = module {\r\n    single { provideResources(get()) }\r\n    single { CoroutineScope(Dispatchers.Main + Job()) }\r\n    single { provideLandingRepository(get(),get(),get())}\r\n    single { provideContactsRepository(get(),get(),get()) }\r\n    single { provideNotificationRepository(get(),get(),get(),get())}\r\n}\r\n\r\nfun provideResources(context: Context): Resources = context.resources\r\n\r\nfun provideLandingRepository(viewModelScope:CoroutineScope,\r\n                             prefsManager: PrefsManager,\r\n                             userDatabase:FirebaseDatabase):LandingRepository\r\n= LandingRepository(viewModelScope,prefsManager,userDatabase)\r\n\r\nfun provideContactsRepository(viewModelScope:CoroutineScope,\r\n                              prefsManager: PrefsManager,\r\n                              firebaseDatabase: FirebaseDatabase):ContactsRepository\r\n= ContactsRepository(firebaseDatabase,viewModelScope,prefsManager)\r\n\r\nfun provideNotificationRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,\r\n                                  prefsManager: PrefsManager,apiServices: ApiServices): NotificationRepository\r\n= NotificationRepository(viewModelScope,prefsManager,apiServices,firebaseDatabase)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/di/appModule.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/di/appModule.kt	(date 1563366529817)
+@@ -20,7 +20,7 @@
+     single { provideResources(get()) }
+     single { CoroutineScope(Dispatchers.Main + Job()) }
+     single { provideLandingRepository(get(),get(),get())}
+-    single { provideContactsRepository(get(),get(),get()) }
++    single { provideContactsRepository(get(),get(),get(),get()) }
+     single { provideNotificationRepository(get(),get(),get(),get())}
+ }
+ 
+@@ -33,8 +33,8 @@
+ 
+ fun provideContactsRepository(viewModelScope:CoroutineScope,
+                               prefsManager: PrefsManager,
+-                              firebaseDatabase: FirebaseDatabase):ContactsRepository
+-= ContactsRepository(firebaseDatabase,viewModelScope,prefsManager)
++                              firebaseDatabase: FirebaseDatabase,apiServices: ApiServices):ContactsRepository
++= ContactsRepository(firebaseDatabase,viewModelScope,prefsManager,apiServices)
+ 
+ fun provideNotificationRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
+                                   prefsManager: PrefsManager,apiServices: ApiServices): NotificationRepository
+Index: app/src/main/java/com/example/sialarm/ui/homepage/notification/NotificationAdaptor.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.homepage.notification\r\n\r\nimport android.view.LayoutInflater\r\nimport android.view.ViewGroup\r\nimport androidx.recyclerview.widget.RecyclerView\r\nimport com.example.sialarm.BR.data\r\nimport com.example.sialarm.BR.model\r\nimport com.example.sialarm.databinding.ItemNotificationBinding\r\n\r\n\r\nclass NotificationAdaptor constructor(private val listNotification:List<NotificationResponseModel> = mutableListOf())\r\n    : RecyclerView.Adapter<RecyclerView.ViewHolder>(){\r\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {\r\n         return Viewholder(ItemNotificationBinding.inflate(LayoutInflater.from(parent.context),parent,false))\r\n    }\r\n\r\n    override fun getItemCount(): Int = listNotification.size\r\n\r\n    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {\r\n        (holder as Viewholder).onBind(position)\r\n    }\r\n\r\n    inner class Viewholder(private val itemNotificationBinding:ItemNotificationBinding):RecyclerView.ViewHolder(itemNotificationBinding.root){\r\n        fun onBind(position:Int){\r\n            with(itemNotificationBinding){\r\n                data= listNotification[position]\r\n            }\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/homepage/notification/NotificationAdaptor.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/ui/homepage/notification/NotificationAdaptor.kt	(date 1563366438425)
+@@ -3,7 +3,6 @@
+ import android.view.LayoutInflater
+ import android.view.ViewGroup
+ import androidx.recyclerview.widget.RecyclerView
+-import com.example.sialarm.BR.data
+ import com.example.sialarm.BR.model
+ import com.example.sialarm.databinding.ItemNotificationBinding
+ 
+@@ -23,7 +22,7 @@
+     inner class Viewholder(private val itemNotificationBinding:ItemNotificationBinding):RecyclerView.ViewHolder(itemNotificationBinding.root){
+         fun onBind(position:Int){
+             with(itemNotificationBinding){
+-                data= listNotification[position]
++                model= listNotification[position]
+             }
+         }
+     }
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'kotlin-android'\r\napply plugin: 'kotlin-android-extensions'\r\napply plugin: 'kotlin-kapt'\r\n\r\nrepositories {\r\n    jcenter()\r\n    google()\r\n    maven { url 'https://jitpack.io' }\r\n    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }\r\n\r\n\r\n}\r\n\r\nandroid {\r\n    compileSdkVersion rootProject.compileSdkVersion\r\n    dataBinding {\r\n        enabled = true\r\n    }\r\n    androidExtensions {\r\n        experimental = true\r\n    }\r\n\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.sialarm\"\r\n        minSdkVersion rootProject.minSdkVersion\r\n        targetSdkVersion rootProject.targetSdkVersion\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        versionCode 1\r\n        versionName \"0.1.6\"\r\n        vectorDrawables.useSupportLibrary true\r\n        multiDexEnabled true\r\n        resConfigs \"en\"\r\n\r\n    }\r\n    buildTypes {\r\n        debug {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\r\n            buildConfigField(\"String\", \"BASE_URL\", '\"https://192.168.0.231:1234/api/v1/\"')\r\n            buildConfigField(\"String\", \"BASE_IP\", '\"192.168.0.231:1234\"')\r\n            buildConfigField(\"String\", \"ASSEMBLY_URL\", \"\\\"https://test.api.promisepay.com/\\\"\")\r\n            buildConfigField(\"String\", \"BASIC_TOKEN_ASSEMBLY\", \"\\\"Basic c2F1cmF2a2FybjU0MUBnbWFpbC5jb206MTIzNDU2Nzg=\\\"\")\r\n\r\n        }\r\n\r\n        staging {\r\n            initWith(buildTypes.debug)\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\r\n            buildConfigField(\"String\", \"BASE_URL\", '\"https://staging.dwellnicely.com/api/v1/\"')\r\n            buildConfigField(\"String\", \"BASE_IP\", '\"staging.dwellnicely.com\"')\r\n            buildConfigField(\"String\", \"ASSEMBLY_URL\", \"\\\"https://test.api.promisepay.com/\\\"\")\r\n            buildConfigField(\"String\", \"BASIC_TOKEN_ASSEMBLY\", \"\\\"Basic c2F1cmF2a2FybjU0MUBnbWFpbC5jb206MTIzNDU2Nzg=\\\"\")\r\n        }\r\n\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\r\n            buildConfigField(\"String\", \"BASE_URL\", '\"https://app.dwellnicely.com/api/v1/\"')\r\n        }\r\n\r\n        live {\r\n            initWith(buildTypes.debug)\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\r\n            buildConfigField(\"String\", \"BASE_URL\", '\"https://app.dwellnicely.com/api/v1/\"')\r\n        }\r\n\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n    // For Kotlin compilers:\r\n    kotlinOptions {\r\n        jvmTarget = JavaVersion.VERSION_1_8\r\n    }\r\n\r\n    applicationVariants.all { variant ->\r\n        variant.outputs.all { output ->\r\n            def project = \"Dwell\"\r\n            def MODULE = \"Mod7\"\r\n            def SEP = \"_\"\r\n            def buildType = variant.variantData.variantConfiguration.buildType.name\r\n            def version = variant.versionName\r\n            def date = new Date();\r\n            def formattedDate = date.format('dd_MMM_yy_HH_mm')\r\n            def newApkName = project + SEP + buildType + SEP + MODULE + SEP + formattedDate + \".apk\"\r\n            outputFileName = new File(newApkName)\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    // Define versions in a single place\r\n        // App dependencies\r\n        def constraintLayoutVersion = '2.0.0-alpha3'\r\n        def coreTestingVersion = '2.0.0'\r\n        def coroutinesVersion = \"1.1.0\"\r\n        def espressoVersion = '3.1.0-alpha4'\r\n        def glideVersion = '4.8.0'\r\n        def gsonVersion = '2.8.2'\r\n        def junitVersion = '4.12'\r\n        def kotlinVersion = '1.3.11'\r\n        def ktlintVersion = '0.29.0'\r\n        def ktxVersion = '1.0.1'\r\n        def lifecycleVersion = '2.0.0'\r\n        def materialVersion = '1.0.0'\r\n        def navigationVersion = '1.0.0-alpha08'\r\n        def recyclerViewVersion = '1.0.0'\r\n        def roomVersion = '2.1.0-alpha03'\r\n        def runnerVersion = '1.0.1'\r\n        def supportLibraryVersion = '1.0.2'\r\n        def uiAutomatorVersion = '2.2.0-alpha4'\r\n        def workVersion = '1.0.1'\r\n        def koinVersion = '1.0.2'\r\n        def retrofit2Verson='2.5.0'\r\n        def retrofit2ConvertorGsonVerson='2.5.0'\r\n        def retrofitCoroutineAdapterVersion='0.9.2'\r\n        def okhttpVersion='3.12.1'\r\n        def nav_version = \"1.0.0\"\r\n        def circle_imageview_version = \"2.2.0\"\r\n        def multidex_version = \"1.0.3\"\r\n        def kotlinPermissions='1.0.3'\r\n        def daimajiaEasingVersion = '2.0@aar'\r\n        def daimajiaAnimation = '2.3@aar'\r\n\r\n\r\n    implementation 'com.android.support:appcompat-v7:28.0.0'\r\n    implementation 'com.android.support.constraint:constraint-layout:1.1.3'\r\n    implementation 'com.android.support:recyclerview-v7:28.0.0'\r\n    implementation 'com.android.support:design:28.0.0'\r\n    kapt \"com.github.bumptech.glide:compiler:$glideVersion\"\r\n    implementation \"android.arch.work:work-runtime-ktx:$workVersion\"\r\n    implementation \"androidx.constraintlayout:constraintlayout:$constraintLayoutVersion\"\r\n    implementation \"androidx.recyclerview:recyclerview:$recyclerViewVersion\"\r\n    implementation \"com.github.bumptech.glide:glide:$glideVersion\"\r\n    implementation \"com.google.android.material:material:$materialVersion\"\r\n    implementation \"com.google.code.gson:gson:$gsonVersion\"\r\n\r\n    //Architecture Component viewModel\r\n    implementation \"androidx.lifecycle:lifecycle-extensions:$lifecycleVersion\"\r\n\r\n    //Room\r\n    kapt \"androidx.room:room-compiler:$roomVersion\"\r\n    implementation \"androidx.room:room-runtime:$roomVersion\"\r\n\r\n    // Retrofit\r\n    implementation \"com.squareup.retrofit2:retrofit:$retrofit2Verson\"\r\n    implementation \"com.squareup.retrofit2:converter-gson:$retrofit2ConvertorGsonVerson\"\r\n    implementation \"com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$retrofitCoroutineAdapterVersion\"\r\n    implementation \"com.squareup.okhttp3:okhttp:$okhttpVersion\"\r\n    implementation \"com.squareup.okhttp3:logging-interceptor:$okhttpVersion\"\r\n\r\n    //Kotlin\r\n    implementation \"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion\"\r\n    implementation \"androidx.core:core-ktx:$ktxVersion\"\r\n\r\n    // Coroutine\r\n    implementation \"org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion\"\r\n    implementation \"org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion\"\r\n\r\n    // Koin\r\n    implementation \"org.koin:koin-androidx-scope:$koinVersion\"\r\n    implementation \"org.koin:koin-androidx-viewmodel:$koinVersion\"\r\n\r\n    // Testing dependencies\r\n    androidTestImplementation \"androidx.arch.core:core-testing:$coreTestingVersion\"\r\n    androidTestImplementation \"androidx.test.espresso:espresso-contrib:$espressoVersion\"\r\n    androidTestImplementation \"androidx.test.espresso:espresso-core:$espressoVersion\"\r\n    androidTestImplementation \"androidx.test.espresso:espresso-intents:$espressoVersion\"\r\n    androidTestImplementation \"androidx.test.uiautomator:uiautomator:$uiAutomatorVersion\"\r\n    testImplementation \"junit:junit:$junitVersion\"\r\n\r\n    //Facebook sdk\r\n    implementation \"android.arch.navigation:navigation-fragment-ktx:$nav_version\"\r\n    implementation \"android.arch.navigation:navigation-ui-ktx:$nav_version\"\r\n\r\n    //Circular ImageView\r\n    implementation \"de.hdodenhof:circleimageview:$circle_imageview_version\"\r\n\r\n    //google places\r\n    implementation 'com.google.android.gms:play-services-places:16.1.0'\r\n\r\n    // multidex dependency\r\n    implementation \"com.android.support:multidex:$multidex_version\"\r\n    implementation 'com.android.support:support-v4:28.0.0'\r\n\r\n    implementation 'com.facebook.stetho:stetho:1.5.0'\r\n    implementation 'com.facebook.android:account-kit-sdk:5.+'    //kotlin run time permissions\r\n    implementation \"ru.superjob:kotlin-permissions:$kotlinPermissions\"\r\n    //tooltip\r\n\r\n    //Animation library\r\n    implementation \"com.daimajia.easing:library:$daimajiaEasingVersion\"\r\n    implementation \"com.daimajia.androidanimations:library:$daimajiaAnimation\"\r\n\r\n    //firebase\r\n    implementation 'com.google.firebase:firebase-core:17.0.0'\r\n    implementation 'com.google.firebase:firebase-messaging:19.0.1'\r\n    implementation 'com.google.firebase:firebase-auth:18.0.0'\r\n    implementation 'com.google.firebase:firebase-firestore:20.1.0'\r\n    implementation 'com.google.firebase:firebase-core:17.0.0'\r\n    implementation 'com.google.firebase:firebase-functions:18.0.0'\r\n    implementation 'com.google.firebase:firebase-database:18.0.0'\r\n\r\n/*\r\n    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'\r\n*/\r\n\r\n    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'\r\n\r\n\r\n}\r\n\r\napply plugin: 'com.google.gms.google-services'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/build.gradle	(date 1563500059557)
+@@ -178,6 +178,8 @@
+     //Facebook sdk
+     implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
+     implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"
++    implementation 'com.google.android.gms:play-services-location:11.0.1'
++
+ 
+     //Circular ImageView
+     implementation "de.hdodenhof:circleimageview:$circle_imageview_version"
+Index: app/src/main/java/com/example/sialarm/data/api/ApiModels.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.data.api\r\n\r\ndata class AcceptDenyRequestModel(\r\n    val sender_id:String,\r\n    val receiver_id:String,\r\n    val notification_type_id:String,\r\n    val accept:Boolean,\r\n    val userName:String\r\n)\r\n\r\n\r\ndata class SendAlertMessages(\r\n    val sender_id:String,\r\n    val userName:String\r\n)\r\n\r\ndata class SendFriendRequest(\r\n    val sender_id:String,\r\n    val receiver_id:String,\r\n    val notification_type_id:String,\r\n    val userName:String\r\n)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/data/api/ApiModels.kt	(revision 8617506adfb19dbce7c6136c01931fc67a748e92)
++++ app/src/main/java/com/example/sialarm/data/api/ApiModels.kt	(date 1563374909501)
+@@ -5,8 +5,7 @@
+     val receiver_id:String,
+     val notification_type_id:String,
+     val accept:Boolean,
+-    val userName:String
+-)
++    val senderUserName:String)
+ 
+ 
+ data class SendAlertMessages(
