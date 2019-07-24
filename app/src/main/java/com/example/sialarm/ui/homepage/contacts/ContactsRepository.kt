@@ -46,7 +46,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                             user = data.getValue(Users::class.java)
                         }
                         receiverId = user!!.phone_number
-                        friendDatabase.child(user.id).child(prefs.getUserId())
+                        friendDatabase.child(user.phone_number).child(prefs.getUserId())
                             .setValue(Friends(prefs.getUserId(),
                                 prefs.getPhoneNumber(),
                                 3,

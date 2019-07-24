@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">@color/green</color>
+    <color name="colorAccent">@color/colorBackground</color>
     <color name="appintro_statusbar_color">#22000000</color>
     <color name="appintro_background_color">#222222</color>
     <color name="appintro_title_color">#FFFFFF</color>
@@ -49,6 +49,24 @@
     <color name="white">#ffffff</color>
     <color name="dark_grey">#7E7E7E</color>
     <color name="light_grey">#D6D6D6</color>
+
+    <color name="colorDark">#191b1d</color>
+    <color name="colorDarkBlack">#131416</color>
+    <color name="colorLightBlue">#04bdbb</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="edittext_border_gray">#EEEEEE</color>
+
+
+    <color name="blue_button_gradient_start">#5A79FF</color>
+    <color name="blue_button_gradient_end">#27A9E1</color>
+
+    <color name="dark_green">#15381F</color>
+
+    <color name="ok_normal">#4B87F6</color>
+    <color name="ok_pressed">#FF3B69BE</color>
+    <color name="ok_disabled">#e6e6e6</color>
+    <color name="browser_actions_divider_color">@color/colorDark</color>
 
 
 </resources>

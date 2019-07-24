@@ -7,9 +7,7 @@ import android.animation.ObjectAnimator
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -389,7 +387,13 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // for hiding title
+
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_pre_setup)
+
         if(prefs.isLogin()){
             HomeActivity.newInstance(this)
             finish()

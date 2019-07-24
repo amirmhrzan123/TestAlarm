@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp">
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipePropertyList"
+                android:id="@+id/swipeNotification"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
 
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_property"
+                        android:id="@+id/rv_notification"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:paddingBottom="80dp"
@@ -91,6 +91,7 @@
 
 
         <TextView
+            android:id="@+id/tv_noNotification"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="No Notification available"

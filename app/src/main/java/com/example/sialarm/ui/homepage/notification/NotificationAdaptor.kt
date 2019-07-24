@@ -7,7 +7,7 @@ import com.example.sialarm.BR.model
 import com.example.sialarm.databinding.ItemNotificationBinding
 
 
-class NotificationAdaptor constructor(private val listNotification:List<NotificationResponseModel> = mutableListOf())
+class NotificationAdaptor constructor(private val listNotification:MutableList<NotificationResponseModel> = mutableListOf())
     : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
          return Viewholder(ItemNotificationBinding.inflate(LayoutInflater.from(parent.context),parent,false))
@@ -25,5 +25,11 @@ class NotificationAdaptor constructor(private val listNotification:List<Notifica
                 model= listNotification[position]
             }
         }
+    }
+
+    fun setNotificationList(list:List<NotificationResponseModel>){
+        listNotification.clear()
+        listNotification.addAll(list)
+        notifyDataSetChanged()
     }
 }

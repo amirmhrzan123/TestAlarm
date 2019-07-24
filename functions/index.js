@@ -1,6 +1,7 @@
 
 const functions = require('firebase-functions');
 var cors = require('cors')({ origin: true });
+var http = require('http')
 
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -9,6 +10,8 @@ exports.offlineObserveFromDevice = functions.database.ref("/SI_ALERT/{device_num
         
 
 })
+
+
 
 /*
 exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWrite((change,context)=>{
@@ -36,6 +39,45 @@ exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWr
 });
 
 var user = functions.database.ref();*/
+
+exports.sendMessage = functions.https.onRequest((req,res)=>{
+
+    var postdata = {
+        'to':'+9779849276763',
+        'from':'Demo',
+        'text':'This is texting',
+        'token':'uYDHxBwMEwsha3Sldmpu'
+    }
+    cors(req,res,()=>{
+        var options = {
+            method:'POST',
+            port:'80',
+            hostname:'http://api.sparrowsms.com/v2/sms',
+            headers:{
+                'Content-Type':'application/json',
+                'Content-Length':Buffer.byteLength(JSON.stringify(postdata))
+            }        
+        }
+
+        cors(req,res,()=>{
+            var req = http.request(options,(res)=>{
+                res.on('data',(chunk)=>{
+                    console.log("BODY: ${chunk}")
+                })  
+                res.on('end',()=>{
+                    console.log("No more data in response")
+                })
+          })
+          req.on('error',(e)=>{
+              console.error(e.message)
+          })
+          req.write(JSON.stringify(postdata))
+          req.end()
+        })
+
+       
+    })
+})
 
 exports.sendFriendRequest = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
@@ -93,27 +135,57 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
 exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
     cors(req,res,()=>{
         var senderId = req.body.sender_id
-        var receiverId = req.body.receiver_id
-        var noticationTypeId = req.body.notification_type_id
+        var notificationTypeId = "1"
         var userName = req.body.userName
+        var geoLatitude = req.body.latitude
+        var geoLongitude = req.body.longitude
         var receiverIds = []
         var registrationTokens = []
+        var payload = {
+            notification: {
+                title: "SI Emergency Alert",
+                body: "Your SI Friend "+userName + " is in need of help. Current location : Latitude="+geoLatitude+
+                " Longitude="+geoLongitude
+            },
+            data: {
+                username: userName,
+                sender_id: senderId,
+                notification_type_id: notificationTypeId,
+                latitude: geoLatitude,
+                longitude: geoLongitude
+            }
+        };
 
         admin.database().ref('/friends/'+senderId).once('value',function(snap){
             if(snap.exists){
                 snap.forEach((child)=>{
-                    receiverIds.push(child.val().id)
+                    receiverIds.push(child.val().number)
                 })
 
                 receiverIds.forEach((id)=>{
                     admin.database().ref('/users/'+id).once('value',function(snap){
-                        if(snap.child('notification_token').val()!==null){
+                        if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
                             registrationTokens.push(snap.child('notification_token').val())
                         }else{
-                            registrationTokens.push("")
+                            registrationTokens.push("kjgkjjk")
                         }
+                        console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            res.status(200).json(registrationTokens)
+                            return admin.messaging().sendToDevice(registrationTokens, payload)
+                            .then(response => {
+                                console.log("Successfully sent message: ", response);
+                                receiverIds.forEach((id)=>{
+                                    var newData = {
+                                        "notification_type_id": notificationTypeId,
+                                        "sender_id": senderId,
+                                        "message": "Your SI Friend "+userName + " is in need of help. Current location : Latitude="+geoLatitude+
+                                        " Longitude="+geoLongitude
+                                    }
+                                    admin.database().ref("Notification").child(id).push(newData)
+                                })
+                                res.status(200).json(registrationTokens)
+                                return ""
+                            });
                         }
                     })
                 })

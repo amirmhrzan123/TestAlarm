@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><!-- bottom sheet -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_bs_media_option"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_cam_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_15dp"
+        android:layout_marginEnd="@dimen/space_15dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:background="@drawable/bottomsheet_button"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_bs_option_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_15dp"
+            android:layout_marginEnd="@dimen/space_15dp"
+            android:background="@android:color/transparent"
+            android:text="@string/txt_add_another"
+            android:textAllCaps="true"
+            android:textColor="@color/light_blue" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1dp"
+            android:layout_marginStart="@dimen/space_15dp"
+            android:layout_marginEnd="@dimen/space_15dp"
+            android:background="@color/edittext_border_gray" />
+
+        <Button
+            android:id="@+id/btn_bs_option_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_15dp"
+            android:layout_marginEnd="@dimen/space_15dp"
+            android:background="@android:color/transparent"
+            android:text="@string/txt_from_contacts"
+            android:textAllCaps="true"
+            android:textColor="@color/light_blue" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_bs_cancel_photo_gallery"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_cam_options"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/space_15dp"
+        android:layout_marginEnd="@dimen/space_15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bottomsheet_button"
+        android:text="@string/cancel"
+        android:textAllCaps="true"
+        android:textColor="@color/light_blue" />
+</RelativeLayout>

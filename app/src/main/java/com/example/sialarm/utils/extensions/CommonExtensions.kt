@@ -2,9 +2,17 @@ package com.example.sialarm.utils.extensions
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.text.format.DateFormat
 import android.view.View
 import androidx.lifecycle.ViewModel
+import org.json.JSONObject
+import retrofit2.HttpException
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -121,6 +129,61 @@ fun String.milliseconds(): Long {
     }
 
     return 0
+}
+data class ErrorResponse(val title: String, val message: String)
+
+
+/**
+ * TODO Handles Exceptions
+ */
+fun Throwable.handleException(title: String, error: (errorResponse: ErrorResponse) -> Unit) {
+    when (this) {
+        is UnknownHostException -> error(ErrorResponse(title, "No internet connection.Please check your network connection and try again."))
+        is SocketTimeoutException -> error(ErrorResponse(title, "Time out"))
+        is NoSuchElementException -> error(ErrorResponse(title, "Something went wrong"))
+
+        is HttpException ->
+            try {
+                val responseBody = this.response().errorBody()
+                val jsonObject = JSONObject(responseBody?.string())
+                when (this.code()) {
+                    HttpURLConnection.HTTP_FORBIDDEN -> {
+                        error(ErrorResponse(title, jsonObject.optString("message")))
+                    }
+                    456 -> {
+                        error(ErrorResponse(title, jsonObject.optString("error")))
+                    }
+
+                    else -> {
+                        if (jsonObject.has("message")) {
+                            error(ErrorResponse(title, jsonObject.optString("message")))
+                        } else {
+                            error(ErrorResponse(title, "Something went wrong"))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                error(ErrorResponse(title, "Something went wrong"))
+            }
+
+        else -> {
+            error(ErrorResponse(title, "Something went wrong"))
+        }
+    }
+}
+
+fun isConnectingToInternet(context: Context): Boolean {
+    val connectivity = context.getSystemService(
+        Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (connectivity != null) {
+        val info = connectivity.allNetworkInfo
+        if (info != null)
+            for (i in info)
+                if (i.state == NetworkInfo.State.CONNECTED) {
+                    return true
+                }
+    }
+    return false
 }
 
 

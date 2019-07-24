@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/wallpaper"
     >
 
     <LinearLayout
@@ -22,6 +23,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="16dp"
+            android:textColor="@color/color_blue_3cacd6"
             android:text="@string/tv_previous"
             android:textAllCaps="true"
             />
@@ -106,17 +108,20 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textAllCaps="true"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="22sp"
             tools:text="@string/app_name" />
 
         <Button
             android:id="@+id/btn_permission"
+            android:background="@drawable/button_rounded"
             android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:padding="10dp"
+            android:textColor="@android:color/white"
             android:visibility="gone"
+            android:textAllCaps="false"
             android:layout_centerHorizontal="true"
             android:text="Grant permissions"
             android:layout_below="@+id/tv_desc_title"/>
@@ -128,6 +133,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/tv_desc_title"
             android:gravity="center"
+            android:textColor="@android:color/white"
             android:padding="24dp"
             android:textSize="14sp"
             tools:text="This is text! How are you?" />
@@ -146,6 +152,7 @@
             android:layout_alignBottom="@+id/rl_images"
             android:layout_centerHorizontal="true"
             android:padding="10dp"
+            android:textColor="@android:color/white"
             android:layout_marginBottom="0dp"
             android:gravity="center"
             android:text="You need to grant the permission for messages and location in order to go ahead" />

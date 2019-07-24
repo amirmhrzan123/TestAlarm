@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -11,59 +11,65 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:background="#ffffff"
+        android:background="@drawable/wallpaper"
         android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/sign_up"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
             android:layout_marginBottom="40dp"
-            app:hintEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/btnLogin">
+            android:textColorHint="#ffffff"
+            app:hintEnabled="false"
+            app:layout_constraintBottom_toTopOf="@id/btnLogin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
                 android:hint="@string/write_your_username"
+                android:paddingBottom="16dp"
+                android:textColor="#ffffff"
                 android:textColorHint="#ffffff"
-                android:textColor="#000000"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/btnLogin"
-            style="@style/cardViewStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            >
+
 
             <Button
-                android:id="@+id/btnNext"
-                style="@style/buttonStyle"
+                android:id="@+id/btnLogin"
+                style="@style/circularButton"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Next"
                 android:textColor="#ffffff"
                 android:textAllCaps="false" />
-
-        </androidx.cardview.widget.CardView>
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

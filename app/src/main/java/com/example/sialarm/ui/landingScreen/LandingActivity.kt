@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Base64
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -18,6 +20,7 @@ import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.getNumber
+import com.example.sialarm.utils.extensions.setupUI
 import com.facebook.accountkit.*
 import com.facebook.accountkit.ui.AccountKitActivity
 import com.facebook.accountkit.ui.AccountKitConfiguration
@@ -41,6 +44,7 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
     override fun getBindingVariable(): Int = BR.viewModel
 
 
+
     var APP_REQUEST_CODE = 99
 
     companion object {
@@ -52,7 +56,14 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // for hiding title
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
+
+        setupUI(main_layout,this)
+
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this@LandingActivity) { instanceIdResult ->
             val newToken = instanceIdResult.token
             landingViewModel.token = newToken
@@ -72,7 +83,7 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
             }
         })
         printHashKey()
-        btnNext.setOnClickListener {
+        btnLogin.setOnClickListener {
             if(etUserName.text!!.trim().toString().isEmpty()){
                 Toast.makeText(this,"Please enter username.",Toast.LENGTH_SHORT).show()
             }else{
@@ -86,7 +97,6 @@ class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBindin
                      LoginType.PHONE,
                      AccountKitActivity.ResponseType.TOKEN
                  )
-
 
                  configurationBuilder.setUIManager(
                      SkinManager(

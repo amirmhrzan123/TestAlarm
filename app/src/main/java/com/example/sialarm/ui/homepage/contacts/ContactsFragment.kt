@@ -1,7 +1,6 @@
 package com.example.sialarm.ui.homepage.contacts
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +11,8 @@ import com.example.sialarm.data.api.AcceptDenyRequestModel
 import com.example.sialarm.data.firebase.Friends
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.FragmentContactsBinding
-import com.example.sialarm.ui.homepage.HomeViewModel
+import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.utils.Status
-import com.example.sialarm.utils.extensions.getNumber
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -41,7 +39,7 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
 
     override fun getViewModel(): ContactsViewModel = contactsViewModel
 
-    private val mainViewMOdel : HomeViewModel by sharedViewModel()
+    private val mainViewMOdel : MainViewModel by sharedViewModel()
 
     override fun getBindingVariable(): Int = BR.viewModel
 

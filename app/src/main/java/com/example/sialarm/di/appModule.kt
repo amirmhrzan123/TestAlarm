@@ -5,6 +5,7 @@ import android.content.res.Resources
 import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.ui.homepage.contacts.ContactsRepository
+import com.example.sialarm.ui.homepage.home.HomeRepository
 import com.example.sialarm.ui.homepage.notification.NotificationRepository
 import com.example.sialarm.ui.landingScreen.LandingRepository
 import com.google.firebase.database.FirebaseDatabase
@@ -22,6 +23,7 @@ val appModule = module {
     single { provideLandingRepository(get(),get(),get())}
     single { provideContactsRepository(get(),get(),get(),get()) }
     single { provideNotificationRepository(get(),get(),get(),get())}
+    single { provideHomeRepository(get(),get(),get(),get())}
 }
 
 fun provideResources(context: Context): Resources = context.resources
@@ -39,3 +41,7 @@ fun provideContactsRepository(viewModelScope:CoroutineScope,
 fun provideNotificationRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
                                   prefsManager: PrefsManager,apiServices: ApiServices): NotificationRepository
 = NotificationRepository(viewModelScope,prefsManager,apiServices,firebaseDatabase)
+
+fun provideHomeRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
+                          prefsManager: PrefsManager,apiServices: ApiServices):HomeRepository
+= HomeRepository(apiServices,viewModelScope,prefsManager,firebaseDatabase)

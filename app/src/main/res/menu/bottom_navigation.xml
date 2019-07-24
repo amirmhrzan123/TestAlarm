@@ -6,7 +6,7 @@
 
     <item
         android:title="Contacts"
-        android:icon="@drawable/ic_contacts" />
+        android:icon="@drawable/ic_friends" />
 
     <item
         android:title="Notifications"
@@ -14,7 +14,7 @@
 
     <item
         android:title="Menu"
-        android:icon="@drawable/ic_setting" />
+        android:icon="@drawable/ic_settings" />
 
 
 </menu>

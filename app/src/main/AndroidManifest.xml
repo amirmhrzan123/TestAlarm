@@ -30,19 +30,11 @@
             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
 
       <activity android:name=".MainActivity">
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <action android:name="android.intent.action.MAIN"/>
-
-              <category android:name="android.intent.category.LAUNCHER"/>
-          </intent-filter>
 
       </activity>
 
 
         <activity android:name=".ui.landingScreen.LandingActivity">
-
-
 
         </activity>
 
@@ -52,13 +44,22 @@
             android:theme="@style/AppLoginTheme"
             tools:replace="android:theme" />
 
-        <activity android:name=".ui.PreSetupActivity">
+        <activity android:name=".ui.PreSetupActivity"
+            android:theme="@style/landingPageTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
 
 
         </activity>
 
         <activity android:name=".ui.homepage.HomeActivity"
-            >
+           >
 
 
         </activity>
@@ -76,7 +77,7 @@
         -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_setting" />
+            android:resource="@drawable/ic_home" />
         <!--
  Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more.

@@ -1,9 +1,7 @@
 package com.example.sialarm.ui.homepage
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,10 +13,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.app.dwell.base.BaseActivity
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
@@ -33,7 +27,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 
-class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
+class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
 
     lateinit var adapter: HomePagerAdapter
     lateinit var navigationAdapter: AHBottomNavigationAdapter
@@ -49,11 +43,11 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
     lateinit var floatingActionButton: FloatingActionButton
 
 
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val mainViewModel: MainViewModel by viewModel()
 
     override fun getLayoutId(): Int  = R.layout.activity_main
 
-    override fun getViewModel(): HomeViewModel = homeViewModel
+    override fun getViewModel(): MainViewModel = mainViewModel
 
     override fun getBindingVariable(): Int = BR.viewModel
 
@@ -70,6 +64,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         toolbar.title = "Alert"
+        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
         initUI()
     }
 
@@ -90,7 +85,8 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         viewPager = findViewById(R.id.view_pager)
-        bottomNavigation.accentColor = resources.getColor(R.color.green)
+        bottomNavigation.accentColor = ContextCompat.getColor(this, R.color.color_blue_2590b8)
+        bottomNavigation.inactiveColor = ContextCompat.getColor(this,R.color.white)
 
         floating_action_button.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
@@ -104,6 +100,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
        // bottomNavigation.isTranslucentNavigationEnabled = true
 
+        bottomNavigation.defaultBackgroundColor = ContextCompat.getColor(this, R.color.dark_green)
         viewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -188,8 +185,8 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
         } else {
             if (addItems) {
                 val item4 = AHBottomNavigationItem(
-                   "Menu",
-                    ContextCompat.getDrawable(this, R.drawable.ic_setting),
+                   "More",
+                    ContextCompat.getDrawable(this, R.drawable.ic_settings),
                     ContextCompat.getColor(this, R.color.color_tab_4)
                 )
 
@@ -278,7 +275,7 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
 
                 if (cursorPhone!!.moveToFirst()) {
                     contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    homeViewModel.contactNumber = contactNumber.getNumber()
+                    mainViewModel.contactNumber = contactNumber.getNumber()
                 }
 
                 cursorPhone.close()
@@ -294,11 +291,11 @@ class HomeActivity:BaseActivity<HomeViewModel,ActivityMainBinding>() {
                     // DISPLAY_NAME = The display name for the contact.
                     // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
                     contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    homeViewModel.contactName = contactName
+                    mainViewModel.contactName = contactName
                 }
 
                 cursor.close()
-                homeViewModel.contactTrigger.value = true
+                mainViewModel.contactTrigger.value = true
 
                 Log.d("Contactname", "Contact Name: " + contactName)
 
