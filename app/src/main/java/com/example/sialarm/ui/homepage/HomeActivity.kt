@@ -20,6 +20,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.databinding.ActivityMainBinding
+import com.example.sialarm.utils.CommonUtils
 import com.example.sialarm.utils.extensions.getNumber
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
@@ -89,9 +90,19 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
         bottomNavigation.inactiveColor = ContextCompat.getColor(this,R.color.white)
 
         floating_action_button.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-            intent.putExtra("finishActivityOnSaveCompleted", true)
-            startActivityForResult(intent, 1)
+                CommonUtils.openChooserDialog(this) {
+                    when(it){
+                        CommonUtils.OPTION.ADDFROMCONTACT->{
+                            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+                            intent.putExtra("finishActivityOnSaveCompleted", true)
+                            startActivityForResult(intent, 1)
+                        }
+                        CommonUtils.OPTION.ADDANOTHERCONTACT->{
+
+                        }
+                    }
+                }
+
         }
 
             tabColors = applicationContext.resources.getIntArray(R.array.tab_colors)

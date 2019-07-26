@@ -68,12 +68,21 @@
     </style>
 
     <style name="landingPageTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@drawable/layout_splash</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <item name="android:statusBarColor" tools:targetApi="23">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
         <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
     </style>
+    <style name="AppTheme.SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <item name="android:windowBackground">@drawable/layout_splash</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="android:statusBarColor" tools:targetApi="23">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
+    </style>
+
 
     <style name="CommonToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/transparent</item>
@@ -102,6 +111,24 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_margin">@dimen/appintro_indicator_margin</item>
     </style>
+
+    <!--for media bottomsheet-->
+    <style name="MaterialDialogSheet" parent="@android:style/Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowAnimationStyle">@style/MaterialDialogSheetAnimation</item>
+    </style>
+
+    <style name="MaterialDialogSheetAnimation">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+
 
     <style name="AppLoginTheme" parent="Theme.AccountKit"/>
 

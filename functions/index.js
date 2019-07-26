@@ -40,44 +40,51 @@ exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWr
 
 var user = functions.database.ref();*/
 
-exports.sendMessage = functions.https.onRequest((req,res)=>{
+exports.sendMessages = functions.https.onRequest((reqs,res)=>{
+    var http = require('http');
 
-    var postdata = {
-        'to':'+9779849276763',
-        'from':'Demo',
-        'text':'This is texting',
-        'token':'uYDHxBwMEwsha3Sldmpu'
+    var options = {
+      'method': 'POST',
+      'hostname': 'api.sparrowsms.com',
+      'path': '/v2/sms',
+      'headers': {
+          'Content-Type':'application/json'
+      }
+    };
+
+    var postData = {
+        to:"+9779849276763",
+        from:"Demo",
+        token:"uYDHxBwMEwsha3Sldmpu",
+        text:"ljdfkkl"
     }
-    cors(req,res,()=>{
-        var options = {
-            method:'POST',
-            port:'80',
-            hostname:'http://api.sparrowsms.com/v2/sms',
-            headers:{
-                'Content-Type':'application/json',
-                'Content-Length':Buffer.byteLength(JSON.stringify(postdata))
-            }        
-        }
-
-        cors(req,res,()=>{
-            var req = http.request(options,(res)=>{
-                res.on('data',(chunk)=>{
-                    console.log("BODY: ${chunk}")
-                })  
-                res.on('end',()=>{
-                    console.log("No more data in response")
-                })
-          })
-          req.on('error',(e)=>{
-              console.error(e.message)
-          })
-          req.write(JSON.stringify(postdata))
-          req.end()
-        })
-
-       
+    
+    var req = http.request(options, function (res) {
+      var chunks = [];
+    
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+    
+      res.on("end", function (chunk) {
+        var body = Buffer.concat(chunks);
+        console.log(body.toString());
+        
+      });
+    
+      res.on("error", function (error) {
+        console.error(error);
+        res.status(301).json(error)
+        
+      });
+    });
+    
+    //var postData =  "{ \n\"to\":\"+9779849276763\",\n\"from\":\"Demo\",\n        \"text\":\"This is texting\",\n        \"token\":\"uYDHxBwMEwsha3Sldmpu\"\n}";
+    
+    req.write(JSON.stringify(postData));
+    
+    req.end();
     })
-})
 
 exports.sendFriendRequest = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
@@ -256,30 +263,6 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
             }
 
         })
-
-
-
-
     })
 })
-
-
-
-/*exports.testingApi = functions.https.onRequest((req,res) =>{
-    cors(req,res,()=>{
-        admin.database().ref('/friends/').child(req.body.id).orderByChild('status').equalTo(2). once("value",function(snap){
-
-            console.log(req.body.id)
-               console.log(snap.val());
-               snap.forEach((child)=>{
-                   console.log(child.key,child.val());
-               })
-
-               res.status(200).json(req.body.id);
-           })
-
-    })
-    //res.status(200).json(user);
-})*/
-
 
