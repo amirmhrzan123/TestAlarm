@@ -1,4 +1,4 @@
-package com.app.dwell.utils.extensions
+package com.example.sialarm.utils.extensions
 
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule

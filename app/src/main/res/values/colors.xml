@@ -67,6 +67,8 @@
     <color name="ok_pressed">#FF3B69BE</color>
     <color name="ok_disabled">#e6e6e6</color>
     <color name="browser_actions_divider_color">@color/colorDark</color>
+    <color name="bg_decline">@color/red</color>
+    <color name="bg_delete">#FF0202</color>
 
 
 </resources>

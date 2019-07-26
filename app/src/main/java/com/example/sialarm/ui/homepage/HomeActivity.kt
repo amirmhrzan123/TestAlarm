@@ -22,6 +22,7 @@ import com.example.sialarm.R
 import com.example.sialarm.databinding.ActivityMainBinding
 import com.example.sialarm.utils.CommonUtils
 import com.example.sialarm.utils.extensions.getNumber
+import com.example.sialarm.utils.extensions.showValidationDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -98,7 +99,14 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
                             startActivityForResult(intent, 1)
                         }
                         CommonUtils.OPTION.ADDANOTHERCONTACT->{
+                            CommonUtils.getAddNumberDialog(this,{number,userName->
+                                mainViewModel.contactName = userName
+                                mainViewModel.contactNumber = number
+                                mainViewModel.contactTrigger.value = true
 
+                            },{message->
+                                showValidationDialog("SI Alsrm",message,"Ok")
+                            })
                         }
                     }
                 }

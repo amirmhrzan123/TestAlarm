@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
 
 repositories {
     jcenter()
@@ -199,19 +201,23 @@ dependencies {
     implementation "com.daimajia.androidanimations:library:$daimajiaAnimation"
 
     //firebase
-    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
-    implementation 'com.google.firebase:firebase-auth:18.0.0'
-    implementation 'com.google.firebase:firebase-firestore:20.1.0'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
-    implementation 'com.google.firebase:firebase-functions:18.0.0'
-    implementation 'com.google.firebase:firebase-database:18.0.0'
+    implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.google.firebase:firebase-firestore:20.2.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-functions:18.1.0'
+    implementation 'com.google.firebase:firebase-database:18.0.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
 
 /*
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 */
 
     implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
+
+    implementation 'com.github.florent37:inline-activity-result-kotlin:1.0.1'
 
 
 }

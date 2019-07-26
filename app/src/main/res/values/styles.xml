@@ -130,6 +130,12 @@
     </style>
 
 
+    <style name="textBlueMedium">
+        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+
     <style name="AppLoginTheme" parent="Theme.AccountKit"/>
 
     <dimen name="txt_16sp">16sp</dimen>
