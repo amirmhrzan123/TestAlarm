@@ -19,9 +19,7 @@ import com.example.sialarm.R
 
 object CommonUtils {
     fun openChooserDialog(activity: Activity, callback: (option:OPTION)->Unit) {
-
         val view = LayoutInflater.from(activity).inflate(R.layout.layout_bottomsheet, null)
-
         val mBottomSheetDialog = Dialog(activity,
             R.style.MaterialDialogSheet)
         mBottomSheetDialog.setContentView(view)
@@ -32,11 +30,9 @@ object CommonUtils {
             LinearLayout.LayoutParams.WRAP_CONTENT)
         mBottomSheetDialog.window!!.setGravity(Gravity.BOTTOM)
         mBottomSheetDialog.show()
-
         val btnOptionPhoto = mBottomSheetDialog.findViewById<View>(R.id.btn_bs_option_photo) as Button
         val btnOptionVideo = mBottomSheetDialog.findViewById<View>(R.id.btn_bs_option_video) as Button
         val btnOptionCancel = mBottomSheetDialog.findViewById<View>(R.id.btn_bs_cancel_photo_gallery) as Button
-
         btnOptionPhoto.setOnClickListener {
             callback(CommonUtils.OPTION.ADDANOTHERCONTACT)
             mBottomSheetDialog.dismiss()
@@ -48,7 +44,6 @@ object CommonUtils {
         }
 
         btnOptionCancel.setOnClickListener { mBottomSheetDialog.dismiss() }
-
     }
 
     fun getAddNumberDialog(context: Context,click:(String,String)->Unit, error:(String)->Unit): Dialog {
@@ -84,14 +79,8 @@ object CommonUtils {
            click(inputEditText.text.toString().trim(),"")
             dialog.dismiss()
         })
-
         return dialog
-
     }
-
-
-
-
 
    enum class OPTION{
        ADDFROMCONTACT,ADDANOTHERCONTACT
