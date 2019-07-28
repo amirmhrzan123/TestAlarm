@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.example.sialarm.ui.homepage.contacts.ContactsFragment
 import com.example.sialarm.ui.homepage.home.HomeFragment
 import com.example.sialarm.ui.homepage.notification.NotificationFragment
+import com.example.sialarm.ui.homepage.settings.SettingsFragment
 import java.util.ArrayList
 
 class HomePagerAdapter  constructor(fm: FragmentManager) : FragmentPagerAdapter(fm) {
@@ -21,7 +22,7 @@ class HomePagerAdapter  constructor(fm: FragmentManager) : FragmentPagerAdapter(
             0 -> return HomeFragment.newInstance()
             1 -> return ContactsFragment.newInstance()
             2 -> return NotificationFragment.newInstance()
-            3 -> return MoreFragment.newInstance()
+            3 -> return SettingsFragment.newInstance()
 
             else -> return null
         }

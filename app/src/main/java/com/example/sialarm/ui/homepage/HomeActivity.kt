@@ -157,7 +157,7 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
                     toolbar.title = "Notifications"
                 }
                 3->{
-                    toolbar.title = "More"
+                    toolbar.title = "Settings"
                 }
             }
 

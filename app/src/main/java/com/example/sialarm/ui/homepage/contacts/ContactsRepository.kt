@@ -2,6 +2,7 @@ package com.example.sialarm.ui.homepage.contacts
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.sialarm.R
 import com.example.sialarm.data.api.AcceptDenyRequestModel
 import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.data.api.SendFriendRequest
@@ -10,6 +11,7 @@ import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.utils.FireKey
 import com.example.sialarm.utils.Resource
+import com.example.sialarm.utils.extensions.handleException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -35,6 +37,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
         firebaseDatabase.getReference(FireKey.USERS).orderByChild("phone_number").equalTo(number)
             .addListenerForSingleValueEvent(object:ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
+                    friendsResponse.postValue(Resource.error("",p0.message,null))
 
                 }
                 override fun onDataChange(p0: DataSnapshot) {
@@ -100,7 +103,10 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                             friendsResponse.postValue(Resource.success("","",null))
 
                         }catch(e:Exception){
-                            friendsResponse.postValue(Resource.error("","",null))
+                            e.handleException(""){
+                                friendsResponse.postValue(Resource.error("",it.message,null))
+
+                            }
                         }
                     }
                 }
@@ -119,6 +125,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
 
         firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).addValueEventListener(object:ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
+                friendsListResponse.postValue(Resource.success("",p0.message,null))
 
             }
 
@@ -151,7 +158,9 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                 acceptDenyResponse.postValue(Resource.success("","",response))
 
             }catch(e:Exception){
-                acceptDenyResponse.postValue(Resource.error("","",""))
+                e.handleException(""){
+                    acceptDenyResponse.postValue(Resource.error("",it.message,""))
+                }
             }
         }
         return acceptDenyResponse

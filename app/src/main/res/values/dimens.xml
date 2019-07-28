@@ -4,4 +4,6 @@
     <dimen name="space_15dp">15dp</dimen>
     <dimen name="dimen_1dp">1dp</dimen>
     <dimen name="quoteItemMenuWidth">82dp</dimen>
+    <dimen name="dimen_16dp">16dp</dimen>
+    <dimen name="space_10dp">10dp</dimen>
 </resources>

@@ -11,35 +11,6 @@ exports.offlineObserveFromDevice = functions.database.ref("/SI_ALERT/{device_num
 
 })
 
-
-
-/*
-exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWrite((change,context)=>{
-  
-    var payload = {
-
-        notification:{
-            title:"Test",
-            body:"test"
-
-        },
-
-        data:{
-            username:"test",
-            email:"test"
-        }
-    };
-    return admin.messaging().sendToDevice("e7nKHHhceZ4:APA91bFmaU7QOhFg-6o5e8ZAiiXFkgcov9udYabOR8mNLYsMNpFDuJrL8YfzMEBJAC5yoRqahmnG94f8C9e15SDSzXtQpHRoojoICRWzdW7A8BaRep_yqFmtbkF2GyWiC5LCZ627KX2m",payload)
-    .then(response=>{
-        console.log("Successfully sent message: ",response);
-        return null
-    });
-
-
-});
-
-var user = functions.database.ref();*/
-
     var options = {
       'method': 'POST',
       'hostname': 'api.sparrowsms.com',
@@ -117,7 +88,7 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                         "sender_id": senderId,
                         "title":"SI friend request",
                         "message": userName + " has sent you friend request.",
-                        "timeStamp": Date().now()
+                        "timeStamp": new Date().getTime()
                     }
                     admin.database().ref("Notification").child(receiverId).push(newData)
                     return admin.messaging().sendToDevice(notificationToken, payload)
@@ -192,7 +163,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                                         "sender_id": senderId,
                                         "title":"SI safe alert",
                                         "message": "Your SI Friend "+userName + " is safe now",
-                                        "timeStamp": Date().now()
+                                        "timeStamp": new Date().getTime()
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)
                                 })
@@ -265,7 +236,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                         "title":"SI emergency alert",
                                         "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location : Latitude="+geoLatitude+
                                         " Longitude="+geoLongitude,
-                                        "timeStamp": Date().now()
+                                        "timeStamp": new Date().getTime()
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)
                                 })
@@ -405,6 +376,172 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
             }
 
         })
+    })
+})
+
+exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
+    cors(req,res,()=>{
+        var senderId = req.body.sender_id
+        var deviceId = req.body.device_id
+        admin.database().ref('/users/'+senderId).once('value',function(snap){
+            if(snap.exists){
+                var notificationTypeId = "4"
+                var userName = snap.child('username').val()
+                var receiverIds = []
+                var message = ""
+                var registrationTokens = []
+                var payload = {
+                    notification:{
+                        title: "SI safe alert",
+                        body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+                    },
+                    data:{
+                        username: userName,
+                        sender_id: senderId,
+                        notification_type_id: notificationTypeId,
+                    }
+                }
+        
+                admin.database().ref('/friends/'+senderId).once('value',function(snap){
+                    if(snap.exists){
+                        snap.forEach((child)=>{
+                            receiverIds.push(child.val().number)
+                        })
+        
+                        receiverIds.forEach((id)=>{
+                            admin.database().ref('/users/'+id).once('value',function(snap){
+                                if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
+                                    registrationTokens.push(snap.child('notification_token').val())
+                                }else{
+                                    registrationTokens.push("kjgkjjk")
+                                }
+                                console.log(registrationTokens)
+                                if(receiverIds.length===registrationTokens.length){
+                                    return admin.messaging().sendToDevice(registrationTokens, payload)
+                                    .then(response => {
+                                        console.log("Successfully sent message: ", response);
+                                        receiverIds.forEach((id)=>{
+                                            var newData = {
+                                                "notification_type_id": notificationTypeId,
+                                                "sender_id": senderId,
+                                                "title":"SI safe alert",
+                                                "message": "Your SI Friend "+userName + " is safe now",
+                                                "timeStamp": new Date().getTime()
+                                            }
+                                            admin.database().ref("Notification").child(id).push(newData)
+                                        })
+                                        res.status(200).json({
+                                            statusCode: 200,
+                                            message: "Success"
+                                        })
+                                        return ""
+                                    });
+                                }
+                            })
+                        })
+                    }else{
+                        res.status(301).json({
+                            statusCode:301,
+                            message: "Failure"
+                        })
+                    }
+                })
+            }else{
+                res.status(301).json({
+                    statusCode: 301,
+                    message: "Failure"
+                })
+            }
+        })
+      
+    })
+})
+
+
+exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
+    cors(req,res,()=>{
+
+        var senderId = req.body.sender_id
+        var notificationTypeId = "2"
+        var geoLatitude = req.body.latitude
+        var geoLongitude = req.body.longitude
+        admin.database().ref('/users/'+senderId).once('value',function(snap){
+            if(snap.exists){
+                var userName = snap.child('username').val()
+                var receiverIds = []
+        var registrationTokens = []
+        var payload = {
+            notification: {
+                title: "SI Emergency Alert",
+                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
+                "Longitude="+geoLongitude
+            },
+            data: {
+                username: userName,
+                sender_id: senderId,
+                notification_type_id: notificationTypeId,
+                latitude: geoLatitude,
+                longitude: geoLongitude
+            }
+        };
+
+        admin.database().ref('/friends/'+senderId).once('value',function(snap){
+            if(snap.exists){
+                snap.forEach((child)=>{
+                    receiverIds.push(child.val().number)
+                })
+
+                receiverIds.forEach((id)=>{
+                    admin.database().ref('/users/'+id).once('value',function(snap){
+                        if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
+                            registrationTokens.push(snap.child('notification_token').val())
+                        }else{
+                            registrationTokens.push("kjgkjjk")
+                        }
+                        console.log(registrationTokens)
+                        if(receiverIds.length===registrationTokens.length){
+                            return admin.messaging().sendToDevice(registrationTokens, payload)
+                            .then(response => {
+                                console.log("Successfully sent message: ", response);
+                                receiverIds.forEach((id)=>{
+                                    var newData = {
+                                        "notification_type_id": notificationTypeId,
+                                        "sender_id": senderId,
+                                        "title":"SI emergency alert",
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location : Latitude="+geoLatitude+
+                                        " Longitude="+geoLongitude,
+                                        "timeStamp": new Date().getTime()
+                                    }
+                                    admin.database().ref("Notification").child(id).push(newData)
+                                })
+                                res.status(200).json({
+                                    statusCode: 200,
+                                    message: "Success"
+                                })
+                                return ""
+                            });
+                        }
+                    })
+                })
+            }else{
+                res.status(301).json({
+                    statusCode:301,
+                    message: "Failure"
+                })
+            }
+        })
+
+
+            }else{
+
+                res.status(301).json({
+                    statusCode:301,
+                    message: "Failure"
+                })
+            }
+
+        })
+            
     })
 })
 

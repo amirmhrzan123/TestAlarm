@@ -8,10 +8,10 @@ data class NotificationResponseModel(
     val message:String="",
     val notification_type_id:String="",
     val sender_id:String="",
-    val time: Long=0
+    val timeStamp: Long=0
 ){
     fun getDateTime():String{
-        println(time.toString())
-        return time.getMessageDateTime()
+        println(timeStamp.toString())
+        return timeStamp.getMessageDateTime()
     }
 }

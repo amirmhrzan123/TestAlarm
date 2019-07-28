@@ -50,8 +50,16 @@
     <string name="language">Language</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="privacyPolicy">Privacy Policy</string>
-    <string name="logout">logout</string>
+    <string name="logout">Logout</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
     <string name="number_error">Could not find the number. You can try adding number manually.</string>
+    <string name="email">Email</string>
+    <string name="state">State</string>
+    <string name="district">District</string>
+    <string name="kathmandu">Kathmandu</string>
+    <string name="wardNo">Ward No.</string>
+    <string name="tole">Tole</string>
+    <string name="deviceNumber">Device Id</string>
+    <string name="siAlarm">SI Alarm</string>
 </resources>

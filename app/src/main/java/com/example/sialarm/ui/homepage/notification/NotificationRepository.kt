@@ -24,7 +24,7 @@ class NotificationRepository constructor(private val viewModelScope:CoroutineSco
     fun getNotificationList():LiveData<Resource<List<NotificationResponseModel>>>{
         val notificationResponse = MutableLiveData<Resource<List<NotificationResponseModel>>>()
         firebaseData.getReference("Notification").child(prefsManager.getUserId())
-            .addListenerForSingleValueEvent(object:ValueEventListener{
+            .addValueEventListener(object:ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
 
                 }

@@ -7,6 +7,7 @@ import com.example.sialarm.data.api.SendAlertMessages
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.di.viewModelModule
 import com.example.sialarm.utils.Resource
+import com.example.sialarm.utils.extensions.handleException
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -26,7 +27,9 @@ class HomeRepository constructor(private val apiServices: ApiServices,
                 sendAlertResponse.postValue(Resource.success("","",null))
 
             }catch(e:Exception){
-                sendAlertResponse.postValue(Resource.error("","",null))
+                e.handleException(""){
+                    sendAlertResponse.postValue(Resource.error("",it.message,null))
+                }
             }
         }
         return sendAlertResponse

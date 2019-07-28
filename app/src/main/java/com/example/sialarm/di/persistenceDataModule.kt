@@ -24,7 +24,7 @@ val persistenceDataModule = module {
     single { provideSharePreference(get(), "SIAlarm") }
     single { providePrefsManager(get()) as PrefsManager }
     single { provideFirebaseStore()}
-    single { provideFirebaseDatabase()}
+    factory { provideFirebaseDatabase()}
     single { provideRoomDatabase(get(),"SIAlarm")}
     single { provideUserDao(get())}
 }
@@ -41,7 +41,11 @@ fun providePrefsManager(pref: SharedPreferences) = PrefsManagerImpl(pref)
 
 fun provideFirebaseStore() = FirebaseFirestore.getInstance()
 
-fun provideFirebaseDatabase():FirebaseDatabase = FirebaseDatabase.getInstance()
+fun provideFirebaseDatabase():FirebaseDatabase {
+    val firebaseDatabse = FirebaseDatabase.getInstance()
+    firebaseDatabse.setPersistenceEnabled(true)
+    return firebaseDatabse
+}
 
 /**
  * TODO Provide the instance of room database

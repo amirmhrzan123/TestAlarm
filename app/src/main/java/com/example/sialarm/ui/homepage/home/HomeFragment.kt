@@ -11,12 +11,13 @@ import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Looper
-import androidx.lifecycle.Observer
+import android.telephony.SmsManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.PermissionChecker.checkSelfPermission
+import androidx.lifecycle.Observer
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
@@ -24,6 +25,7 @@ import com.example.sialarm.databinding.FragmentAlertBinding
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.isConnectingToInternet
+import com.example.sialarm.utils.extensions.isNetworkConnected
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -308,9 +310,26 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                     buttonPressed = false
                 }
 
-                if(isConnectingToInternet(activity!!)){
+                if(context!!.isNetworkConnected()){
                     homeViewModel.sendLocationUpdates(mCurrentLocation.latitude.toString(),
                         mCurrentLocation.longitude.toString())
+                }else{
+                    KotlinPermissions.with(activity!!) // where this is an FragmentActivity instance
+                        .permissions(Manifest.permission.SEND_SMS)
+                        .onAccepted { permissions ->
+                            val smsManager = SmsManager.getDefault() as SmsManager
+                            smsManager.sendTextMessage("+9779841866002", null, "${mCurrentLocation.latitude},${mCurrentLocation.longitude}", null, null)
+                            stopLocationUpdates()
+                        }
+                        .onDenied {
+                            //List of denied permissions
+                            stopLocationUpdates()
+                        }
+                        .onForeverDenied { permissions ->
+                            //List of forever denied permissions
+                            stopLocationUpdates()
+                        }
+                        .ask()
                 }
 
                 //updateLocationUI()
@@ -424,9 +443,4 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
             })
     }
 
-    private fun getPendingIntent(): PendingIntent?{
-        val intent = Intent(activity!!,LocalReceiver::class.java)
-        intent.action = LocalReceiver.ACTION_PROCESS_UPDATE
-        return PendingIntent.getBroadcast(activity!!,0,intent,PendingIntent.FLAG_UPDATE_CURRENT)
-    }
 }

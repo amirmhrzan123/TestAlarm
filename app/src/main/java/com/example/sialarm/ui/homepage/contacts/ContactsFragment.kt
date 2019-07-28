@@ -14,6 +14,7 @@ import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.FragmentContactsBinding
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.utils.Status
+import com.example.sialarm.utils.extensions.isNetworkConnected
 import com.example.sialarm.utils.extensions.showConfirmationDialog
 import com.example.sialarm.utils.extensions.showValidationDialog
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -118,7 +119,11 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
             if(list.isNotEmpty()){
                 activity!!.showValidationDialog("SI Alarm","You already have added this friend.")
             }else{
-                contactsViewModel.insertContactValid.value = true
+                if(context!!.isNetworkConnected()){
+                    contactsViewModel.insertContactValid.value = true
+                }else{
+                    activity!!.showValidationDialog("SI Alarm","You need to connect to internet to perform this action.")
+                }
             }
         })
 
@@ -132,6 +137,7 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                 }
                 Status.ERROR->{
                     hideLoading()
+                    activity!!.showValidationDialog("SI Alarm",it.message!!)
                 }
             }
         })
@@ -147,14 +153,21 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                 }
                 Status.ERROR->{
                     hideLoading()
+                    activity!!.showValidationDialog("SI Alarm",it.message!!)
+
                 }
             }
         })
 
         contactsViewModel.getContacts.observe(this,Observer{
             when(it.status){
-                Status.ERROR->{
+                Status.LOADING->{
                     showLoading("")
+                }
+                Status.ERROR->{
+                    hideLoading()
+                    activity!!.showValidationDialog("SI Alarm",it.message!!)
+
                 }
                 Status.SUCCESS->{
                     hideLoading()
