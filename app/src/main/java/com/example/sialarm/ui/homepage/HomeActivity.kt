@@ -89,6 +89,7 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
         viewPager = findViewById(R.id.view_pager)
         bottomNavigation.accentColor = ContextCompat.getColor(this, R.color.color_blue_2590b8)
         bottomNavigation.inactiveColor = ContextCompat.getColor(this,R.color.white)
+        bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
 
         floating_action_button.setOnClickListener {
                 CommonUtils.openChooserDialog(this) {
@@ -100,13 +101,14 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
                         }
                         CommonUtils.OPTION.ADDANOTHERCONTACT->{
                             CommonUtils.getAddNumberDialog(this,{number,userName->
+                                println("USername $userName")
                                 mainViewModel.contactName = userName
                                 mainViewModel.contactNumber = number
                                 mainViewModel.contactTrigger.value = true
 
                             },{message->
                                 showValidationDialog("SI Alsrm",message,"Ok")
-                            })
+                            }).show()
                         }
                     }
                 }
@@ -116,8 +118,6 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
             tabColors = applicationContext.resources.getIntArray(R.array.tab_colors)
             navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)
             navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)
-
-       // bottomNavigation.isTranslucentNavigationEnabled = true
 
         bottomNavigation.defaultBackgroundColor = ContextCompat.getColor(this, R.color.dark_green)
         viewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
@@ -174,89 +174,12 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
             true
         })
 
-        /*
-		bottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
-			@Override public void onPositionChange(int y) {
-				Log.d("DemoActivity", "BottomNavigation Position: " + y);
-			}
-		});
-		*/
-
         viewPager.offscreenPageLimit = 3
         adapter = HomePagerAdapter(supportFragmentManager)
         viewPager.adapter = adapter
 
-
-        //bottomNavigation.setDefaultBackgroundResource(R.drawable.bottom_navigation_background);
     }
 
-    /**
-     * Add or remove items of the bottom navigation
-     */
-    fun updateBottomNavigationItems(addItems: Boolean) {
-
-        if (useMenuResource) {
-                navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)
-                navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)
-                bottomNavigation.setNotification("1", 3)
-
-
-        } else {
-            if (addItems) {
-                val item4 = AHBottomNavigationItem(
-                   "More",
-                    ContextCompat.getDrawable(this, R.drawable.ic_settings),
-                    ContextCompat.getColor(this, R.color.color_tab_4)
-                )
-
-                bottomNavigation.addItem(item4)
-                bottomNavigation.setNotification("1", 3)
-            } else {
-                bottomNavigation.removeAllItems()
-                bottomNavigation.addItems(bottomNavigationItems)
-            }
-        }
-    }
-
-    /**
-     * Show or hide the bottom navigation with animation
-     */
-    fun showOrHideBottomNavigation(show: Boolean) {
-        if (show) {
-            bottomNavigation.restoreBottomNavigation(true)
-        } else {
-            bottomNavigation.hideBottomNavigation(true)
-        }
-    }
-
-    /**
-     * Show or hide selected item background
-     */
-    fun updateSelectedBackgroundVisibility(isVisible: Boolean) {
-        bottomNavigation.setSelectedBackgroundVisible(isVisible)
-    }
-
-    /**
-     * Set title state for bottomNavigation
-     */
-    fun setTitleState(titleState: AHBottomNavigation.TitleState) {
-        bottomNavigation.titleState = titleState
-    }
-
-    /**
-     * Reload activity
-     */
-    fun reload() {
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
-    }
-
-    /**
-     * Return the number of items in the bottom navigation
-     */
-    fun getBottomNavigationNbItems(): Int {
-        return bottomNavigation.itemsCount
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -294,7 +217,6 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
 
                 if (cursorPhone!!.moveToFirst()) {
                     contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    mainViewModel.contactNumber = contactNumber.getNumber()
                 }
 
                 cursorPhone.close()
@@ -310,11 +232,17 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
                     // DISPLAY_NAME = The display name for the contact.
                     // HAS_PHONE_NUMBER =   An indicator of whether this contact has at least one phone number.
                     contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    mainViewModel.contactName = contactName
                 }
 
                 cursor.close()
-                mainViewModel.contactTrigger.value = true
+                if(contactNumber.isEmpty()){
+                    showValidationDialog("SI Alarm",getString(R.string.number_error))
+                }else{
+                    mainViewModel.contactNumber = contactNumber.getNumber()
+                    mainViewModel.contactName = contactName
+                    mainViewModel.contactTrigger.value = true
+                }
+
 
                 Log.d("Contactname", "Contact Name: " + contactName)
 

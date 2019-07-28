@@ -45,9 +45,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
     private var clImages: ConstraintLayout? = null
 
     private var ivOnBoarding: ImageView? = null
-    private var ivEvents: ImageView? = null
-    private var ivCalendar: ImageView? = null
-    private var ivGuestList: ImageView? = null
+    private var ivRegister: ImageView? = null
+    private var ivSendAlert: ImageView? = null
+    private var ivAddSiFriend: ImageView? = null
     private var ivMain: ImageView? = null
 
     private var degreeEnd = 120f
@@ -319,26 +319,26 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             val list = ArrayList<Animator>()
             when (getViewState()) {
                 ViewState.EVENTS -> {
-                    val backgroundReverse = ivEvents!!.background as TransitionDrawable
+                    val backgroundReverse = ivRegister!!.background as TransitionDrawable
                     backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivEvents!!))
-                    list.add(getScaleDownYAnimator(ivEvents!!))
+                    list.add(getScaleDownXAnimator(ivRegister!!))
+                    list.add(getScaleDownYAnimator(ivRegister!!))
 
-                    val background = ivGuestList!!.background as TransitionDrawable
+                    val background = ivAddSiFriend!!.background as TransitionDrawable
                     background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivGuestList!!))
-                    list.add(getScaleUpYAnimator(ivGuestList!!))
+                    list.add(getScaleUpXAnimator(ivAddSiFriend!!))
+                    list.add(getScaleUpYAnimator(ivAddSiFriend!!))
                 }
                 ViewState.GUEST_LIST -> {
-                    val backgroundReverse = ivGuestList!!.background as TransitionDrawable
+                    val backgroundReverse = ivAddSiFriend!!.background as TransitionDrawable
                     backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivGuestList!!))
-                    list.add(getScaleDownYAnimator(ivGuestList!!))
+                    list.add(getScaleDownXAnimator(ivAddSiFriend!!))
+                    list.add(getScaleDownYAnimator(ivAddSiFriend!!))
 
-                    val background = ivCalendar!!.background as TransitionDrawable
+                    val background = ivSendAlert!!.background as TransitionDrawable
                     background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivCalendar!!))
-                    list.add(getScaleUpYAnimator(ivCalendar!!))
+                    list.add(getScaleUpXAnimator(ivSendAlert!!))
+                    list.add(getScaleUpYAnimator(ivSendAlert!!))
                 }
             }
             return list
@@ -349,26 +349,26 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             val list = ArrayList<Animator>()
             when (getViewState()) {
                 ViewState.GUEST_LIST -> {
-                    val backgroundReverse = ivGuestList!!.background as TransitionDrawable
+                    val backgroundReverse = ivAddSiFriend!!.background as TransitionDrawable
                     backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivGuestList!!))
-                    list.add(getScaleDownYAnimator(ivGuestList!!))
+                    list.add(getScaleDownXAnimator(ivAddSiFriend!!))
+                    list.add(getScaleDownYAnimator(ivAddSiFriend!!))
 
-                    val background = ivEvents!!.background as TransitionDrawable
+                    val background = ivRegister!!.background as TransitionDrawable
                     background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivEvents!!))
-                    list.add(getScaleUpYAnimator(ivEvents!!))
+                    list.add(getScaleUpXAnimator(ivRegister!!))
+                    list.add(getScaleUpYAnimator(ivRegister!!))
                 }
                 ViewState.CALENDAR -> {
-                    val backgroundReverse = ivCalendar!!.background as TransitionDrawable
+                    val backgroundReverse = ivSendAlert!!.background as TransitionDrawable
                     backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivCalendar!!))
-                    list.add(getScaleDownYAnimator(ivCalendar!!))
+                    list.add(getScaleDownXAnimator(ivSendAlert!!))
+                    list.add(getScaleDownYAnimator(ivSendAlert!!))
 
-                    val background = ivGuestList!!.background as TransitionDrawable
+                    val background = ivAddSiFriend!!.background as TransitionDrawable
                     background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivGuestList!!))
-                    list.add(getScaleUpYAnimator(ivGuestList!!))
+                    list.add(getScaleUpXAnimator(ivAddSiFriend!!))
+                    list.add(getScaleUpYAnimator(ivAddSiFriend!!))
                 }
             }
             return list
@@ -415,9 +415,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         ivOnBoarding = findViewById(R.id.iv_on_boarding)
         clImages = findViewById(R.id.rl_images)
         //Image
-        ivEvents = findViewById(R.id.iv_events)
-        ivGuestList = findViewById(R.id.iv_guest_list)
-        ivCalendar = findViewById(R.id.iv_calendar)
+        ivRegister = findViewById(R.id.iv_register)
+        ivAddSiFriend = findViewById(R.id.ivAddFriends)
+        ivSendAlert = findViewById(R.id.iv_send_alert)
         ivMain = findViewById(R.id.iv_mid_circle)
 
         //Text part
@@ -505,7 +505,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         listRotationAnimators.add(animatorAllView)
 
-        val rotateGroup = ObjectAnimator.ofFloat(ivEvents, View.ROTATION, -degreeEnd)
+        val rotateGroup = ObjectAnimator.ofFloat(ivRegister, View.ROTATION, -degreeEnd)
         rotateGroup.repeatCount = 0
         rotateGroup.duration = ANIMATION_DURATION.toLong()
         rotateGroup.addListener(object : Animator.AnimatorListener {
@@ -514,7 +514,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivEvents!!.rotation = -degreeEnd
+                ivRegister!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -527,7 +527,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         listRotationAnimators.add(rotateGroup)
 
-        val rotateEvent = ObjectAnimator.ofFloat(ivGuestList, View.ROTATION, -degreeEnd)
+        val rotateEvent = ObjectAnimator.ofFloat(ivAddSiFriend, View.ROTATION, -degreeEnd)
         rotateEvent.repeatCount = 0
         rotateEvent.duration = ANIMATION_DURATION.toLong()
         rotateEvent.addListener(object : Animator.AnimatorListener {
@@ -536,7 +536,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivGuestList!!.rotation = -degreeEnd
+                ivAddSiFriend!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -549,7 +549,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         listRotationAnimators.add(rotateEvent)
 
-        val rotateMessaging = ObjectAnimator.ofFloat(ivCalendar, View.ROTATION, -degreeEnd)
+        val rotateMessaging = ObjectAnimator.ofFloat(ivSendAlert, View.ROTATION, -degreeEnd)
         rotateMessaging.repeatCount = 0
         rotateMessaging.duration = ANIMATION_DURATION.toLong()
         rotateMessaging.addListener(object : Animator.AnimatorListener {
@@ -558,7 +558,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivCalendar!!.rotation = -degreeEnd
+                ivSendAlert!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -598,7 +598,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         list.add(animatorAllView)
 
-        val animatorGroup = ObjectAnimator.ofFloat(ivEvents, View.ROTATION, -degreeEnd)
+        val animatorGroup = ObjectAnimator.ofFloat(ivRegister, View.ROTATION, -degreeEnd)
         animatorGroup.repeatCount = 0
         animatorGroup.duration = ANIMATION_DURATION.toLong()
         animatorGroup.addListener(object : Animator.AnimatorListener {
@@ -607,7 +607,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivEvents!!.rotation = -degreeEnd
+                ivRegister!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -620,7 +620,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         list.add(animatorGroup)
 
-        val animatorEvent = ObjectAnimator.ofFloat(ivGuestList, View.ROTATION, -degreeEnd)
+        val animatorEvent = ObjectAnimator.ofFloat(ivAddSiFriend, View.ROTATION, -degreeEnd)
         animatorEvent.repeatCount = 0
         animatorEvent.duration = ANIMATION_DURATION.toLong()
         animatorEvent.addListener(object : Animator.AnimatorListener {
@@ -629,7 +629,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivGuestList!!.rotation = -degreeEnd
+                ivAddSiFriend!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -642,7 +642,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         })
         list.add(animatorEvent)
 
-        val animatorMessaging = ObjectAnimator.ofFloat(ivCalendar, View.ROTATION, -degreeEnd)
+        val animatorMessaging = ObjectAnimator.ofFloat(ivSendAlert, View.ROTATION, -degreeEnd)
         animatorMessaging.repeatCount = 0
         animatorMessaging.duration = ANIMATION_DURATION.toLong()
         animatorMessaging.addListener(object : Animator.AnimatorListener {
@@ -651,7 +651,7 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                ivCalendar!!.rotation = -degreeEnd
+                ivSendAlert!!.rotation = -degreeEnd
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -677,9 +677,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             override fun onAnimationEnd(animation: Animator) {
                 when (imageView.id) {
-                    R.id.iv_events -> ivEvents!!.scaleX = SCALE_DOWN_RATIO
-                    R.id.iv_guest_list -> ivGuestList!!.scaleX = SCALE_DOWN_RATIO
-                    R.id.iv_calendar -> ivCalendar!!.scaleX = SCALE_DOWN_RATIO
+                    R.id.iv_register -> ivRegister!!.scaleX = SCALE_DOWN_RATIO
+                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleX = SCALE_DOWN_RATIO
+                    R.id.iv_send_alert -> ivSendAlert!!.scaleX = SCALE_DOWN_RATIO
                 }
             }
 
@@ -705,9 +705,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             override fun onAnimationEnd(animation: Animator) {
                 when (imageView.id) {
-                    R.id.iv_events -> ivEvents!!.scaleY = SCALE_DOWN_RATIO
-                    R.id.iv_guest_list -> ivGuestList!!.scaleY = SCALE_DOWN_RATIO
-                    R.id.iv_calendar -> ivCalendar!!.scaleY = SCALE_DOWN_RATIO
+                    R.id.iv_register -> ivRegister!!.scaleY = SCALE_DOWN_RATIO
+                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleY = SCALE_DOWN_RATIO
+                    R.id.iv_send_alert -> ivSendAlert!!.scaleY = SCALE_DOWN_RATIO
                 }
             }
 
@@ -735,9 +735,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             override fun onAnimationEnd(animation: Animator) {
                 when (imageView.id) {
-                    R.id.iv_events -> ivEvents!!.scaleX = SCALE_UP_RATIO
-                    R.id.iv_guest_list -> ivGuestList!!.scaleX = SCALE_UP_RATIO
-                    R.id.iv_calendar -> ivCalendar!!.scaleX = SCALE_UP_RATIO
+                    R.id.iv_register -> ivRegister!!.scaleX = SCALE_UP_RATIO
+                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleX = SCALE_UP_RATIO
+                    R.id.iv_send_alert -> ivSendAlert!!.scaleX = SCALE_UP_RATIO
                 }
             }
 
@@ -763,9 +763,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
             override fun onAnimationEnd(animation: Animator) {
                 when (imageView.id) {
-                    R.id.iv_events -> ivEvents!!.scaleY = SCALE_UP_RATIO
-                    R.id.iv_guest_list -> ivGuestList!!.scaleY = SCALE_UP_RATIO
-                    R.id.iv_calendar -> ivCalendar!!.scaleY = SCALE_UP_RATIO
+                    R.id.iv_register -> ivRegister!!.scaleY = SCALE_UP_RATIO
+                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleY = SCALE_UP_RATIO
+                    R.id.iv_send_alert -> ivSendAlert!!.scaleY = SCALE_UP_RATIO
                 }
             }
 
@@ -793,19 +793,19 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         ibMessaging!!.isSelected = false
         ibPermissions!!.isSelected = false
 
-        ivEvents!!.scaleX = SCALE_UP_RATIO
-        ivEvents!!.scaleY = SCALE_UP_RATIO
+        ivRegister!!.scaleX = SCALE_UP_RATIO
+        ivRegister!!.scaleY = SCALE_UP_RATIO
 
-        ivGuestList!!.scaleX = SCALE_DOWN_RATIO
-        ivGuestList!!.scaleY = SCALE_DOWN_RATIO
+        ivAddSiFriend!!.scaleX = SCALE_DOWN_RATIO
+        ivAddSiFriend!!.scaleY = SCALE_DOWN_RATIO
 
-        ivCalendar!!.scaleX = SCALE_DOWN_RATIO
-        ivCalendar!!.scaleY = SCALE_DOWN_RATIO
+        ivSendAlert!!.scaleX = SCALE_DOWN_RATIO
+        ivSendAlert!!.scaleY = SCALE_DOWN_RATIO
 
-        val backgroundReverse1 = ivGuestList!!.background as TransitionDrawable
+        val backgroundReverse1 = ivAddSiFriend!!.background as TransitionDrawable
         backgroundReverse1.reverseTransition(100)
 
-        val backgroundReverse2 = ivCalendar!!.background as TransitionDrawable
+        val backgroundReverse2 = ivSendAlert!!.background as TransitionDrawable
         backgroundReverse2.reverseTransition(100)
     }
 

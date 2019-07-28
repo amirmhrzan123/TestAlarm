@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="#A5A3A3"
+    android:layout_height="0.5dp"
+    android:background="@color/colorDarkBlack"
     xmlns:android="http://schemas.android.com/apk/res/android" />

@@ -11,10 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
+import android.widget.*
 import com.example.sialarm.R
 
 object CommonUtils {
@@ -55,7 +52,9 @@ object CommonUtils {
         window!!.setGravity(Gravity.CENTER)
         window.setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
         val inputEditText = dialog.findViewById<EditText>(R.id.etNumber)
+        val userName = dialog.findViewById<EditText>(R.id.etName)
         val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirm)
+        val btnClose = dialog.findViewById<ImageView>(R.id.ivClose)
         inputEditText.addTextChangedListener(object:TextWatcher{
             override fun afterTextChanged(s: Editable?) {
             }
@@ -64,21 +63,37 @@ object CommonUtils {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s.toString().length==0 || s.toString().length>9){
-                    btnConfirm.isEnabled = false
-                }else{
-                    btnConfirm.isEnabled = s.toString().substring(0) == "9"
-                }
+
+                btnConfirm.isEnabled = s.toString().isNotEmpty() && s.toString().length==10 && s?.first()=='9' && userName.text.toString().isNotEmpty()
+            }
+
+        })
+
+        userName.addTextChangedListener(object:TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                btnConfirm.isEnabled = inputEditText.text.toString().isNotEmpty() && inputEditText.text.toString().length==10 && inputEditText.text.toString().first()=='9' && userName.text.toString().isNotEmpty()
 
             }
 
         })
+
         btnConfirm.setOnClickListener(View.OnClickListener {
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(inputEditText.windowToken, 0)
-           click(inputEditText.text.toString().trim(),"")
+           click(inputEditText.text.toString().trim(),userName.text.toString().trim())
             dialog.dismiss()
         })
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
         return dialog
     }
 

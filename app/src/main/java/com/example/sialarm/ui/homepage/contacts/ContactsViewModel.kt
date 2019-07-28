@@ -17,6 +17,7 @@ class ContactsViewModel constructor(private val repository:ContactsRepository):B
     var insertContactValid = MutableLiveData<Boolean>()
     var getContactsValid = MutableLiveData<Boolean>()
     var acceptDenyValid = MutableLiveData<AcceptDenyRequestModel>()
+    var listContacts :  MutableList<Friends> = mutableListOf()
 
 
 

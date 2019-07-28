@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModel
 import org.json.JSONObject
@@ -69,57 +70,69 @@ private val HOUR_MILLIS = 60 * MINUTE_MILLIS
 private val DAY_MILLIS = 24 * HOUR_MILLIS
 
 
-fun String.getMessageDateTime(isMilliseconds: Boolean = false): String {
+fun Long.getMessageDateTime(isMilliseconds: Boolean = false): String {
     val messageTime = Calendar.getInstance()
-    if (!isMilliseconds)
-        messageTime.timeInMillis = this.milliseconds()
-    else
-        messageTime.timeInMillis = this.toLong()
-    // get Currunt time
-    val now = Calendar.getInstance()
 
-    val strTimeFormate = "h:mm aa"
-    val strDateFormate = "dd/MM/yyyy h:mm aa"
+        if (!isMilliseconds) {
+            messageTime.timeInMillis = this*1000
+            Log.d("millif", this.toLong().toString())
+        }
+        else
+            messageTime.timeInMillis = this
+        // get Currunt time
+        val now = Calendar.getInstance()
 
-    return if (now.get(Calendar.DATE) === messageTime.get(Calendar.DATE)
+        val strTimeFormate = "h:mm aa"
+        val strDateFormate = "dd/MM/yyyy h:mm aa"
+
+        return if (now.get(Calendar.DATE) === messageTime.get(Calendar.DATE)
             &&
             now.get(Calendar.MONTH) === messageTime.get(Calendar.MONTH)
             &&
             now.get(Calendar.YEAR) === messageTime.get(Calendar.YEAR)) {
 
 
-        val now = now.timeInMillis
-        val millis2 = messageTime.timeInMillis
-        val diff = now - millis2
-        when {
-            diff < MINUTE_MILLIS -> "Just now"
-            diff < 2 * MINUTE_MILLIS -> "A minute ago"
-            diff < 50 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS}  minutes ago"
-            diff < 90 * MINUTE_MILLIS -> "An hour ago"
-            diff < 24 * HOUR_MILLIS -> "${diff / HOUR_MILLIS}  hours ago"
-            diff < 48 * HOUR_MILLIS -> "Yesterday"
-            else -> "${diff / DAY_MILLIS} days ago"
-        }
+            val now = now.timeInMillis
+            println("now $now")
+            val millis2 = messageTime.timeInMillis
+            println("secon $millis2")
+            val diff = now - millis2
+            when {
+                diff < MINUTE_MILLIS -> "Just now"
+                diff < 2 * MINUTE_MILLIS -> "A minute ago"
+                diff < 50 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS}  minutes ago"
+                diff < 90 * MINUTE_MILLIS -> "An hour ago"
+                diff < 24 * HOUR_MILLIS -> "${diff / HOUR_MILLIS}  hours ago"
+                diff < 48 * HOUR_MILLIS -> "Yesterday"
+                else -> "${diff / DAY_MILLIS} days ago"
+            }
 
 //        "Today at " + DateFormat.format(strTimeFormate, messageTime)
 
-    } else if (now.get(Calendar.DATE) - messageTime.get(Calendar.DATE) === 1
+        } else if (now.get(Calendar.DATE) - messageTime.get(Calendar.DATE) === 1
             &&
             now.get(Calendar.MONTH) === messageTime.get(Calendar.MONTH)
             &&
             now.get(Calendar.YEAR) === messageTime.get(Calendar.YEAR)) {
-        "Yesterday at " + DateFormat.format(strTimeFormate, messageTime)
-    } else {
-        "" + DateFormat.format(strDateFormate, messageTime)
-    }
+            "Yesterday at " + DateFormat.format(strTimeFormate, messageTime)
+        } else {
+            try{
+                "" + DateFormat.format(strDateFormate, messageTime)
+
+            }catch(e:Exception){
+                Log.d("Exeption",e.message.toString())
+                ""
+            }
+        }
+
 }
 
-fun String.milliseconds(): Long {
+fun Long.milliseconds(): Long {
     //String date_ = date;
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     try {
         sdf.timeZone = TimeZone.getTimeZone("UTC")
-        val mDate = sdf.parse(this)
+        val mDate = sdf.parse(this.toString())
         val timeInMilliseconds = mDate.time
         println("Date in milli :: $timeInMilliseconds")
         return timeInMilliseconds
@@ -130,6 +143,8 @@ fun String.milliseconds(): Long {
 
     return 0
 }
+
+
 data class ErrorResponse(val title: String, val message: String)
 
 

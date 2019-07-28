@@ -178,6 +178,7 @@
                 android:id="@+id/iv_mid_circle"
                 android:layout_width="160dp"
                 android:layout_height="160dp"
+                android:tint="@color/white"
                 android:contentDescription="@null"
                 android:src="@drawable/shape_circle_on_boarding_main"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -186,29 +187,31 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/iv_guest_list"
+                android:id="@+id/ivAddFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/transition_event"
                 android:contentDescription="@null"
                 android:padding="24dp"
+                android:tint="@color/white"
                 app:layout_constraintCircle="@id/iv_mid_circle"
                 app:layout_constraintCircleAngle="60"
                 app:layout_constraintCircleRadius="80dp" />
 
             <ImageView
-                android:id="@+id/iv_events"
+                android:id="@+id/iv_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/transition_group"
                 android:contentDescription="@null"
                 android:padding="24dp"
+                android:tint="@color/white"
                 app:layout_constraintCircle="@id/iv_mid_circle"
                 app:layout_constraintCircleAngle="180"
                 app:layout_constraintCircleRadius="80dp" />
 
             <ImageView
-                android:id="@+id/iv_calendar"
+                android:id="@+id/iv_send_alert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/transition_messaging"

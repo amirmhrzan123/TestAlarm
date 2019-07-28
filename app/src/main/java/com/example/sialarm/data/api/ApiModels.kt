@@ -4,7 +4,7 @@ data class AcceptDenyRequestModel(
     val sender_id:String,
     val receiver_id:String,
     val notification_type_id:String,
-    val accept:Boolean,
+    val status:Int,
     val senderUserName:String)
 
 

@@ -46,6 +46,7 @@
     <color name="yellow">#FFEB3B</color>
     <color name="red">#F44336</color>
     <color name="green">#4CAF50</color>
+    <color name="pink">#F104E5</color>
     <color name="white">#ffffff</color>
     <color name="dark_grey">#7E7E7E</color>
     <color name="light_grey">#D6D6D6</color>
@@ -69,6 +70,8 @@
     <color name="browser_actions_divider_color">@color/colorDark</color>
     <color name="bg_decline">@color/red</color>
     <color name="bg_delete">#FF0202</color>
+    <color name="bg_accept">@color/green</color>
+    <color name="bg_unfriend">@color/ok_pressed</color>
 
 
 </resources>

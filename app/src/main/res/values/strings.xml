@@ -41,4 +41,17 @@
     <string name="txt_from_contacts">Add from contacts</string>
     <string name="txt_add_another">Add another contact</string>
     <string name="add_number">ADD NUMBER</string>
+    <string name="alert_sent">Alert sent.</string>
+    <string name="add_friend">Add friend</string>
+    <string name="username">Username</string>
+    <string name="my_profile">My Profile</string>
+    <string name="notify_you_are_safe">Notify you are safe</string>
+    <string name="history">History</string>
+    <string name="language">Language</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="privacyPolicy">Privacy Policy</string>
+    <string name="logout">logout</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="number_error">Could not find the number. You can try adding number manually.</string>
 </resources>

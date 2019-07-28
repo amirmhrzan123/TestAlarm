@@ -12,8 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:background="@color/white"
+        android:layout_height="wrap_content">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -31,7 +31,7 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/rlAccount"
+                    android:id="@+id/rlMyProfile"
                     android:layout_width="0dp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
@@ -45,18 +45,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/dark_grey"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:layout_toStartOf="@id/imageView3"
                         android:padding="16dp"
-                        android:text="My Profile" />
+                        android:text="@string/my_profile" />
 
                     <ImageView
                         android:id="@+id/imageView3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="16dp"
+                        android:tint="@color/dark_grey"
                         app:srcCompat="@drawable/ic_arrow_right" />
 
                     <include
@@ -67,8 +70,9 @@
                         android:layout_marginTop="16dp" />
                 </RelativeLayout>
 
+
                 <RelativeLayout
-                    android:id="@+id/rlRentalLedger"
+                    android:id="@+id/rlNotify"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:paddingStart="16dp"
@@ -76,62 +80,26 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rlAccount">
-
-                    <TextView
-                        android:id="@+id/tvSmsContent"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:textSize="18sp"
-                        android:layout_toStartOf="@id/imageView5"
-                        android:padding="8dp"
-                        android:text="Change sms message content" />
-
-                    <ImageView
-                        android:id="@+id/imageView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="16dp"
-                        app:srcCompat="@drawable/ic_arrow_right" />
-
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/tvSmsContent"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/rlMaintenance"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:layout_width="0dp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rlRentalLedger">
+                    app:layout_constraintTop_toBottomOf="@+id/rlMyProfile">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
                         android:layout_marginEnd="8dp"
                         android:layout_toStartOf="@id/imageView6"
                         android:padding="16dp"
-                        android:text="Notify that you are safe"
+                        android:text="@string/notify_you_are_safe"
                         />
 
                     <ImageView
                         android:id="@+id/imageView6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:tint="@color/dark_grey"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="16dp"
                         app:srcCompat="@drawable/ic_arrow_right" />
 
@@ -144,7 +112,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rlRecommendATenant"
+                    android:id="@+id/rlHistory"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -152,23 +120,25 @@
                     android:paddingEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rlMaintenance">
+                    app:layout_constraintTop_toBottomOf="@+id/rlNotify">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
                         android:layout_marginEnd="8dp"
                         android:layout_toStartOf="@id/imageView7"
                         android:padding="16dp"
-                        android:text="Recommend SI friend" />
+                        android:text="@string/history" />
 
                     <ImageView
                         android:id="@+id/imageView7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:tint="@color/dark_grey"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="16dp"
                         app:srcCompat="@drawable/ic_arrow_right" />
 
@@ -181,7 +151,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rlSwitchLandLordProfile"
+                    android:id="@+id/rlLanguageSetting"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:paddingStart="16dp"
@@ -189,36 +159,39 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rlRecommendATenant">
+                    app:layout_constraintTop_toBottomOf="@id/rlHistory">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
                         android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/imageView8"
+                        android:layout_toStartOf="@id/switches"
                         android:padding="16dp"
-                        android:text="About us" />
+                        android:text="@string/language" />
 
-                    <ImageView
-                        android:id="@+id/imageView8"
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switches"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
                         android:layout_marginTop="16dp"
-                        app:srcCompat="@drawable/ic_arrow_right" />
+                        android:layout_alignParentRight="true"
+
+                        />
+
 
                     <include
                         layout="@layout/view_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_below="@id/imageView8"
+                        android:layout_below="@id/switches"
                         android:layout_marginTop="16dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rLsubscription"
+                    android:id="@+id/rlTemsCondition"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -226,7 +199,7 @@
                     android:paddingEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rlSwitchLandLordProfile">
+                    app:layout_constraintTop_toBottomOf="@id/rlLanguageSetting">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -234,9 +207,10 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
                         android:layout_toStartOf="@id/imageView10"
                         android:padding="16dp"
-                        android:text="Logout" />
+                        android:text="@string/terms_and_conditions" />
 
                     <ImageView
                         android:id="@+id/imageView10"
@@ -244,6 +218,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginTop="16dp"
+                        android:tint="@color/dark_grey"
                         app:srcCompat="@drawable/ic_arrow_right" />
 
                     <include
@@ -251,6 +226,84 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@id/imageView10"
+                        android:layout_marginTop="16dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlPrivacyPolicy"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rlTemsCondition">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
+                        android:layout_toStartOf="@id/imageView10"
+                        android:padding="16dp"
+                        android:text="@string/privacyPolicy" />
+
+                    <ImageView
+                        android:id="@+id/imageView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="16dp"
+                        android:tint="@color/dark_grey"
+                        app:srcCompat="@drawable/ic_arrow_right" />
+
+                    <include
+                        layout="@layout/view_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/imageView11"
+                        android:layout_marginTop="16dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlLogout"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rlPrivacyPolicy">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/dark_grey"
+                        android:layout_toStartOf="@id/imageView10"
+                        android:padding="16dp"
+                        android:text="@string/logout" />
+
+                    <ImageView
+                        android:id="@+id/imageview12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="16dp"
+                        android:tint="@color/dark_grey"
+                        app:srcCompat="@drawable/ic_arrow_right" />
+
+                    <include
+                        layout="@layout/view_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/imageview12"
                         android:layout_marginTop="16dp" />
                 </RelativeLayout>
 

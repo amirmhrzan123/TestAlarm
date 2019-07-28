@@ -40,9 +40,6 @@ exports.notifyNewMessage = functions.database.ref("/Notification/{userId}").onWr
 
 var user = functions.database.ref();*/
 
-exports.sendMessages = functions.https.onRequest((reqs,res)=>{
-    var http = require('http');
-
     var options = {
       'method': 'POST',
       'hostname': 'api.sparrowsms.com',
@@ -51,6 +48,9 @@ exports.sendMessages = functions.https.onRequest((reqs,res)=>{
           'Content-Type':'application/json'
       }
     };
+
+exports.sendMessages = functions.https.onRequest((reqs,res)=>{
+    
 
     var postData = {
         to:"+9779849276763",
@@ -90,7 +90,7 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
         var senderId = req.body.sender_id;
         var receiverId = req.body.receiver_id;
-        var notificationTypeId = req.body.notification_type_id;
+        var notificationTypeId = "1";
         var userName = req.body.userName;
         var notificationToken = "";
 
@@ -102,8 +102,7 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
 
                     notification: {
                         title: "SI friend request",
-                        body: userName + " has sent you SI friend request"
-
+                        body: capitalizeFirstLetter(userName) + " has sent you SI friend request"
                     },
                     data: {
                         username: userName,
@@ -116,25 +115,103 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                     var newData = {
                         "notification_type_id": notificationTypeId,
                         "sender_id": senderId,
-                        "message": userName + " has sent you friend request."
+                        "title":"SI friend request",
+                        "message": userName + " has sent you friend request.",
+                        "timeStamp": Date().now()
                     }
                     admin.database().ref("Notification").child(receiverId).push(newData)
                     return admin.messaging().sendToDevice(notificationToken, payload)
                         .then(response => {
                             console.log("Successfully sent message: ", response);
-                            res.status(200).send("Success")
+                            res.status(200).json({
+                                statusCode: 200,
+                                message: "Success"
+                            })
                             return ""
                         });
                 } else {
                     console.log("Error")
-                    res.status(301).send("Failure")
+                    res.status(301).json({
+                        statusCode: 301,
+                        message: "Failure"
+                    })
                 }
 
             }else{
-                res.status(301).send("Failure")
+                res.status(301).json({
+                    statusCode: 301,
+                    message: "Failure"
+                })
             }
         })
 
+    })
+})
+
+exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
+    cors(req,res,()=>{
+        var senderId = req.body.sender_id
+        var notificationTypeId = "4"
+        var userName = req.body.userName
+        var receiverIds = []
+        var message = ""
+        var registrationTokens = []
+        var payload = {
+            notification:{
+                title: "SI safe alert",
+                body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+            },
+            data:{
+                username: userName,
+                sender_id: senderId,
+                notification_type_id: notificationTypeId,
+            }
+        }
+
+        admin.database().ref('/friends/'+senderId).once('value',function(snap){
+            if(snap.exists){
+                snap.forEach((child)=>{
+                    receiverIds.push(child.val().number)
+                })
+
+                receiverIds.forEach((id)=>{
+                    admin.database().ref('/users/'+id).once('value',function(snap){
+                        if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
+                            registrationTokens.push(snap.child('notification_token').val())
+                        }else{
+                            registrationTokens.push("kjgkjjk")
+                        }
+                        console.log(registrationTokens)
+                        if(receiverIds.length===registrationTokens.length){
+                            return admin.messaging().sendToDevice(registrationTokens, payload)
+                            .then(response => {
+                                console.log("Successfully sent message: ", response);
+                                receiverIds.forEach((id)=>{
+                                    var newData = {
+                                        "notification_type_id": notificationTypeId,
+                                        "sender_id": senderId,
+                                        "title":"SI safe alert",
+                                        "message": "Your SI Friend "+userName + " is safe now",
+                                        "timeStamp": Date().now()
+                                    }
+                                    admin.database().ref("Notification").child(id).push(newData)
+                                })
+                                res.status(200).json({
+                                    statusCode: 200,
+                                    message: "Success"
+                                })
+                                return ""
+                            });
+                        }
+                    })
+                })
+            }else{
+                res.status(301).json({
+                    statusCode:301,
+                    message: "Failure"
+                })
+            }
+        })
     })
 })
 
@@ -142,7 +219,7 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
 exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
     cors(req,res,()=>{
         var senderId = req.body.sender_id
-        var notificationTypeId = "1"
+        var notificationTypeId = "2"
         var userName = req.body.userName
         var geoLatitude = req.body.latitude
         var geoLongitude = req.body.longitude
@@ -151,8 +228,8 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+userName + " is in need of help. Current location : Latitude="+geoLatitude+
-                " Longitude="+geoLongitude
+                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
+                "Longitude="+geoLongitude
             },
             data: {
                 username: userName,
@@ -185,19 +262,27 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                     var newData = {
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
-                                        "message": "Your SI Friend "+userName + " is in need of help. Current location : Latitude="+geoLatitude+
-                                        " Longitude="+geoLongitude
+                                        "title":"SI emergency alert",
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location : Latitude="+geoLatitude+
+                                        " Longitude="+geoLongitude,
+                                        "timeStamp": Date().now()
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)
                                 })
-                                res.status(200).json(registrationTokens)
+                                res.status(200).json({
+                                    statusCode: 200,
+                                    message: "Success"
+                                })
                                 return ""
                             });
                         }
                     })
                 })
             }else{
-                res.status(301).send("error")
+                res.status(301).json({
+                    statusCode:301,
+                    message: "Failure"
+                })
             }
         })
 
@@ -210,8 +295,8 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
         console.log("senderId", senderId);
         var receiverId = req.body.receiver_id;
         console.log("receiverId",receiverId)
-        var notificationTypeId = req.body.notification_type_id;
-        var accept = req.body.accept
+        var notificationTypeId = "";
+        var status = req.body.status
         var userName = req.body.senderUserName;
         var notificationToken = "";
         var message = ""
@@ -220,16 +305,51 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
         admin.database().ref('/users/' + receiverId).once("value", function (snap) {
             if (snap.exists) {
                 notificationToken = snap.child('notification_token').val()
-                if (accept) {
-                    message = userName + " has accepted your request."
-                } else {
-                    message = userName + " has denied your request."
+                if(status>2){
+                    admin.database().ref('/friends/'+receiverId).child(senderId).remove(then=>{
+                        admin.database().ref('/friends/'+senderId).child(receiverId).remove(then=>{
+                            console.log("Deleted")
+                            res.status(200).json({
+                                statusCode: 200,
+                                message: "Success"
+                            })
+                        })
+                    })
+                }else{
+                    
+                    if(status===1){
+                        notificationTypeId="3"
+                        message = capitalizeFirstLetter(userName)  + " has accepted your request."
+                        admin.database().ref('/friends/'+receiverId).child(senderId).update({
+                            status:1,
+                            notification:true
+        
+                        })
+                        admin.database().ref('/friends/'+senderId).child(receiverId).update({
+                            status:1,
+                            notification:true
+                        })
+
+                    }else{
+                        message = capitalizeFirstLetter(userName)  + " has denied your request."
+                        notificationTypeId="4"
+                        admin.database().ref('/friends/'+receiverId).child(senderId).remove(then=>{
+                            admin.database().ref('/friends/'+senderId).child(receiverId).remove(then=>{
+                                console.log("Deleted")
+                                res.status(200).json({
+                                    statusCode: 200,
+                                    message: "Success"
+                                })
+                            })
+                        })
+                    }
+                 
                 }
 
                 var payload = {
 
                     notification: {
-                        title: "SI Invitation Reply",
+                        title: "SI friend request reply",
                         body: message
 
                     },
@@ -241,28 +361,56 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                     }
                 };
                 console.log("notificationtoken", notificationToken)
-                if (notificationToken !== "") {
-                    var newData = {
-                        "notification_type_id": notificationTypeId,
-                        "sender_id": senderId,
-                        "message": message
+                if(status>2){
+                    res.status(200).json({
+                        statusCode: 200,
+                        message: "Success"
+                    })
+                }else{
+                    if (notificationToken !== "") {
+
+                        var newData = {
+                            "notification_type_id": notificationTypeId,
+                            "sender_id": senderId,
+                            "title":"SI friend request reply",
+                            "message": message,
+                            "timeStamp": new Date().getTime()
+                        }
+                        admin.database().ref("Notification").child(receiverId).push(newData)
+                        return admin.messaging().sendToDevice(notificationToken, payload)
+                            .then(response => {
+                                console.log("Successfully sent message: ", response);
+                                res.status(200).json({
+                                    statusCode:200,
+                                    message: "Success"
+                                })
+                                return ""
+                            });
+                    } else {
+                        console.log("Error")
+                        res.status(301).json({
+                            statusCode: 301,
+                            message: "Failure"
+                        })
                     }
-                    admin.database().ref("Notification").child(receiverId).push(newData)
-                    return admin.messaging().sendToDevice(notificationToken, payload)
-                        .then(response => {
-                            console.log("Successfully sent message: ", response);
-                            res.status(200).send("Success")
-                            return ""
-                        });
-                } else {
-                    console.log("Error")
                 }
+              
 
             } else {
                 console.log("error")
+                res.status(301).json({
+                    statusCode: 301,
+                    message: "Failure"
+                })
             }
 
         })
     })
 })
+
+
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 

@@ -54,6 +54,7 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
     var runnable:Runnable?=null
     var counDownTimer : CountDownTimer?=null
     var time:Long  = 1500
+    var alertSend = false
     var buttonPressed = false
 
 
@@ -181,7 +182,16 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                     hideLoading()
                 }
             }
+
         })
+        btnStopTracking.setOnClickListener {
+            alertSend = false
+            progress.progress = 0
+            progress.visibility = View.INVISIBLE
+            ll_alert.visibility = View.INVISIBLE
+            btnUrgent.visibility = View.VISIBLE
+            stopLocationUpdates()
+        }
 
         runnable = Runnable{
             btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
@@ -195,7 +205,10 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                                 override fun onFinish() {
                                     counDownTimer=null
                                     btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
-                                    progress.visibility = View.INVISIBLE
+                                    btnUrgent.visibility = View.INVISIBLE
+                                    ll_alert.visibility = View.VISIBLE
+                                    alertSend = true
+                                    progress.progress = 100
                                     buttonPressed = true
                                     if (!mRequestingLocationUpdates) {
                                         mRequestingLocationUpdates = true
@@ -217,12 +230,13 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
 
                     }
                     MotionEvent.ACTION_UP -> {
-                        progress.visibility = View.GONE
                         btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
-                        progress.progress = 0
                         counDownTimer?.cancel()
                         counDownTimer = null
-                        progress.visibility = View.INVISIBLE
+                        if(!alertSend){
+                            progress.visibility = View.INVISIBLE
+                            progress.progress = 0
+                        }
                         return@OnTouchListener true
                     }
                 }

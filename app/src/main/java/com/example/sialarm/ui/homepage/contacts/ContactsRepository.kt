@@ -133,9 +133,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                     friendsListResponse.postValue(Resource.success("","",listContacts,null))
                 }else{
                     friendsListResponse.postValue(Resource.success("","",listContacts,null))
-
                 }
-
             }
 
         })
@@ -145,18 +143,7 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
 
     fun acceptDenyInvitation(acceptDenyRequestModel: AcceptDenyRequestModel):LiveData<Resource<String>>{
         val acceptDenyResponse = MutableLiveData<Resource<String>>()
-        val taskMap = HashMap<String, Any>()
-        if(acceptDenyRequestModel.accept){
-            taskMap["status"]=1
-            taskMap["notification"]=true
-            taskMap["message"]=false
-        }else{
-            taskMap["status"]=4
-            taskMap["notification"]=false
-            taskMap["message"]=false
-        }
-        firebaseDatabase.getReference("friends").child(acceptDenyRequestModel.sender_id).child(acceptDenyRequestModel.receiver_id).updateChildren(taskMap)
-        firebaseDatabase.getReference("friends").child(acceptDenyRequestModel.receiver_id).child(acceptDenyRequestModel.sender_id).updateChildren(taskMap)
+
         viewModelScope.launch {
             try{
                 acceptDenyResponse.postValue(Resource.loading(null))
