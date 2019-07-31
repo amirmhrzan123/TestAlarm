@@ -59,16 +59,18 @@ exports.sendMessages = functions.https.onRequest((reqs,res)=>{
 
 exports.sendFriendRequest = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
-        var senderId = req.body.sender_id;
-        var receiverId = req.body.receiver_id;
+        var senderId = req.body.sender_id
+        console.log("SI friend Request",senderId)
+        var receiverId = req.body.receiver_id
+        console.log("SI frind request",receiverId)
         var notificationTypeId = "1";
         var userName = req.body.userName;
+        console.log("SI Friend request",userName)
         var notificationToken = "";
-
-        admin.database().ref('/users/' + receiverId).once("value", function (snap) {
+        admin.database().ref('/users/' + receiverId).once("value",async function (snap) {
             if (snap.exists) {
                 notificationToken = snap.child('notification_token').val()
-
+                console.log("SI friend request",notificationToken)
                 var payload = {
 
                     notification: {
@@ -91,15 +93,13 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                         "timeStamp": new Date().getTime()
                     }
                     admin.database().ref("Notification").child(receiverId).push(newData)
-                    return admin.messaging().sendToDevice(notificationToken, payload)
-                        .then(response => {
-                            console.log("Successfully sent message: ", response);
-                            res.status(200).json({
-                                statusCode: 200,
-                                message: "Success"
-                            })
-                            return ""
-                        });
+                    const response = await admin.messaging().sendToDevice(notificationToken, payload);
+                    console.log("Successfully sent message: ", response);
+                    res.status(200).json({
+                        statusCode: 200,
+                        message: "Success"
+                    });
+                    return "";
                 } else {
                     console.log("Error")
                     res.status(301).json({
@@ -114,6 +114,12 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                     message: "Failure"
                 })
             }
+        },function(error){
+            console.log("SI friend request",error.message)
+            res.status(301).json({
+                statusCode:301,
+                message: "Error"
+            })
         })
 
     })
@@ -146,7 +152,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                 })
 
                 receiverIds.forEach((id)=>{
-                    admin.database().ref('/users/'+id).once('value',function(snap){
+                    admin.database().ref('/users/'+id).once('value',async function(snap){
                         if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
                             registrationTokens.push(snap.child('notification_token').val())
                         }else{
@@ -154,8 +160,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            return admin.messaging().sendToDevice(registrationTokens, payload)
-                            .then(response => {
+                            const response=  admin.messaging().sendToDevice(registrationTokens, payload)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -171,8 +176,6 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                                     statusCode: 200,
                                     message: "Success"
                                 })
-                                return ""
-                            });
                         }
                     })
                 })
@@ -218,7 +221,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                 })
 
                 receiverIds.forEach((id)=>{
-                    admin.database().ref('/users/'+id).once('value',function(snap){
+                    admin.database().ref('/users/'+id).once('value',async function(snap){
                         if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
                             registrationTokens.push(snap.child('notification_token').val())
                         }else{
@@ -226,8 +229,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            return admin.messaging().sendToDevice(registrationTokens, payload)
-                            .then(response => {
+                            const response = await admin.messaging().sendToDevice(registrationTokens, payload)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -244,8 +246,6 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                     statusCode: 200,
                                     message: "Success"
                                 })
-                                return ""
-                            });
                         }
                     })
                 })
@@ -255,6 +255,12 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                     message: "Failure"
                 })
             }
+        },function(error){
+            console.log("Send alert Message","Error")
+            res.status(301).json({
+                statusCode: 301,
+                message: "Failure"
+            })
         })
 
     })

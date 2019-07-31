@@ -12,6 +12,7 @@ import com.facebook.accountkit.AccountKitCallback
 import com.facebook.stetho.DumperPluginsProvider
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.dumpapp.DumperPlugin
+import com.google.firebase.database.FirebaseDatabase
 import org.koin.android.ext.android.startKoin
 
 class BaseApplication : MultiDexApplication() {
@@ -28,6 +29,9 @@ class BaseApplication : MultiDexApplication() {
                 .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                 .build());
         startKoin(this, listOf(appModule, apiModule, persistenceDataModule,  viewModelModule), mapOf(), true)
+
+        val firebaseDatabase = FirebaseDatabase.getInstance()
+        firebaseDatabase.setPersistenceEnabled(true)
     }
 
     private class SampleDumperPluginProvider(private val mContext: Context) : DumperPluginsProvider {

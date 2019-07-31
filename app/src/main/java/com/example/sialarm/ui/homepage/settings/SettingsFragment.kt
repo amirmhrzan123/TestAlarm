@@ -12,7 +12,18 @@ import com.example.sialarm.databinding.FragmentSettingBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>() {
+class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),ISettingNavigator {
+    override fun onProfileClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onLogoutClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSendSafeAlertClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private val settingViewModel : SettingViewModel by viewModel()
 
@@ -30,6 +41,7 @@ class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>() 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        settingViewModel.setNavigator(this)
 
     }
 }

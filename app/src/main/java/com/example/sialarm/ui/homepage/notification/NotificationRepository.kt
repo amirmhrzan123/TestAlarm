@@ -45,6 +45,7 @@ class NotificationRepository constructor(private val viewModelScope:CoroutineSco
                         }
 
                     }else{
+                        notificationResponse.postValue(Resource.error("","",null))
 
                     }
                 }

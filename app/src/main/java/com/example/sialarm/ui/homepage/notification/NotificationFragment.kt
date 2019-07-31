@@ -44,7 +44,7 @@ class NotificationFragment:BaseFragment<NotificationViewModel,FragmentNotificati
         notificationViewModel.notification.observe(this, Observer {
             when(it.status){
                 Status.LOADING->{
-                    showLoading("")
+                  //  showLoading("")
                 }
                 Status.SUCCESS->{
                     hideLoading()
@@ -60,6 +60,7 @@ class NotificationFragment:BaseFragment<NotificationViewModel,FragmentNotificati
 
                 }
                 Status.ERROR->{
+                    hideLoading()
 
                 }
             }

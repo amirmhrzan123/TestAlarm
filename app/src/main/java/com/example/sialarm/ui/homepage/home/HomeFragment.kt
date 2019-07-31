@@ -154,7 +154,6 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
             progress.visibility = View.INVISIBLE
         })
 
-
         KotlinPermissions.with(activity!!)
             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
             .onAccepted { permissions ->

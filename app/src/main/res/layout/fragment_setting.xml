@@ -34,6 +34,7 @@
 
                 <RelativeLayout
                     android:id="@+id/rlMyProfile"
+                    android:onClick="@{viewModel.onProfileClick()}"
                     android:layout_width="0dp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
@@ -77,6 +78,7 @@
                     android:id="@+id/rlNotify"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
+                    android:onClick="@{viewModel.onSafeAlertClick()}"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:layout_height="wrap_content"
@@ -274,6 +276,7 @@
                     android:id="@+id/rlLogout"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
+                    android:onClick="@{viewModel.onLogoutClick()}"
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"

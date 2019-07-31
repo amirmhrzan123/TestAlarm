@@ -43,7 +43,6 @@ fun provideFirebaseStore() = FirebaseFirestore.getInstance()
 
 fun provideFirebaseDatabase():FirebaseDatabase {
     val firebaseDatabse = FirebaseDatabase.getInstance()
-    firebaseDatabse.setPersistenceEnabled(true)
     return firebaseDatabse
 }
 

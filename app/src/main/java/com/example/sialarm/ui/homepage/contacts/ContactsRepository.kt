@@ -41,7 +41,6 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
 
                 }
                 override fun onDataChange(p0: DataSnapshot) {
-
                     val friendDatabase = firebaseDatabase.getReference(FireKey.FRIENDS)
                     if(p0.exists()){
                         var user:Users?=null
@@ -67,6 +66,9 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                                     .addOnCompleteListener {
                                         friendsResponse.postValue(Resource.success("","",null,null))
                                     }
+                                    .addOnFailureListener {
+                                        friendsResponse.postValue(Resource.error("","",null))
+                                    }
                             }
 
                     }else{
@@ -89,6 +91,9 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
                                                 true))
                                             .addOnCompleteListener {
                                                 friendsResponse.postValue(Resource.success("","",null,null))
+                                            }
+                                            .addOnFailureListener {
+                                                friendsResponse.postValue(Resource.error("","",null))
                                             }
                                     }
 
@@ -122,10 +127,9 @@ class ContactsRepository constructor(private val firebaseDatabase: FirebaseDatab
         val friendsListResponse = MutableLiveData<Resource<List<Friends>>>()
         friendsListResponse.postValue(Resource.loading(null))
         println("number"+prefs.getUserId())
-
         firebaseDatabase.getReference(FireKey.FRIENDS).child(prefs.getUserId()).addValueEventListener(object:ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
-                friendsListResponse.postValue(Resource.success("",p0.message,null))
+                friendsListResponse.postValue(Resource.error("",p0.message,null))
 
             }
 

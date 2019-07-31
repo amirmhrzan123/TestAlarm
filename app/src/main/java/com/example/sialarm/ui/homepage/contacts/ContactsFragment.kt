@@ -162,7 +162,7 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
         contactsViewModel.getContacts.observe(this,Observer{
             when(it.status){
                 Status.LOADING->{
-                    showLoading("")
+                   // showLoading("")
                 }
                 Status.ERROR->{
                     hideLoading()
