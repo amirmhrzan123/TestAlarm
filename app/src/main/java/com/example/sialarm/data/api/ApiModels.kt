@@ -9,10 +9,10 @@ data class AcceptDenyRequestModel(
 
 
 data class SendAlertMessages(
-    val sender_id:String,
-    val userName:String,
-    val latitude:String,
-    val longitude:String
+    var sender_id:String="",
+    var userName:String="",
+    var latitude:String="",
+    var longitude:String=""
 )
 
 data class SendFriendRequest(

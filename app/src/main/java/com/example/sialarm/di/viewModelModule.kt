@@ -7,6 +7,7 @@ import com.example.sialarm.ui.homepage.notification.NotificationViewModel
 import com.example.sialarm.ui.homepage.settings.SettingViewModel
 import com.example.sialarm.ui.landingScreen.LandingScreenViewModel
 import com.example.sialarm.ui.myProfile.MyProfileViewModel
+import com.example.sialarm.utils.FirebaseData
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 
@@ -22,7 +23,7 @@ val viewModelModule = module {
 
     viewModel { HomeViewModel(get()) }
 
-    viewModel { MyProfileViewModel(get())}
+    viewModel { MyProfileViewModel(get(),get())}
 
     viewModel {  SettingViewModel(get()) }
 

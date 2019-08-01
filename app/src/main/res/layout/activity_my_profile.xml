@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <com.example.sialarm.utils.customViews.CenteredToolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_profiler"
                 android:layout_width="match_parent"
                 app:title="My Proflie"
                 app:layout_constraintTop_toTopOf="parent"
@@ -32,26 +32,30 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_profiler"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
 
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_marginBottom="20dp"
+                    android:layout_height="match_parent">
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/circleImageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:onClick="@{()->viewModel.onImageClicked()}"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@drawable/ic_profile"
+                        android:src="@drawable/ic_profile"
                         app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
                         app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -71,8 +75,8 @@
                     <ProgressBar
                         android:id="@+id/progress"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="133dp"
-                        android:layout_height="133dp"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
                         android:layout_centerInParent="true"
                         android:indeterminate="false"
                         android:max="100"
@@ -114,6 +118,7 @@
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/textInputStyle"
                             android:layout_width="match_parent"
+                            android:textColorHint="@color/light_blue"
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -249,7 +254,6 @@
                                 android:id="@+id/etStreet"
                                 style="@style/textInputEdiTextStyle"
                                 android:layout_width="match_parent"
-                                android:focusable="false"
                                 android:hint="@string/tole"
                                 android:inputType="textCapSentences"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -262,6 +266,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="@dimen/space_60dp"
                         app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
                         app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
                         app:layout_constraintTop_toBottomOf="@+id/cvTole">
@@ -290,11 +295,6 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -317,7 +317,7 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                         .permissions(Manifest.permission.SEND_SMS)
                         .onAccepted { permissions ->
                             val smsManager = SmsManager.getDefault() as SmsManager
-                            smsManager.sendTextMessage("+9779841866002", null, "${mCurrentLocation.latitude},${mCurrentLocation.longitude}", null, null)
+                            smsManager.sendTextMessage("+9779808878368", null, "SISA1234|${mCurrentLocation.latitude}|${mCurrentLocation.longitude}*", null, null)
                             stopLocationUpdates()
                         }
                         .onDenied {

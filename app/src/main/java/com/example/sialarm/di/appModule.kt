@@ -50,8 +50,8 @@ fun provideHomeRepository(viewModelScope: CoroutineScope,firebaseDatabase: Fireb
                           prefsManager: PrefsManager,apiServices: ApiServices):HomeRepository
 = HomeRepository(apiServices,viewModelScope,prefsManager,firebaseDatabase)
 
-fun provideMyProfileRepository(viewModelScope: CoroutineScope,firebaseDatabase: FirebaseDatabase,
-                               prefsManager: PrefsManager):MyProfileRepository
+fun provideMyProfileRepository(viewModelScope: CoroutineScope,
+                               prefsManager: PrefsManager,firebaseDatabase: FirebaseDatabase):MyProfileRepository
 = MyProfileRepository(viewModelScope,firebaseDatabase,prefsManager)
 
 

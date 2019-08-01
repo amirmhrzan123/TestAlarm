@@ -242,11 +242,7 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
                     mainViewModel.contactName = contactName
                     mainViewModel.contactTrigger.value = true
                 }
-
-
                 Log.d("Contactname", "Contact Name: " + contactName)
-
-
             }
             }
     }

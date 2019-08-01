@@ -30,6 +30,7 @@
     <!--For Edittext-->
     <style name="editTextStyle">
         <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="android:textColor">@color/dark_grey</item>
         <item name="android:background">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
@@ -51,6 +52,7 @@
 
     <style name="textInputStyle">
         <item name="android:paddingTop">@dimen/space_5dp</item>
+        <item name="android:textColorHint">@color/light_blue</item>
         <item name="android:layout_height">@dimen/space_60dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">@color/white</item>

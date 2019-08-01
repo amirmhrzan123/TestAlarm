@@ -279,7 +279,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
         var message = ""
        
 
-        admin.database().ref('/users/' + receiverId).once("value", function (snap) {
+        admin.database().ref('/users/' + receiverId).once("value", async function (snap) {
             if (snap.exists) {
                 notificationToken = snap.child('notification_token').val()
                 if(status>2){
@@ -291,7 +291,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                                 message: "Success"
                             })
                         })
-                    })
+                    }).
                 }else{
                     
                     if(status===1){
@@ -474,7 +474,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
         admin.database().ref('/users/'+senderId).once('value',function(snap){
             if(snap.exists){
                 var userName = snap.child('username').val()
-                var receiverIds = []
+                var receiverIds = []s
         var registrationTokens = []
         var payload = {
             notification: {
