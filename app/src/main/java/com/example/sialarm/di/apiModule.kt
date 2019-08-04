@@ -1,4 +1,4 @@
-package com.example.sialarm.di
+sopackage com.example.sialarm.di
 
 import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.utils.LiveDataCallAdapterFactory

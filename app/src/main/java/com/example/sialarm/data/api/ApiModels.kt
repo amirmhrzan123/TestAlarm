@@ -15,6 +15,11 @@ data class SendAlertMessages(
     var longitude:String=""
 )
 
+data class SendSafeAlertMessages(
+    var sender_id:String="",
+    var userName: String=""
+)
+
 data class SendFriendRequest(
     val sender_id:String,
     val receiver_id:String,

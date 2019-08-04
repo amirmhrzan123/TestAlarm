@@ -4,6 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.example.sialarm.ui.myProfile.MyProfileViewModel" />
@@ -53,6 +55,7 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_marginStart="8dp"
+                        app:url="@{viewModel.imageurl}"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:src="@drawable/ic_profile"
@@ -80,8 +83,9 @@
                         android:layout_centerInParent="true"
                         android:indeterminate="false"
                         android:max="100"
+                        android:visibility="@{viewModel.visible ? View.VISIBLE : View.GONE}"
                         android:secondaryProgress="100"
-                        android:progress="50"
+                        android:progress="@{viewModel.progress}"
                         android:progressDrawable="@drawable/circular_progress"
                         app:layout_constraintBottom_toBottomOf="@+id/circleImageView2"
                         app:layout_constraintEnd_toEndOf="@+id/circleImageView2"
@@ -122,6 +126,7 @@
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/userName"
                                 style="@style/textInputEdiTextStyle"
                                 android:layout_width="match_parent"
                                 android:hint="@string/username"
@@ -147,6 +152,7 @@
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/email"
                                 style="@style/textInputEdiTextStyle"
                                 android:layout_width="match_parent"
                                 android:hint="@string/email"
@@ -170,12 +176,16 @@
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/textInputStyle"
                             android:layout_width="match_parent"
+                            android:onClick="@{()->viewModel.onStateClicked()}"
+
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etState"
                                 style="@style/textInputEdiTextStyle"
                                 android:layout_width="match_parent"
-                                android:enabled="false"
+                                android:focusable="false"
+                                android:onClick="@{()->viewModel.onStateClicked()}"
                                 android:text="Province No.3"
                                 android:hint="@string/state"
                                 />
@@ -196,15 +206,16 @@
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/textInputStyle"
+                            android:onClick="@{()->viewModel.onDistrictClicked()}"
                             android:layout_width="match_parent"
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 style="@style/textInputEdiTextStyle"
+                                android:id="@+id/etDistrict"
+                                android:onClick="@{()->viewModel.onDistrictClicked()}"
                                 android:layout_width="match_parent"
-                                android:clickable="false"
                                 android:focusable="false"
-                                android:enabled="false"
                                 android:text="@string/kathmandu"
                                 android:hint="@string/district"
                                  />
@@ -223,12 +234,18 @@
 
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/textInputStyle"
+                            android:onClick="@{()->viewModel.onWardClicked()}"
                             android:layout_width="match_parent"
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etWardNumber"
                                 style="@style/textInputEdiTextStyle"
+                                android:cursorVisible="false"
+                                android:onClick="@{()->viewModel.onWardClicked()}"
                                 android:layout_width="match_parent"
+                                android:text="0"
+                                android:focusable="false"
                                 android:hint="@string/wardNo"
                                 android:inputType="number"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -287,6 +304,24 @@
 
 
                     </androidx.cardview.widget.CardView>
+
+                    <Button
+                        android:id="@+id/btnUpdate"
+                        style="@style/circularButton"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="32dp"
+                        android:onClick="@{()->viewModel.onUpdateClicked()}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginTop="32dp"
+                        app:layout_constraintTop_toBottomOf="@+id/cvDevice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Next"
+                        android:textColor="#ffffff"
+                        android:textAllCaps="false" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -310,8 +310,8 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                 }
 
                 if(context!!.isNetworkConnected()){
-                    homeViewModel.sendLocationUpdates(mCurrentLocation.latitude.toString(),
-                        mCurrentLocation.longitude.toString())
+                    homeViewModel.sendLocationUpdates(String.format("%.7f", mCurrentLocation.latitude),
+                        String.format("%.7f", mCurrentLocation.longitude))
                 }else{
                     KotlinPermissions.with(activity!!) // where this is an FragmentActivity instance
                         .permissions(Manifest.permission.SEND_SMS)

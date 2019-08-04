@@ -6,12 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.sialarm.base.BaseViewModel
 import com.example.sialarm.data.api.SendAlertMessages
+import com.example.sialarm.data.api.SendSafeAlertMessages
 import com.example.sialarm.utils.FirebaseData
 import com.example.sialarm.utils.Resource
 
 class SettingViewModel constructor(private val repository: SettingRepository):BaseViewModel<ISettingNavigator>() {
 
-    var settingValid = MutableLiveData<SendAlertMessages>()
+    var settingValid = MutableLiveData<SendSafeAlertMessages>()
 
 
     fun onProfileClick(){
@@ -24,6 +25,10 @@ class SettingViewModel constructor(private val repository: SettingRepository):Ba
 
     fun onSafeAlertClick(){
         getNavigator().onSendSafeAlertClicked()
+    }
+
+    fun onHistoryClick(){
+        getNavigator().onHistoryClicked()
     }
 
     val sendSafeAlert: LiveData<Resource<String>> = Transformations

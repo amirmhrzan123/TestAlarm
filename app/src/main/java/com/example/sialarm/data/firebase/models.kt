@@ -8,7 +8,6 @@ import com.google.firebase.database.DataSnapshot
 
 data class Users(
     val active: Boolean=false,
-    val address:String="",
     val email:String="",
     val id:String="",
     val latitude:String="",
@@ -17,7 +16,12 @@ data class Users(
     val phone_number:String="",
     val username:String="",
     val device:String="",
-    val timeStamp:Long=0
+    val timeStamp:Long=0,
+    val image: String = "",
+    val tole:String="",
+    val ward:Int= 0,
+    val state:String="",
+    val district:String=""
 )
 
 data class PhoneNumber(

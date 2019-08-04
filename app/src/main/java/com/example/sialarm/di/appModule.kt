@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.res.Resources
 import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.data.prefs.PrefsManager
+import com.example.sialarm.ui.history.HistoryRepository
+import com.example.sialarm.ui.homepage.MainRepository
 import com.example.sialarm.ui.homepage.contacts.ContactsRepository
 import com.example.sialarm.ui.homepage.home.HomeRepository
 import com.example.sialarm.ui.homepage.notification.NotificationRepository
@@ -28,6 +30,8 @@ val appModule = module {
     single { provideHomeRepository(get(),get(),get(),get())}
     single { provideMyProfileRepository(get(),get(),get())}
     single { provideSettingsRepository(get(),get(),get(),get())}
+    single { provideMainRepository(get(),get(),get())}
+    single { provideHistoryRepository(get(),get(),get())}
 }
 
 fun provideResources(context: Context): Resources = context.resources
@@ -59,3 +63,12 @@ fun provideSettingsRepository(viewModelScope: CoroutineScope,firebaseDatabase: F
                               prefsManager: PrefsManager,apiServices: ApiServices): SettingRepository
 = SettingRepository(apiServices,viewModelScope,firebaseDatabase,prefsManager)
 
+fun provideMainRepository(viewModelScope: CoroutineScope,
+                          firebaseDatabase: FirebaseDatabase,
+                          prefsManager: PrefsManager):MainRepository
+= MainRepository(viewModelScope,firebaseDatabase,prefsManager)
+
+fun provideHistoryRepository(viewModelScope: CoroutineScope,
+                             firebaseDatabase: FirebaseDatabase,
+                             prefsManager: PrefsManager):HistoryRepository
+= HistoryRepository(firebaseDatabase,prefsManager,viewModelScope)

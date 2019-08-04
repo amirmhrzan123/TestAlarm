@@ -62,4 +62,25 @@
     <string name="tole">Tole</string>
     <string name="deviceNumber">Device Id</string>
     <string name="siAlarm">SI Alarm</string>
+    <string name="place_autocomplete_search_hint">Search</string>
+    <string name="search_hint_country">Search</string>
+
+
+    <array name="state">
+        <item>Province No. 1</item>
+        <item>Province No. 2</item>
+        <item>Province No. 3</item>
+        <item>Gandaki Pradesh</item>
+        <item>Province No. 5</item>
+        <item>Karnali Pradesh</item>
+        <item>Sudurpaschim Pradesh</item>
+    </array>
+
+    <array name="district">
+        <item>Bhojpur</item>
+        <item>Dhankuta</item>
+        <item>Ilam</item>
+        <item>Jhapa</item>
+    </array>
+
 </resources>

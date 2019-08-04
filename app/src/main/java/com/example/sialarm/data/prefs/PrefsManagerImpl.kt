@@ -3,6 +3,44 @@ package com.example.sialarm.data.prefs
 import android.content.SharedPreferences
 
 class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
+    override fun setDistrict(district: String) {
+        pref.district = district
+    }
+
+    override fun getDistrict(): String =  pref.district
+
+    override fun setTole(tole: String) {
+        pref.tole = tole
+    }
+
+    override fun getTole(): String = pref.tole
+
+    override fun setState(state: String) {
+        pref.state = state
+    }
+
+    override fun getState(): String = pref.state
+
+    override fun setWardNo(ward: String) {
+        pref.wardNumber = ward
+    }
+
+    override fun getWardNo(): String = pref.wardNumber
+
+    override fun setEmail(email: String) {
+        pref.email = email
+    }
+
+    override fun getEmail(): String = pref.email
+
+    override fun setUserImage(image: String) {
+        pref.userImage = image
+    }
+
+    override fun getUserImage(): String {
+        return pref.userImage
+    }
+
     override fun setPreSetupComplete(boolean: Boolean) {
         pref.preSetupComplete = boolean
     }
@@ -15,11 +53,7 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
 
     override fun getDeviceId(): String = pref.deviceId
 
-    override fun setEnableSubscrition(enable: Boolean) {
-        pref.enableSubsription = enable
-    }
 
-    override fun getEnableSubscription(): Boolean = pref.enableSubsription
 
     override fun isDeviceRegistered(): Boolean {
         return pref.isDeviceRegistered
@@ -32,20 +66,6 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
     override fun clear() {
         pref.edit().clear().commit()
     }
-
-    override fun setCompletedSubStepCount(pos: Int) {
-        pref.completedSubSteps = pos
-    }
-
-    override fun getCompletedSubStepCount(): Int = pref.completedSubSteps
-
-
-    override fun setCompletedStepCount(pos: Int) {
-        pref.completedSteps = pos
-    }
-
-    override fun getCompletedStepCount() = pref.completedSteps
-
     override fun getPhoneNumber(): String = pref.phoneNumber
 
     override fun setPhoneNumber(number: String) {
@@ -67,17 +87,23 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
     companion object {
         const val ACCESSTOKEN = "access_token"
         const val REFRESHTOKEN = "refresh_token"
+        const val TOLE = "tole"
+        const val WARDNUMBER = "wardNumber"
+        const val STATE = "state"
+        const val EMAIL = "email"
         const val USERID = "userId"
         const val USERNAME = "userName"
         const val LOGINSTATUS = "loginStatus"
         const val LOGIN_AS = "login_as"
         const val PHONENUMBER = "phoneNumber"
         const val COMPLETED_STEPS = "completed_steps"
+        const val USERIMAGE = "userImage"
         const val COMPLETED_SUB_STEPS = "completed_sub_steps"
         const val IS_DEVICE_REGISTERED = "Is_device_registered"
         const val ENABLE_SUBSCRIPTION = "enable_subscription"
         const val DEVICE_ID = "device_id"
         const val PRE_SETUP_COMPLETE = "pre_setup_complete"
+        const val DISTRICT = "district"
     }
 
     override fun setUserId(userId: String) {
@@ -157,17 +183,13 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
             putValue(LOGIN_AS, value)
         }
 
-    private var SharedPreferences.completedSteps
-        get() = getInt(COMPLETED_STEPS, 0)
-        set(value) {
-            putValue(COMPLETED_STEPS, value)
+    private var SharedPreferences.userImage
+        get() = getString(USERIMAGE,"")
+        set(value){
+            putValue(USERIMAGE,value)
         }
 
-    private var SharedPreferences.completedSubSteps
-        get() = getInt(COMPLETED_SUB_STEPS, 0)
-        set(value) {
-            putValue(COMPLETED_SUB_STEPS, value)
-        }
+
 
     private var SharedPreferences.phoneNumber
         get() = getString(PHONENUMBER, "")
@@ -179,6 +201,37 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         get() = getBoolean(PRE_SETUP_COMPLETE,false)
         set(value){
             putValue(PRE_SETUP_COMPLETE,value)
+        }
+
+    private var SharedPreferences.email
+        get() = getString(EMAIL,"")
+        set(value){
+            putValue(EMAIL,value)
+        }
+
+    private var SharedPreferences.tole
+        get() = getString(TOLE,"")
+        set(value){
+            putValue(TOLE,value)
+        }
+
+    private var SharedPreferences.wardNumber
+        get() = getString(WARDNUMBER,"")
+        set(value){
+            putValue(WARDNUMBER,value)
+        }
+
+
+    private var SharedPreferences.state
+        get() = getString(STATE,"")
+        set(value){
+            putValue(STATE,value)
+        }
+
+    private var SharedPreferences.district
+        get() = getString(DISTRICT,"")
+        set(value){
+            putValue(DISTRICT,value)
         }
 
 

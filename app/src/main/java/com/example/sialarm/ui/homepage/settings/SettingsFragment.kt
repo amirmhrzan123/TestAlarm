@@ -10,7 +10,9 @@ import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
 import com.example.sialarm.data.api.SendAlertMessages
+import com.example.sialarm.data.api.SendSafeAlertMessages
 import com.example.sialarm.databinding.FragmentSettingBinding
+import com.example.sialarm.ui.history.HistoryActivity
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.ui.homepage.home.HomeFragment
 import com.example.sialarm.ui.myProfile.MyProfileActivity
@@ -23,6 +25,10 @@ import java.util.*
 
 
 class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),ISettingNavigator {
+    override fun onHistoryClicked() {
+        HistoryActivity.newInstance(activity!!)
+    }
+
     override fun onProfileClicked() {
         MyProfileActivity.newInstance(activity!!)
     }
@@ -35,7 +41,7 @@ class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),
             "No"
         ) {
             if(isConnectingToInternet(context!!)){
-                settingViewModel.settingValid.value = SendAlertMessages()
+                settingViewModel.settingValid.value = SendSafeAlertMessages()
             }else{
                 val smsManager = SmsManager.getDefault() as SmsManager
                 smsManager.sendTextMessage("+9779808878368", null, "SISA1234|${HomeFragment.mCurrentLocation.latitude}|${HomeFragment.mCurrentLocation.longitude}*", null, null)

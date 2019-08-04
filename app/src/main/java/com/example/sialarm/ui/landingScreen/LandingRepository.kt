@@ -35,7 +35,7 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                 try{
 
                                     val user = Users(active = true,
-                                        address = "",
+                                        tole = "",
                                         latitude = "",
                                         longitude = "",
                                         email = "",
@@ -43,7 +43,11 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         username = userName,
                                         id = number,
                                         notification_token = token,
-                                        device = "")
+                                        device = "",
+                                        image = "",
+                                        state = "",
+                                        ward = 0,
+                                        district = "")
 
                                     userDatabase.getReference(FireKey.USERS).child(number).setValue(user).addOnCompleteListener {
                                         prefsManager.setLoginStatus(true)
@@ -68,15 +72,23 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                         }
 
                         userDatabase.getReference(FireKey.USERS).child(number)
-                            .setValue(Users(true,user!!.address,
-                                user.email,user.id,
-                                user.latitude,user.longitude,
-                                token,user.phone_number,
-                                userName,user.device,user.timeStamp)).addOnCompleteListener {
+                            .setValue(Users(active = true,tole = user!!.tole,
+                                email = user.email,id = user.id,
+                                latitude = user.latitude,longitude = user.longitude,
+                                notification_token = token,phone_number = user.phone_number,
+                                username = userName,  timeStamp = user.timeStamp,device = user.device,
+                                image = user.image, district = user.district,state = user.state,
+                                ward = user.ward)).addOnCompleteListener {
                                 prefsManager.setLoginStatus(true)
                                 prefsManager.setUserId(number)
                                 prefsManager.setUserName(user.username)
                                 prefsManager.setPhoneNumber(number)
+                                prefsManager.setUserImage(user.image)
+                                prefsManager.setEmail(user.email)
+                                prefsManager.setTole(user.tole)
+                                prefsManager.setDistrict(user.district)
+                                prefsManager.setWardNo(user.ward.toString())
+                                prefsManager.setState(user.state)
                                 insertResponse.postValue(Resource.success("","",""))
 
                             }

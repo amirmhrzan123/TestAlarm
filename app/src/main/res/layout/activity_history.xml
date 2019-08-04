@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.myProfile.MyProfileViewModel" />
+            type="com.example.sialarm.ui.history.HistoryViewModel" />
 
     </data>
 
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <com.example.sialarm.utils.customViews.CenteredToolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_history"
                 android:layout_width="match_parent"
                 app:title="History"
                 app:layout_constraintTop_toTopOf="parent"
@@ -31,11 +31,12 @@
             </com.example.sialarm.utils.customViews.CenteredToolbar>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHistory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar">
+                app:layout_constraintTop_toBottomOf="@id/toolbar_history">
 
             </androidx.recyclerview.widget.RecyclerView>
 

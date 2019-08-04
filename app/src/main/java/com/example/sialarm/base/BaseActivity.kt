@@ -1,5 +1,4 @@
-package com.app.dwell.base
-
+package com.example.sialarm.base
 import android.app.Dialog
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,10 +6,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.Observer
-import com.example.sialarm.base.BaseViewModel
 import com.example.sialarm.utils.ProgressDialogHelper
-import com.example.sialarm.utils.extensions.showValidationDialog
 
 
 abstract class BaseActivity<M : BaseViewModel<*>, V : ViewDataBinding> : AppCompatActivity() {

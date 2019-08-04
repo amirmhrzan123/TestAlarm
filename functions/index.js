@@ -4,7 +4,14 @@ var cors = require('cors')({ origin: true });
 var http = require('http')
 
 const admin = require('firebase-admin');
+const geolib = require('geolib')
 admin.initializeApp(functions.config().firebase);
+
+
+
+
+
+
 
 exports.offlineObserveFromDevice = functions.database.ref("/SI_ALERT/{device_number}").onWrite((change,context)=>{
         
@@ -160,7 +167,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            const response=  admin.messaging().sendToDevice(registrationTokens, payload)
+                            const response=  await admin.messaging().sendToDevice(registrationTokens, payload)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -170,8 +177,17 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                                         "message": "Your SI Friend "+userName + " is safe now",
                                         "timeStamp": new Date().getTime()
                                     }
-                                    admin.database().ref("Notification").child(id).push(newData)
+                                 admin.database().ref("Notification").child(id).push(newData)
                                 })
+                                var historyDate = {
+                                    "title":"SI Safe Alert",
+                                    "total_message_sent":registrationTokens.length,
+                                    "message":"You sent safe alert messages to "+registrationTokens.length+" SI friends.",
+                                    "timeStamp": new Date().getTime(),
+                                    "paid":false
+                                }
+                                admin.database().ref("History").child(senderId).push(historyDate)
+
                                 res.status(200).json({
                                     statusCode: 200,
                                     message: "Success"
@@ -240,11 +256,19 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                         " Longitude="+geoLongitude,
                                         "timeStamp": new Date().getTime()
                                     }
-                                    admin.database().ref("Notification").child(id).push(newData)
+                                     admin.database().ref("Notification").child(id).push(newData)
                                 })
+                                var historyDate = {
+                                    "title":"Emergency Alert",
+                                    "total_message_sent":registrationTokens.length,
+                                    "message":"You sent emergency alert messages to "+registrationTokens.length+" SI friends.",
+                                    "timeStamp": new Date().getTime(),
+                                    "paid":false
+                                }
+                                admin.database().ref("History").child(senderId).push(historyDate)
                                 res.status(200).json({
                                     statusCode: 200,
-                                    message: "Success"
+                                    message: "*success#"
                                 })
                         }
                     })
@@ -291,7 +315,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                                 message: "Success"
                             })
                         })
-                    }).
+                    })
                 }else{
                     
                     if(status===1){
@@ -354,15 +378,14 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                             "timeStamp": new Date().getTime()
                         }
                         admin.database().ref("Notification").child(receiverId).push(newData)
-                        return admin.messaging().sendToDevice(notificationToken, payload)
-                            .then(response => {
-                                console.log("Successfully sent message: ", response);
+                        const response =  admin.messaging().sendToDevice(notificationToken, payload)
+                        console.log("Successfully sent message: ", response);
+                       
                                 res.status(200).json({
                                     statusCode:200,
                                     message: "Success"
                                 })
-                                return ""
-                            });
+                        
                     } else {
                         console.log("Error")
                         res.status(301).json({
@@ -474,7 +497,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
         admin.database().ref('/users/'+senderId).once('value',function(snap){
             if(snap.exists){
                 var userName = snap.child('username').val()
-                var receiverIds = []s
+                var receiverIds = []
         var registrationTokens = []
         var payload = {
             notification: {

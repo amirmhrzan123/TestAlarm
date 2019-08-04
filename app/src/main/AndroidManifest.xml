@@ -63,7 +63,11 @@
 
         </activity>
 
+        <activity android:name=".ui.district.SearchDistrictActivity"/>
+
         <activity android:name=".ui.myProfile.MyProfileActivity"/>
+
+        <activity android:name=".ui.history.HistoryActivity"/>
 
         <service
             android:name=".data.firebase.MyFirebaseMessagingService"

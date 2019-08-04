@@ -18,6 +18,9 @@ interface ApiServices {
     @POST(EndPoint.API.SENDALERTMESSAGES)
     fun sendAlertMessages(@Body sendAlertMessages: SendAlertMessages):Deferred<String>
 
+    @POST(EndPoint.API.SENDSAFEALERTMESSAGES)
+    fun sendSafeAlertMessages(@Body sendSafeAlertMessages: SendSafeAlertMessages):Deferred<String>
+
 }
 
 class EndPoint {
@@ -26,5 +29,6 @@ class EndPoint {
         const val SENDFRIENDREQUEST = "sendFriendRequest"
         const val SENDALERTMESSAGES = "sendAlertMessages"
         const val ACCEPTDENYINVITATION = "acceptDenyInvitation"
+        const val SENDSAFEALERTMESSAGES = "sendSafeAlert"
     }
 }

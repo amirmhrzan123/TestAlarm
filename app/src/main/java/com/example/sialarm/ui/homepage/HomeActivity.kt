@@ -13,12 +13,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.app.dwell.base.BaseActivity
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.example.sialarm.BR
 import com.example.sialarm.R
+import com.example.sialarm.base.BaseActivity
 import com.example.sialarm.databinding.ActivityMainBinding
 import com.example.sialarm.utils.CommonUtils
 import com.example.sialarm.utils.extensions.getNumber
@@ -29,7 +29,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 
-class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
+class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     lateinit var adapter: HomePagerAdapter
     lateinit var navigationAdapter: AHBottomNavigationAdapter
@@ -64,10 +64,11 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
         toolbar.title = "Alert"
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
         initUI()
+
     }
 
     override fun onDestroy() {
@@ -84,6 +85,7 @@ class HomeActivity:BaseActivity<MainViewModel,ActivityMainBinding>() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
+        mainViewModel.saveUsers()
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         viewPager = findViewById(R.id.view_pager)

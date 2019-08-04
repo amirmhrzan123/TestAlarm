@@ -14,13 +14,19 @@ import com.example.sialarm.ui.DeviceList
 
 class CustomSpinnerDialog : DialogFragment() {
 
-    var listOptions: ArrayList<DeviceList> = arrayListOf()
+    var listOptions: ArrayList<Int> = arrayListOf()
 
+    var listStates : ArrayList<String> = arrayListOf()
 
-    private lateinit var listener: CustomSpinnerAdapter.onCustomSpinnerItemSelected
+    private lateinit var listener: CustomSpinnerWardAdapter.onCustomSpinnerItemSelected
     private var selectedId: Int = -1
+    var from: Int = 0
 
-    fun setListener(listener: CustomSpinnerAdapter.onCustomSpinnerItemSelected) {
+    enum class FOR{
+        WARD,STATE
+    }
+
+    fun setListener(listener: CustomSpinnerWardAdapter.onCustomSpinnerItemSelected) {
         this.listener = listener
     }
 
@@ -30,11 +36,29 @@ class CustomSpinnerDialog : DialogFragment() {
         const val OPTIONS = "options"
         const val PROPERTIES = "property"
         const val SELECTED_ID = "selected_id"
+        const val FOR = "for"
+        const val WARD = 1
+        const val STATE = 2
         const val TITLE = "title"
-        fun getInstance(title: String = "", listOptions: ArrayList<DeviceList>, selectedId: Int?): CustomSpinnerDialog {
+        fun getInstance(title: String = "", listOptions: ArrayList<String>, selectedId: Int?): CustomSpinnerDialog {
             val dialog = CustomSpinnerDialog()
             val arguments = Bundle()
             arguments.putSerializable(OPTIONS, listOptions)
+            arguments.putInt(FOR, STATE)
+            if (selectedId == null)
+                arguments.putInt(SELECTED_ID, -1)
+            else
+                arguments.putInt(SELECTED_ID, selectedId)
+            arguments.putString(TITLE, title)
+            dialog.arguments = arguments
+            return dialog
+        }
+
+        fun getInstanceForWard(title: String = "", listOptions: ArrayList<Int>, selectedId: Int?): CustomSpinnerDialog {
+            val dialog = CustomSpinnerDialog()
+            val arguments = Bundle()
+            arguments.putSerializable(OPTIONS, listOptions)
+            arguments.putInt(FOR, WARD)
             if (selectedId == null)
                 arguments.putInt(SELECTED_ID, -1)
             else
@@ -50,7 +74,13 @@ class CustomSpinnerDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.MyDialog)
-        listOptions = arguments?.getSerializable(OPTIONS) as ArrayList<DeviceList>
+
+        from = arguments!!.getInt(FOR)
+        if(from == WARD){
+            listOptions = arguments?.getSerializable(OPTIONS) as ArrayList<Int>
+        }else{
+            listStates = arguments?.getSerializable(OPTIONS) as ArrayList<String>
+        }
         selectedId = arguments!!.getInt(SELECTED_ID, -1)
         titleText = arguments!!.getString(TITLE)
     }
@@ -61,18 +91,36 @@ class CustomSpinnerDialog : DialogFragment() {
         val pageTitle = view.findViewById<TextView>(R.id.pageTitle)
         pageTitle.text = titleText
 
-        with(rvCustomSpinner) {
-            layoutManager = LinearLayoutManager(activity!!) as RecyclerView.LayoutManager
-            adapter = CustomSpinnerAdapter(
-                listOptions,
-                selectedId,
-                object : CustomSpinnerAdapter.onCustomSpinnerItemSelected {
-                    override fun onItemSelected(selectedId: Int, position: Int) {
-                        listener.onItemSelected(selectedId, position)
-                        dismiss()
-                    }
+        if(from == WARD){
+            with(rvCustomSpinner) {
+                layoutManager = LinearLayoutManager(activity!!) as RecyclerView.LayoutManager
+                adapter = CustomSpinnerWardAdapter(
+                    listOptions,
+                    selectedId,
+                    object : CustomSpinnerWardAdapter.onCustomSpinnerItemSelected {
+                        override fun onItemSelected(selectedId: Int, position: Int) {
+                            listener.onItemSelected(selectedId, position)
+                            dismiss()
+                        }
 
-                })
+                    })
+            }
+
+        }else{
+            with(rvCustomSpinner) {
+                layoutManager = LinearLayoutManager(activity!!) as RecyclerView.LayoutManager
+                adapter = CustomSpinnerStateAdapter(
+                    listStates,
+                    selectedId,
+                    object : CustomSpinnerStateAdapter.onCustomSpinnerItemSelected {
+                        override fun onItemSelected(selectedId: Int, position: Int) {
+                            listener.onItemSelected(selectedId, position)
+                            dismiss()
+                        }
+
+                    })
+            }
+
         }
         return view
 

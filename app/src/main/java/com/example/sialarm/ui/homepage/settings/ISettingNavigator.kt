@@ -7,4 +7,6 @@ interface ISettingNavigator {
     fun onLogoutClicked()
 
     fun onSendSafeAlertClicked()
+
+    fun onHistoryClicked()
 }

@@ -1,5 +1,6 @@
 package com.example.sialarm.di
 
+import com.example.sialarm.ui.history.HistoryViewModel
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.ui.homepage.contacts.ContactsViewModel
 import com.example.sialarm.ui.homepage.home.HomeViewModel
@@ -13,7 +14,7 @@ import org.koin.dsl.module.module
 
 val viewModelModule = module {
 
-    viewModel{MainViewModel()}
+    viewModel{MainViewModel(get())}
 
     viewModel { ContactsViewModel(get()) }
 
@@ -23,8 +24,12 @@ val viewModelModule = module {
 
     viewModel { HomeViewModel(get()) }
 
-    viewModel { MyProfileViewModel(get(),get())}
+    viewModel { MyProfileViewModel(get(),get(),get(),get())}
 
     viewModel {  SettingViewModel(get()) }
+
+    viewModel { HistoryViewModel(get()) }
+
+
 
 }

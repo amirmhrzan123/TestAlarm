@@ -8,7 +8,10 @@ import android.net.NetworkInfo
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.ViewModel
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.example.sialarm.R
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.net.HttpURLConnection
@@ -17,6 +20,7 @@ import java.net.UnknownHostException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
 Created by Prajeet on 1/16/2019, 4:08 PM
@@ -34,6 +38,12 @@ fun Context.isNetworkConnected():Boolean{
 fun ViewModel.getCurrentTimeStamp(): String {
     return System.currentTimeMillis().toString()
 }
+
+fun ImageView.loadImage(url: String, placeholder: Int) {
+
+    GlideApp.with(this.context).load(url).placeholder(R.drawable.ic_profile).into(this)
+}
+
 
 fun String.getNumber():String{
     var replacenumber = ""
@@ -206,6 +216,95 @@ fun isConnectingToInternet(context: Context): Boolean {
     return false
 }
 
+
+fun getDistrictsKeyValue():MutableList<District>{
+    val listDistricts : MutableList<District> = mutableListOf()
+    listDistricts.add(0,District(1,"Bhojpur"))
+    listDistricts.add(1,District(2,"Dhankuta"))
+    listDistricts.add(2,District(3,"Ilam"))
+    listDistricts.add(3,District(4,"Jhapa"))
+    listDistricts.add(4,District(5,"Khotang"))
+    listDistricts.add(5,District(6,"Morang"))
+    listDistricts.add(6,District(7,"Okhaldhunga"))
+    listDistricts.add(7,District(8,"Panchthar"))
+    listDistricts.add(8,District(9,"Sankhuwasabha"))
+    listDistricts.add(9,District(10,"Solukhumbu"))
+    listDistricts.add(10,District(11,"Sunsari"))
+    listDistricts.add(11,District(12,"Taplejung"))
+    listDistricts.add(12,District(13,"Saptari"))
+    listDistricts.add(13,District(14,"Siraha"))
+    listDistricts.add(14,District(15,"Dhanusa"))
+    listDistricts.add(15,District(16,"Mahottari"))
+    listDistricts.add(16,District(17,"Sarlahi"))
+    listDistricts.add(17,District(18,"Bara"))
+    listDistricts.add(18,District(19,"Parsa"))
+    listDistricts.add(19,District(20,"Rautahat"))
+    listDistricts.add(20,District(21,"Sindhuli"))
+    listDistricts.add(21,District(22,"Ramechhap"))
+    listDistricts.add(22,District(23,"Dolakha"))
+    listDistricts.add(23,District(24,"Ramechhap"))
+    listDistricts.add(24,District(25,"Dolakha"))
+    listDistricts.add(25,District(26,"Bhaktapur"))
+    listDistricts.add(26,District(27,"Dhading"))
+    listDistricts.add(27,District(28,"Kathmandu"))
+    listDistricts.add(28,District(29,"Kavrepalanchok"))
+    listDistricts.add(29,District(30,"Lalitpur"))
+    listDistricts.add(30,District(31,"Nuwakot"))
+    listDistricts.add(31,District(32,"Rasuwa"))
+    listDistricts.add(32,District(33,"Sindhupalchok"))
+    listDistricts.add(33,District(34,"Chitwan"))
+    listDistricts.add(34,District(35,"Makwanpur"))
+    listDistricts.add(35,District(36,"Baglung"))
+    listDistricts.add(36,District(37,"Gorkha"))
+    listDistricts.add(37,District(38,"Kaski"))
+    listDistricts.add(38,District(39,"Lamjung"))
+    listDistricts.add(39,District(40,"Manang"))
+    listDistricts.add(40,District(41,"Mustang"))
+    listDistricts.add(41,District(42,"Myagdi"))
+    listDistricts.add(42,District(43,"Nawalpur"))
+    listDistricts.add(43,District(44,"Parbat"))
+    listDistricts.add(44,District(45,"Syangja"))
+    listDistricts.add(45,District(46,"Tanahun"))
+    listDistricts.add(46,District(47,"Kapilvastu"))
+    listDistricts.add(47,District(48,"Parasi"))
+    listDistricts.add(48,District(49,"Runpandehi"))
+    listDistricts.add(49,District(50,"Arghakhanchi"))
+    listDistricts.add(50,District(51,"Gulmi"))
+    listDistricts.add(51,District(52,"Palpa"))
+    listDistricts.add(52,District(53,"Dang"))
+    listDistricts.add(53,District(54,"Pyuthan"))
+    listDistricts.add(54,District(55,"Rolpa"))
+    listDistricts.add(55,District(56,"Eastern Rukum"))
+    listDistricts.add(56,District(57,"Banke"))
+    listDistricts.add(57,District(58,"Bardiya"))
+    listDistricts.add(58,District(59,"Western Rukum"))
+    listDistricts.add(59,District(60,"Salyan"))
+    listDistricts.add(60,District(61,"Humla"))
+    listDistricts.add(61,District(62,"Jumla"))
+    listDistricts.add(62,District(63,"Kalikot"))
+    listDistricts.add(63,District(64,"Mugu"))
+    listDistricts.add(64,District(65,"Surkhet"))
+    listDistricts.add(65,District(66,"Dailekh"))
+    listDistricts.add(66,District(67,"Jajarkot"))
+    listDistricts.add(67,District(68,"Kailali"))
+    listDistricts.add(68,District(68,"Accham"))
+    listDistricts.add(69,District(70,"Doti"))
+    listDistricts.add(70,District(71,"Bajhang"))
+    listDistricts.add(71,District(72,"Bajura"))
+    listDistricts.add(72,District(73,"Kachanpur"))
+    listDistricts.add(73,District(74,"Dadeldhura"))
+    listDistricts.add(74,District(75,"Baitedi"))
+    listDistricts.add(75,District(76,"Darchula"))
+    return listDistricts
+
+}
+
+
+data class District(val id: Int,
+                    val name:String)
+
+data class State(val id:Int,
+                 val name:String)
 
 
 

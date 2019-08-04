@@ -11,11 +11,10 @@ import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.app.dwell.base.BaseActivity
 import com.example.sialarm.BR
 import com.example.sialarm.R
+import com.example.sialarm.base.BaseActivity
 import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.utils.Status
@@ -33,7 +32,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 
-class LandingActivity :BaseActivity<LandingScreenViewModel,ActivityLandingBinding>(){
+class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBinding>(){
 
     private val landingViewModel : LandingScreenViewModel by viewModel()
 
