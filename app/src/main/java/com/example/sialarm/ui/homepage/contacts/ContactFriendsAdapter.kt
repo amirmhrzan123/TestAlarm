@@ -2,14 +2,21 @@ package com.example.sialarm.ui.homepage.contacts
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sialarm.R
 import com.example.sialarm.data.firebase.Friends
+import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.databinding.ItemContactsBinding
 import com.example.sialarm.ui.homepage.notification.NotificationAdaptor
 import com.example.sialarm.utils.FriendStatus
+import com.example.sialarm.utils.extensions.loadImage
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ContactFriendsAdapter(private val listFriends:MutableList<Friends> = mutableListOf()): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,6 +45,23 @@ class ContactFriendsAdapter(private val listFriends:MutableList<Friends> = mutab
         fun onBind(position:Int){
             with(itemContactsBinding){
                 model = listFriends[position]
+                FirebaseDatabase.getInstance().getReference("users").child(model?.id.toString()).addValueEventListener(object:
+                    ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if(p0.exists()){
+                            val user = p0.getValue(Users::class.java)
+                            if(user?.image!!.isNotEmpty()){
+                                itemContactsBinding.civImage.loadImage(user.image,0)
+                                itemContactsBinding.textView9.visibility = View.GONE
+                            }
+                        }
+                    }
+
+                })
                 viewModel = ContactsItemViewModel(model!!,this@ViewHolder)
                 when(model?.status){
                     FriendStatus.FRIEND->{

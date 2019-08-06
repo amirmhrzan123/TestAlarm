@@ -153,7 +153,7 @@ class ContactsFragment:BaseFragment<ContactsViewModel,FragmentContactsBinding>()
                 }
                 Status.ERROR->{
                     hideLoading()
-                    activity!!.showValidationDialog("SI Alarm",it.message!!)
+                   // activity!!.showValidationDialog("SI Alarm",it.message!!)
 
                 }
             }
