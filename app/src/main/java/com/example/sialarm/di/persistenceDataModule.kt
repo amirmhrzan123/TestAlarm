@@ -6,10 +6,7 @@ import androidx.room.Room
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.data.prefs.PrefsManagerImpl
 import com.example.sialarm.data.room.AppDatabase
-import com.example.sialarm.data.room.dao.UserDao
-import com.example.sialarm.di.PersistenceDataSourceProperties.PREF_NAME
-import com.example.sialarm.utils.FireKey
-import com.google.firebase.database.DatabaseReference
+import com.example.sialarm.data.room.dao.NotificationDao
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.dsl.module.module
@@ -26,7 +23,7 @@ val persistenceDataModule = module {
     single { provideFirebaseStore()}
     factory { provideFirebaseDatabase()}
     single { provideRoomDatabase(get(),"SIAlarm")}
-    single { provideUserDao(get())}
+    single { provideNotificationDao(get()) }
 }
 
 object PersistenceDataSourceProperties {
@@ -54,7 +51,7 @@ fun provideRoomDatabase(context: Context, dbName: String): AppDatabase {
     return Room.databaseBuilder(context, AppDatabase::class.java, dbName).fallbackToDestructiveMigration().build()
 }
 
-fun provideUserDao(appDatabase: AppDatabase): UserDao = appDatabase.getUserDao()
+fun provideNotificationDao(appDatabase: AppDatabase): NotificationDao = appDatabase.getNotificationDao()
 
 
 

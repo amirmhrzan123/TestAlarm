@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.example.sialarm.data.api.ApiServices
 import com.example.sialarm.data.prefs.PrefsManager
+import com.example.sialarm.data.room.dao.NotificationDao
 import com.example.sialarm.ui.history.HistoryRepository
 import com.example.sialarm.ui.homepage.MainRepository
 import com.example.sialarm.ui.homepage.contacts.ContactsRepository
@@ -24,13 +25,13 @@ import org.koin.dsl.module.module
 val appModule = module {
     single { provideResources(get()) }
     single { CoroutineScope(Dispatchers.Main + Job()) }
-    single { provideLandingRepository(get(),get(),get())}
+    single { provideLandingRepository(get(),get(),get(),get())}
     single { provideContactsRepository(get(),get(),get(),get()) }
     single { provideNotificationRepository(get(),get(),get(),get())}
     single { provideHomeRepository(get(),get(),get(),get())}
     single { provideMyProfileRepository(get(),get(),get())}
     single { provideSettingsRepository(get(),get(),get(),get())}
-    single { provideMainRepository(get(),get(),get())}
+    single { provideMainRepository(get(),get(),get(),get())}
     single { provideHistoryRepository(get(),get(),get())}
 }
 
@@ -38,8 +39,9 @@ fun provideResources(context: Context): Resources = context.resources
 
 fun provideLandingRepository(viewModelScope:CoroutineScope,
                              prefsManager: PrefsManager,
-                             userDatabase:FirebaseDatabase):LandingRepository
-= LandingRepository(viewModelScope,prefsManager,userDatabase)
+                             userDatabase:FirebaseDatabase,
+                             notificationDao:NotificationDao):LandingRepository
+= LandingRepository(viewModelScope,prefsManager,userDatabase,notificationDao)
 
 fun provideContactsRepository(viewModelScope:CoroutineScope,
                               prefsManager: PrefsManager,
@@ -63,10 +65,11 @@ fun provideSettingsRepository(viewModelScope: CoroutineScope,firebaseDatabase: F
                               prefsManager: PrefsManager,apiServices: ApiServices): SettingRepository
 = SettingRepository(apiServices,viewModelScope,firebaseDatabase,prefsManager)
 
-fun provideMainRepository(viewModelScope: CoroutineScope,
+fun provideMainRepository(notificationDao: NotificationDao,
                           firebaseDatabase: FirebaseDatabase,
-                          prefsManager: PrefsManager):MainRepository
-= MainRepository(viewModelScope,firebaseDatabase,prefsManager)
+                          prefsManager: PrefsManager,
+                          viewModelScope: CoroutineScope):MainRepository
+= MainRepository(notificationDao,firebaseDatabase,prefsManager,viewModelScope)
 
 fun provideHistoryRepository(viewModelScope: CoroutineScope,
                              firebaseDatabase: FirebaseDatabase,
