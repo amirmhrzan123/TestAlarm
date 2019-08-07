@@ -4,7 +4,6 @@ var cors = require('cors')({ origin: true });
 var http = require('http')
 
 const admin = require('firebase-admin');
-const geolib = require('geolib')
 admin.initializeApp(functions.config().firebase);
 
 
@@ -82,7 +81,8 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
 
                     notification: {
                         title: "SI friend request",
-                        body: capitalizeFirstLetter(userName) + " has sent you SI friend request"
+                        body: capitalizeFirstLetter(userName) + " has sent you SI friend request",
+                        sound : "default"
                     },
                     data: {
                         username: userName,
@@ -143,7 +143,9 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
         var payload = {
             notification:{
                 title: "SI safe alert",
-                body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+                body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now.",
+                sound : "default"
+
             },
             data:{
                 username: userName,
@@ -219,7 +221,9 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
             notification: {
                 title: "SI Emergency Alert",
                 body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
-                "Longitude="+geoLongitude
+                "Longitude="+geoLongitude,
+                sound : "default"
+
             },
             data: {
                 username: userName,
@@ -351,7 +355,9 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
 
                     notification: {
                         title: "SI friend request reply",
-                        body: message
+                        body: message,
+                        sound : "default"
+
 
                     },
                     data: {
@@ -378,7 +384,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                             "timeStamp": new Date().getTime()
                         }
                         admin.database().ref("Notification").child(receiverId).push(newData)
-                        const response =  admin.messaging().sendToDevice(notificationToken, payload)
+                        const response =  await admin.messaging().sendToDevice(notificationToken, payload)
                         console.log("Successfully sent message: ", response);
                        
                                 res.status(200).json({
@@ -422,7 +428,9 @@ exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
                 var payload = {
                     notification:{
                         title: "SI safe alert",
-                        body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+                        body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now.",
+                        sound : "default"
+
                     },
                     data:{
                         username: userName,
@@ -503,7 +511,9 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
             notification: {
                 title: "SI Emergency Alert",
                 body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
-                "Longitude="+geoLongitude
+                "Longitude="+geoLongitude,
+                sound : "default"
+
             },
             data: {
                 username: userName,
