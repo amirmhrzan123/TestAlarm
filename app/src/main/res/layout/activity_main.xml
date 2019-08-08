@@ -28,6 +28,65 @@
 
             </com.example.sialarm.utils.customViews.CenteredToolbar>
 
+
+            <ImageView
+                android:id="@+id/iv_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="@dimen/dimen_16dp"
+                android:src="@drawable/ic_info"
+                app:layout_constraintBottom_toTopOf="@+id/view_pager"
+                app:layout_constraintEnd_toEndOf="@+id/toolbar"
+                app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+            <com.example.sialarm.utils.tooltips.BubbleLayout
+                android:id="@+id/bl_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:padding="8dp"
+                android:visibility="visible"
+                app:bl_arrowDirection="top"
+                app:bl_arrowHeight="8dp"
+                app:bl_arrowWidth="16dp"
+                android:layout_marginStart="8dp"
+                app:bl_bubbleColor="@color/light_blue"
+                app:bl_cornersRadius="6dp"
+                app:bl_strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_info">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="5dp"
+                        android:padding="4dp"
+                        android:text="Please click in above icon to get more information."
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_cross"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_cancel" />
+
+                </RelativeLayout>
+
+
+            </com.example.sialarm.utils.tooltips.BubbleLayout>
+
+
+
             <com.aurelhubert.ahbottomnavigation.AHBottomNavigationViewPager
                 android:id="@+id/view_pager"
                 android:layout_width="0dp"

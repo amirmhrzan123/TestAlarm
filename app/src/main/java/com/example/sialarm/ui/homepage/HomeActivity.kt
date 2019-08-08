@@ -9,6 +9,7 @@ import android.os.Handler
 import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -21,10 +22,15 @@ import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
 import com.example.sialarm.databinding.ActivityMainBinding
+import com.example.sialarm.ui.instructions.InstructionFragment
 import com.example.sialarm.utils.CommonUtils
+import com.example.sialarm.utils.extensions.convertDpToPixel
 import com.example.sialarm.utils.extensions.getNumber
 import com.example.sialarm.utils.extensions.showValidationDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.skydoves.balloon.ArrowOrientation
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -39,6 +45,8 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
     lateinit var tabColors: IntArray
     private val handler = Handler()
     private var currentFragment: Fragment?= null
+
+    private var tabPosition = 0
 
 
 
@@ -93,11 +101,22 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
         mainViewModel.saveUsers()
 
+        setPositionOfTooltip()
+
         bottomNavigation = findViewById(R.id.bottom_navigation)
         viewPager = findViewById(R.id.view_pager)
         bottomNavigation.accentColor = ContextCompat.getColor(this, R.color.color_blue_2590b8)
         bottomNavigation.inactiveColor = ContextCompat.getColor(this,R.color.white)
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
+
+        iv_cross.setOnClickListener {
+            bl_menu.visibility = View.GONE
+        }
+
+        iv_info.setOnClickListener {
+            openInformationFragment(123)
+        }
+
 
 
         floating_action_button.setOnClickListener {
@@ -149,6 +168,8 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
 
             override fun onPageSelected(position: Int) {
                 bottomNavigation.currentItem = position
+                tabPosition = position
+
             }
 
         })
@@ -188,7 +209,14 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
                 floating_action_button.visibility = View.GONE
             }
 
-           // currentFragment.willBeDisplayed()
+            if(tabPosition>1){
+                iv_info.visibility = View.GONE
+            }else{
+                iv_info.visibility = View.VISIBLE
+            }
+
+
+            // currentFragment.willBeDisplayed()
 
 
 
@@ -198,6 +226,38 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         viewPager.offscreenPageLimit = 3
         adapter = HomePagerAdapter(supportFragmentManager)
         viewPager.adapter = adapter
+
+    }
+
+    fun openInformationFragment(send: Int) {
+        supportFragmentManager
+            .beginTransaction()
+            .addToBackStack(null)
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+            .replace(R.id.container, InstructionFragment.newInstance(send), InstructionFragment.TAG)
+            .commit()
+    }
+
+
+    private fun setPositionOfTooltip() {
+        val vto = iv_info.getViewTreeObserver()
+        vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                iv_info.getViewTreeObserver().removeGlobalOnLayoutListener(this)
+
+                val posXY = IntArray(2)
+                val x = iv_info.getLeft()
+                val y = iv_info.getRight()
+                val position = x  + (y-x)/2 - convertDpToPixel(16f)
+                bl_menu.setArrowPosition(position.toFloat())
+
+            }
+        })
 
     }
 

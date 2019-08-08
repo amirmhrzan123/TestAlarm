@@ -3,6 +3,7 @@ package com.example.sialarm.utils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.res.Resources
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -97,7 +98,18 @@ object CommonUtils {
         return dialog
     }
 
-   enum class OPTION{
+    fun dpToPx(dp: Float): Int {
+        val density = Resources.getSystem().displayMetrics.density
+        return Math.round(dp * density)
+    }
+
+    fun pxToDp(px: Float): Float {
+        val densityDpi = Resources.getSystem().displayMetrics.densityDpi.toFloat()
+        return px / (densityDpi / 160f)
+    }
+
+
+    enum class OPTION{
        ADDFROMCONTACT,ADDANOTHERCONTACT
    }
 }

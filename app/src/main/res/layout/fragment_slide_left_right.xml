@@ -69,6 +69,8 @@
                     android:id="@+id/animation"
                     android:layout_width="280dp"
                     android:layout_height="293dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/ic_swipe"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.495"
                     app:layout_constraintStart_toStartOf="parent"

@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.lifecycle.Observer
 import com.example.sialarm.BR
@@ -33,6 +34,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.kotlinpermissions.KotlinPermissions
+import com.skydoves.balloon.ArrowOrientation
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
 import kotlinx.android.synthetic.main.fragment_alert.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -142,7 +146,6 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
         super.onViewCreated(view, savedInstanceState)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
         mSettingsClient = LocationServices.getSettingsClient(activity!!)
-
         // Kick off the process of building the LocationCallback, LocationRequest, and
         // LocationSettingsRequest objects.
         createLocationCallback()
@@ -153,6 +156,7 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
             btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
             progress.visibility = View.INVISIBLE
         })
+
 
         KotlinPermissions.with(activity!!)
             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)

@@ -17,14 +17,14 @@ class HomePagerAdapter  constructor(fm: FragmentManager) : FragmentPagerAdapter(
         fragmentList = ArrayList(NUM_ITEMS)
     }
 
-    override fun getItem(position: Int): Fragment? {
+    override fun getItem(position: Int): Fragment {
         when (position) {
             0 -> return HomeFragment.newInstance()
             1 -> return ContactsFragment.newInstance()
             2 -> return NotificationFragment.newInstance()
             3 -> return SettingsFragment.newInstance()
 
-            else -> return null
+            else -> return SettingsFragment.newInstance()
         }
 
 
