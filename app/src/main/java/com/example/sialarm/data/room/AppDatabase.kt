@@ -6,15 +6,15 @@ import androidx.room.PrimaryKey
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.sialarm.data.room.dao.UserDao
+import com.example.sialarm.data.room.dao.NotificationDao
 
 @Database(entities = [
-    UserTable::class
+    NotificationCountTable::class
 
 
 ], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun getUserDao(): UserDao
+    abstract fun getNotificationDao(): NotificationDao
 }
 
 
@@ -24,6 +24,9 @@ val MIGRATION_1_2: Migration = object : Migration(0, 1) {
     }
 }
 
-@Entity
-data class UserTable(
-    @PrimaryKey val value:String)
+@Entity(tableName = "notification_count")
+data class NotificationCountTable(
+    @PrimaryKey
+    var id:String ,
+    var count:Int = 0
+)

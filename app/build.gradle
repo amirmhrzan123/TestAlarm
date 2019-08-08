@@ -82,14 +82,13 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def project = "Dwell"
-            def MODULE = "Mod7"
+            def project = "SIAlarm"
             def SEP = "_"
             def buildType = variant.variantData.variantConfiguration.buildType.name
             def version = variant.versionName
             def date = new Date();
             def formattedDate = date.format('dd_MMM_yy_HH_mm')
-            def newApkName = project + SEP + buildType + SEP + MODULE + SEP + formattedDate + ".apk"
+            def newApkName = project + SEP + buildType + SEP  + SEP + formattedDate + ".apk"
             outputFileName = new File(newApkName)
         }
     }

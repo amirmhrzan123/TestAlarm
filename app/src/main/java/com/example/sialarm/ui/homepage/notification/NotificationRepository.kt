@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 class NotificationRepository constructor(private val viewModelScope:CoroutineScope,
                                          private val prefsManager: PrefsManager,
@@ -38,6 +39,7 @@ class NotificationRepository constructor(private val viewModelScope:CoroutineSco
                                 val notification : NotificationResponseModel? = data.getValue(NotificationResponseModel::class.java)
                                 listNotification.add(notification!!)
                             }
+                            listNotification.reverse()
                             notificationResponse.postValue(Resource.success("","",listNotification,null))
                         }else{
                             notificationResponse.postValue(Resource.success("","",listNotification,null))

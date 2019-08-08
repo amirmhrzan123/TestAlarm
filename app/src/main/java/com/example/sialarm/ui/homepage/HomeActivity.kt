@@ -16,6 +16,7 @@ import androidx.viewpager.widget.ViewPager
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
+import com.aurelhubert.ahbottomnavigation.notification.AHNotification
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
@@ -39,6 +40,9 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
     private val handler = Handler()
     private var currentFragment: Fragment?= null
 
+
+
+
     // UI
     lateinit var viewPager: ViewPager
     lateinit var bottomNavigation: AHBottomNavigation
@@ -52,6 +56,8 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
     override fun getViewModel(): MainViewModel = mainViewModel
 
     override fun getBindingVariable(): Int = BR.viewModel
+
+
 
     companion object {
         fun newInstance(activity: Activity){
@@ -93,6 +99,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         bottomNavigation.inactiveColor = ContextCompat.getColor(this,R.color.white)
         bottomNavigation.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
 
+
         floating_action_button.setOnClickListener {
                 CommonUtils.openChooserDialog(this) {
                     when(it){
@@ -120,6 +127,17 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
             tabColors = applicationContext.resources.getIntArray(R.array.tab_colors)
             navigationAdapter = AHBottomNavigationAdapter(this, R.menu.bottom_navigation)
             navigationAdapter.setupWithBottomNavigation(bottomNavigation, tabColors)
+
+        mainViewModel.getNotificationCountValid.value = true
+
+        mainViewModel.getNotificationResponse.observe(this,androidx.lifecycle.Observer {
+            if(it.count==0){
+                bottomNavigation.setNotification("",2)
+            }else{
+                bottomNavigation.setNotification(it.count.toString(),2)
+            }
+        })
+
 
         bottomNavigation.defaultBackgroundColor = ContextCompat.getColor(this, R.color.dark_green)
         viewPager.addOnPageChangeListener(object:ViewPager.OnPageChangeListener{
@@ -157,6 +175,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
                 }
                 2->{
                     toolbar.title = "Notifications"
+                    mainViewModel.resetNotificationCount()
                 }
                 3->{
                     toolbar.title = "Settings"

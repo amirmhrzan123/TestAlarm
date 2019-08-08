@@ -7,21 +7,30 @@ import com.example.sialarm.data.firebase.Friends
 import com.example.sialarm.data.firebase.PhoneNumber
 import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.data.prefs.PrefsManager
+import com.example.sialarm.data.room.NotificationCountTable
+import com.example.sialarm.data.room.dao.NotificationDao
 import com.example.sialarm.utils.FireKey
 import com.example.sialarm.utils.FirebaseData
 import com.example.sialarm.utils.Resource
 import com.google.firebase.database.*
 import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                     private val prefsManager: PrefsManager,
-                                    private val userDatabase: FirebaseDatabase) {
+                                    private val userDatabase: FirebaseDatabase,
+                                    private val notificationDao:NotificationDao) {
 
     fun insertUsers(userName:String, number:String, token:String):LiveData<Resource<String>>{
+        viewModelScope.launch {
+            withContext(IO){
+                notificationDao.setNotificationCount(NotificationCountTable("1",0))
+            }
+        }
         val insertResponse = MutableLiveData<Resource<String>>()
         userDatabase.getReference(FireKey.USERS).orderByChild("phone_number").equalTo(number)
             .addListenerForSingleValueEvent(object:ValueEventListener{

@@ -26,14 +26,11 @@ import kotlin.collections.HashMap
 Created by Prajeet on 1/16/2019, 4:08 PM
  **/
 
-
-
 fun Context.isNetworkConnected():Boolean{
     val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val activeNetwork:NetworkInfo?=cm.activeNetworkInfo
     return activeNetwork?.isConnected==true
 }
-
 
 fun ViewModel.getCurrentTimeStamp(): String {
     return System.currentTimeMillis().toString()

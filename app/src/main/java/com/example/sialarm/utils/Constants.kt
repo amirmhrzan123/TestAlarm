@@ -21,3 +21,9 @@ class FriendStatus{
         val UNFRIEND = 8
     }
 }
+
+class Extras{
+    companion object {
+        val FROMNOTIFICATION = "fromNotification"
+    }
+}

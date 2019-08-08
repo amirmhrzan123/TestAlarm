@@ -99,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/ll_bottom"
-        android:minHeight="180dp"
+        android:minHeight="120dp"
         android:orientation="vertical">
 
         <TextView
@@ -172,7 +172,8 @@
             android:id="@+id/rl_images"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible">
+            android:visibility="visible">
+
 
             <ImageView
                 android:id="@+id/iv_mid_circle"
@@ -220,6 +221,15 @@
                 app:layout_constraintCircle="@id/iv_mid_circle"
                 app:layout_constraintCircleAngle="300"
                 app:layout_constraintCircleRadius="80dp" />
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:layout_marginTop="@dimen/space_10dp"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"
+              android:rotation="-5"
+              android:src="@drawable/signup"/>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 

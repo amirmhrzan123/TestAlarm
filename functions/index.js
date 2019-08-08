@@ -2,16 +2,10 @@
 const functions = require('firebase-functions');
 var cors = require('cors')({ origin: true });
 var http = require('http')
+var geoLocation = require('geolocation-utils')
 
 const admin = require('firebase-admin');
-const geolib = require('geolib')
 admin.initializeApp(functions.config().firebase);
-
-
-
-
-
-
 
 exports.offlineObserveFromDevice = functions.database.ref("/SI_ALERT/{device_number}").onWrite((change,context)=>{
         
@@ -82,7 +76,8 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
 
                     notification: {
                         title: "SI friend request",
-                        body: capitalizeFirstLetter(userName) + " has sent you SI friend request"
+                        body: capitalizeFirstLetter(userName) + " has sent you SI friend request",
+                        sound : "default"
                     },
                     data: {
                         username: userName,
@@ -143,7 +138,9 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
         var payload = {
             notification:{
                 title: "SI safe alert",
-                body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+                body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now.",
+                sound : "default"
+
             },
             data:{
                 username: userName,
@@ -162,6 +159,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                     admin.database().ref('/users/'+id).once('value',async function(snap){
                         if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
                             registrationTokens.push(snap.child('notification_token').val())
+
                         }else{
                             registrationTokens.push("kjgkjjk")
                         }
@@ -218,8 +216,10 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
-                "Longitude="+geoLongitude
+                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
+                "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
+                sound : "default"
+
             },
             data: {
                 username: userName,
@@ -252,8 +252,8 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
                                         "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location : Latitude="+geoLatitude+
-                                        " Longitude="+geoLongitude,
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
+                                        "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
                                         "timeStamp": new Date().getTime()
                                     }
                                      admin.database().ref("Notification").child(id).push(newData)
@@ -351,7 +351,9 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
 
                     notification: {
                         title: "SI friend request reply",
-                        body: message
+                        body: message,
+                        sound : "default"
+
 
                     },
                     data: {
@@ -378,7 +380,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                             "timeStamp": new Date().getTime()
                         }
                         admin.database().ref("Notification").child(receiverId).push(newData)
-                        const response =  admin.messaging().sendToDevice(notificationToken, payload)
+                        const response =  await admin.messaging().sendToDevice(notificationToken, payload)
                         console.log("Successfully sent message: ", response);
                        
                                 res.status(200).json({
@@ -422,7 +424,9 @@ exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
                 var payload = {
                     notification:{
                         title: "SI safe alert",
-                        body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now."
+                        body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now.",
+                        sound : "default"
+
                     },
                     data:{
                         username: userName,
@@ -502,8 +506,10 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help. Current location : Latitude="+geoLatitude+
-                "Longitude="+geoLongitude
+                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
+                "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
+                sound : "default"
+
             },
             data: {
                 username: userName,
@@ -537,8 +543,8 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
                                         "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location : Latitude="+geoLatitude+
-                                        " Longitude="+geoLongitude,
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
+                                        "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
                                         "timeStamp": new Date().getTime()
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)

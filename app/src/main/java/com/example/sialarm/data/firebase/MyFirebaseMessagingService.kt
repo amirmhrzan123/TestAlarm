@@ -1,12 +1,29 @@
 package com.example.sialarm.data.firebase
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.example.sialarm.R
 import com.example.sialarm.data.prefs.PrefsManager
+import com.example.sialarm.data.room.NotificationCountTable
+import com.example.sialarm.data.room.dao.NotificationDao
+import com.example.sialarm.ui.homepage.HomeActivity
+import com.example.sialarm.utils.Extras
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -15,6 +32,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
 
     private val viewModelScoper: CoroutineScope by inject()
+
+    private val notificationDao: NotificationDao by inject()
 
 
     /**
@@ -38,11 +57,35 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: ${remoteMessage?.from}")
 
+        viewModelScoper.launch {
+            withContext(Dispatchers.IO){
+
+                try{
+                    var databaseCount = notificationDao.getBadgeCount("1")
+
+                    databaseCount += 1
+                    val notificationCountTable = NotificationCountTable(
+                        id = "1",
+                        count = databaseCount
+                    )
+                    notificationDao.updateNotificationCount(notificationCountTable)
+                }catch(e:Exception){
+                    println("Error"+ e.message)
+                }
+
+            }
+        }
+
+        remoteMessage?.data?.isNotEmpty()?.let {
+
+        }
+
 
 
         // Check if message contains a notification payload.
         remoteMessage?.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
+            sendNotification(it.title!!,it.body!!)
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -108,4 +151,39 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         private const val TAG = "MyFirebaseMsgService"
     }
+
+    private fun sendNotification(title:String,message:String) {
+
+        var intent : Intent? = null
+
+                intent = Intent(this, HomeActivity::class.java)
+                intent.putExtra(Extras.FROMNOTIFICATION, true)
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT)
+
+        val channelId = getString(R.string.default_notification_channel_id)
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+    }
+
 }
