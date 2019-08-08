@@ -1,4 +1,8 @@
 package com.example.sialarm.ui.instructions
 
-class InstructionViewModel {
+import com.example.sialarm.base.BaseViewModel
+
+class InstructionViewModel : BaseViewModel<IInstructionNavigator>() {
+
+
 }

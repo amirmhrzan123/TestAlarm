@@ -64,6 +64,7 @@
     <string name="siAlarm">SI Alarm</string>
     <string name="place_autocomplete_search_hint">Search</string>
     <string name="search_hint_country">Search</string>
+    <string name="returnToHome">Return to home</string>
 
 
     <array name="state">
