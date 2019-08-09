@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Debug
 import android.os.Handler
 import android.provider.ContactsContract
 import android.util.Log
@@ -114,7 +115,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
 
         iv_info.setOnClickListener {
-            openInformationFragment(123)
+            openInformationFragment()
         }
 
 
@@ -229,18 +230,9 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     }
 
-    fun openInformationFragment(send: Int) {
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .setCustomAnimations(
-                R.anim.slide_in_right,
-                R.anim.slide_out_left,
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
-            .replace(R.id.container, InstructionFragment.newInstance(send), InstructionFragment.TAG)
-            .commit()
+    fun openInformationFragment() {
+        InstructionFragment.newInstance(tabPosition).show(supportFragmentManager,"")
+
     }
 
 

@@ -1,17 +1,21 @@
 package com.example.sialarm.ui.instructions
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import com.example.sialarm.BR
 import com.example.sialarm.R
-import com.example.sialarm.base.BaseFragment
-import com.example.sialarm.databinding.FragmentSlideLeftRightBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class InstructionFragment :DialogFragment(){
 
+    private val tabPosition : Int by lazy{
+        arguments!!.getInt(TAG)
+    }
 
 
     companion object{
@@ -30,16 +34,34 @@ class InstructionFragment :DialogFragment(){
 
 
 
-
-    private val instructionViewModel : InstructionViewModel by viewModel()
-
-    override fun getLayoutId(): Int = R.layout.fragment_slide_left_right
-
-    override fun getViewModel(): InstructionViewModel = instructionViewModel
-
-    override fun getBindingVariable(): Int = BR.viewModel
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            dialog.window.setLayout(width, height)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
     }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val v = inflater.inflate(R.layout.fragment_slide_left_right, container, false)
+
+        var imageview = v.findViewById<ImageView>(R.id.animation)
+        var title = v.findViewById<TextView>(R.id.tvTitle)
+        var descriptoin = v.findViewById<TextView>(R.id.tvDescription)
+        if(tabPosition==0){
+            title.setText("ALARM")
+        }else{
+            title.setText("FRIENDS")
+        }
+        v.findViewById<Button>(R.id.button).setOnClickListener {
+            dismiss()
+        }
+        return v    }
 }

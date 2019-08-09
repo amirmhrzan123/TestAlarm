@@ -36,13 +36,14 @@
 
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="36dp"
                     android:textSize="30sp"
+                    android:textColor="@color/colorDarkBlack"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.497"
                     app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +51,7 @@
                     tools:text="fsdf sdf sdf sd" />
 
                 <TextView
-                    android:id="@+id/textView15"
+                    android:id="@+id/tvDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="32dp"
@@ -62,7 +63,7 @@
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView10"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                     tools:text="Soon you will be notified when your quote requests have been sent by your service provider. You will be able to approve or decline each quote. Once you have approved all your quote requests, you will be able to send this quote to your client" />
 
                 <ImageView
