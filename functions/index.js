@@ -2,15 +2,11 @@
 const functions = require('firebase-functions');
 var cors = require('cors')({ origin: true });
 var http = require('http')
-var geoLocation = require('geolocation-utils')
 
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-exports.offlineObserveFromDevice = functions.database.ref("/SI_ALERT/{device_number}").onWrite((change,context)=>{
-        
 
-})
 
     var options = {
       'method': 'POST',
@@ -216,9 +212,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
-                "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
-                sound : "default"
+                body: "Your SI Friend "+capitalizeFirstLetter(userName) + "is in need of help.",
 
             },
             data: {
@@ -252,9 +246,11 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
                                         "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
-                                        "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
-                                        "timeStamp": new Date().getTime()
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Please click here to know your friend current location",
+                                        "timeStamp": new Date().getTime(),
+                                        "link":"http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=10",
+                                        "latitude":geoLatitude,
+                                        "longitude":geoLongitude
                                     }
                                      admin.database().ref("Notification").child(id).push(newData)
                                 })
@@ -506,8 +502,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
-                "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
+                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help.",
                 sound : "default"
 
             },
@@ -543,9 +538,11 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
                                         "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Current location :" +
-                                        "http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=20",
-                                        "timeStamp": new Date().getTime()
+                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Click here to get your friend location.",
+                                        "timeStamp": new Date().getTime(),
+                                        "link":"http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=10",
+                                        "latitude":geoLatitude,
+                                        "longitude":geoLongitude
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)
                                 })
