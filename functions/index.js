@@ -182,10 +182,27 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                                 }
                                 admin.database().ref("History").child(senderId).push(historyDate)
 
-                                res.status(200).json({
-                                    statusCode: 200,
-                                    message: "Success"
+                                admin.database().ref('/users/'+senderId).update({
+                                    safeStatus: true
                                 })
+
+                                admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                    if(snap.exists){
+                                        console.log(snap.child('device').val())
+                                        admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                        .update({status:false,
+                                        sender_id:senderId})
+                                        res.status(200).json({
+                                            statusCode: 200,
+                                            message: "*success#"
+                                        })
+                                    }else[
+                                        res.status(302).json({
+                                            statusCode: 301,
+                                            message: "*No device found"
+                                        })
+                                    ]
+                            })
                         }
                     })
                 })
@@ -223,6 +240,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                 longitude: geoLongitude
             }
         };
+
 
         admin.database().ref('/friends/'+senderId).once('value',function(snap){
             if(snap.exists){
@@ -262,10 +280,28 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                     "paid":false
                                 }
                                 admin.database().ref("History").child(senderId).push(historyDate)
-                                res.status(200).json({
-                                    statusCode: 200,
-                                    message: "*success#"
+                                admin.database().ref('/users/'+senderId).update({
+                                    safeStatus: false
                                 })
+                                
+                                admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                            if(snap.exists){
+                                                console.log(snap.child('device').val())
+                                                admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                                .update({status:true,
+                                                sender_id:senderId})
+                                                res.status(200).json({
+                                                    statusCode: 200,
+                                                    message: "*success#"
+                                                })
+                                            }else[
+                                                res.status(302).json({
+                                                    statusCode: 301,
+                                                    message: "*No device found"
+                                                })
+                                            ]
+                                    })
+                               
                         }
                     })
                 })
@@ -458,11 +494,30 @@ exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
                                                 "timeStamp": new Date().getTime()
                                             }
                                             admin.database().ref("Notification").child(id).push(newData)
+
+                                            admin.database().ref('/users/'+senderId).update({
+                                                safeStatus: true
+                                            })
+
+                                            admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                                if(snap.exists){
+                                                    console.log(snap.child('device').val())
+                                                    admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                                    .update({status:false,
+                                                    sender_id:senderId})
+                                                    res.status(200).json({
+                                                        statusCode: 200,
+                                                        message: "*success#"
+                                                    })
+                                                }else[
+                                                    res.status(302).json({
+                                                        statusCode: 301,
+                                                        message: "*No device found"
+                                                    })
+                                                ]
                                         })
-                                        res.status(200).json({
-                                            statusCode: 200,
-                                            message: "Success"
                                         })
+                                       
                                         return ""
                                     });
                                 }
@@ -522,7 +577,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                 })
 
                 receiverIds.forEach((id)=>{
-                    admin.database().ref('/users/'+id).once('value',function(snap){
+                    admin.database().ref('/users/'+id).once('value',async function(snap){
                         if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
                             registrationTokens.push(snap.child('notification_token').val())
                         }else{
@@ -530,8 +585,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            return admin.messaging().sendToDevice(registrationTokens, payload)
-                            .then(response => {
+                            const response = await admin.messaging().sendToDevice(registrationTokens, payload)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -545,12 +599,28 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                                         "longitude":geoLongitude
                                     }
                                     admin.database().ref("Notification").child(id).push(newData)
+
+                                    admin.database().ref('/users/'+senderId).update({
+                                        safeStatus: false
+                                    })
+                                    admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                        if(snap.exists){
+                                            console.log(snap.child('device').val())
+                                            admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                            .update({status:true,
+                                            sender_id:senderId})
+                                            res.status(200).json({
+                                                statusCode: 200,
+                                                message: "*success#"
+                                            })
+                                        }else[
+                                            res.status(302).json({
+                                                statusCode: 301,
+                                                message: "*No device found"
+                                            })
+                                        ]
                                 })
-                                res.status(200).json({
-                                    statusCode: 200,
-                                    message: "Success"
-                                })
-                                return ""
+                            
                             });
                         }
                     })
