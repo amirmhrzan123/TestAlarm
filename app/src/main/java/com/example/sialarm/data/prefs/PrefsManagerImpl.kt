@@ -3,6 +3,26 @@ package com.example.sialarm.data.prefs
 import android.content.SharedPreferences
 
 class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
+    override fun getDeviceName(): String {
+        return pref.deviceName
+    }
+
+    override fun setDeviceName(device: String) {
+        pref.deviceName = device
+    }
+
+    override fun isAdmin(): Boolean = pref.admin
+
+    override fun setAdmin(admin: Boolean) {
+        pref.admin = admin
+    }
+
+    override fun setInstruction(status: Boolean) {
+        pref.instructionStatus = status
+    }
+
+    override fun getInstruction() = pref.instructionStatus
+
     override fun setDistrict(district: String) {
         pref.district = district
     }
@@ -54,15 +74,6 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
     override fun getDeviceId(): String = pref.deviceId
 
 
-
-    override fun isDeviceRegistered(): Boolean {
-        return pref.isDeviceRegistered
-    }
-
-    override fun setIsDeviceRegistered(boolean: Boolean) {
-        pref.isDeviceRegistered = boolean
-    }
-
     override fun clear() {
         pref.edit().clear().commit()
     }
@@ -72,11 +83,7 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         pref.phoneNumber = number
     }
 
-    override fun setLoginAs(loginAs: Int) {
-        pref.loginAs = loginAs
-    }
 
-    override fun getLoginAs(): Int = pref.loginAs
 
     override fun setLoginStatus(status: Boolean) {
         pref.isLogin = status
@@ -85,8 +92,6 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
     override fun isLogin(): Boolean = pref.isLogin
 
     companion object {
-        const val ACCESSTOKEN = "access_token"
-        const val REFRESHTOKEN = "refresh_token"
         const val TOLE = "tole"
         const val WARDNUMBER = "wardNumber"
         const val STATE = "state"
@@ -94,16 +99,15 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         const val USERID = "userId"
         const val USERNAME = "userName"
         const val LOGINSTATUS = "loginStatus"
-        const val LOGIN_AS = "login_as"
         const val PHONENUMBER = "phoneNumber"
-        const val COMPLETED_STEPS = "completed_steps"
         const val USERIMAGE = "userImage"
-        const val COMPLETED_SUB_STEPS = "completed_sub_steps"
-        const val IS_DEVICE_REGISTERED = "Is_device_registered"
-        const val ENABLE_SUBSCRIPTION = "enable_subscription"
         const val DEVICE_ID = "device_id"
         const val PRE_SETUP_COMPLETE = "pre_setup_complete"
         const val DISTRICT = "district"
+        const val INSTRUCTIONSTATUS = "instructionStatus"
+        const val DEVICETYPE = "deviceType"
+        const val ADMIN = "admin"
+        const val DEVICENAME = "deviceName"
     }
 
     override fun setUserId(userId: String) {
@@ -118,22 +122,11 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
 
     override fun getUserName(): String = pref.userName
 
-    override fun setRefreshToken(refreshToken: String) {
-        pref.refreshToken = refreshToken
-    }
 
-    override fun getRefreshToken(): String = pref.refreshToken
-
-    override fun setAccessToken(token: String) {
-        pref.accessToken = token
-    }
-
-    override fun getAccessToken(): String = pref.accessToken
-
-    private var SharedPreferences.accessToken
-        get() = getString(ACCESSTOKEN, "")
+    private var SharedPreferences.admin
+        get() = getBoolean(ADMIN, false)
         set(value) {
-            putValue(ACCESSTOKEN, value)
+            putValue(ADMIN, value)
         }
 
     private var SharedPreferences.deviceId
@@ -142,17 +135,12 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
             putValue(DEVICE_ID,value)
         }
 
-    private var SharedPreferences.enableSubsription
-        get() = getBoolean(ENABLE_SUBSCRIPTION,true)
+    private var SharedPreferences.deviceName
+        get() = getString(DEVICENAME,"")
         set(value){
-            putValue(ENABLE_SUBSCRIPTION,value)
+            putValue(DEVICENAME,value)
         }
 
-    private var SharedPreferences.refreshToken
-        get() = getString(REFRESHTOKEN, "")
-        set(value) {
-            putValue(REFRESHTOKEN, value)
-        }
 
     private var SharedPreferences.userId
         get() = getString(USERID, "")
@@ -171,17 +159,6 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
             putValue(LOGINSTATUS, value)
         }
 
-    private var SharedPreferences.isDeviceRegistered
-        get() = getBoolean(IS_DEVICE_REGISTERED, false)
-        set(value) {
-            putValue(IS_DEVICE_REGISTERED, value)
-        }
-
-    private var SharedPreferences.loginAs
-        get() = getInt(LOGIN_AS, 1)
-        set(value) {
-            putValue(LOGIN_AS, value)
-        }
 
     private var SharedPreferences.userImage
         get() = getString(USERIMAGE,"")
@@ -219,6 +196,12 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         get() = getString(WARDNUMBER,"")
         set(value){
             putValue(WARDNUMBER,value)
+        }
+
+    private var SharedPreferences.instructionStatus
+        get() = getBoolean(INSTRUCTIONSTATUS,false)
+        set(value){
+            putValue(INSTRUCTIONSTATUS,value)
         }
 
 

@@ -52,6 +52,10 @@ class MyProfileViewModel constructor(private val repository:MyProfileRepository,
         getNavigator().onStateClicked()
     }
 
+    fun onDeviceClicked(){
+        getNavigator().onDeviceClicked()
+    }
+
     fun onWardClicked(){
         getNavigator().onWardClicked()
     }

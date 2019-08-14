@@ -36,8 +36,10 @@ class MainRepository constructor(private val notificationDao:NotificationDao,
                     prefsManager.setPhoneNumber(user.phone_number)
                     prefsManager.setState(user.state)
                     prefsManager.setWardNo(user.ward.toString())
-                    prefsManager.setDeviceId("Device 1")
+                    prefsManager.setDeviceId(user.device)
                     prefsManager.setDistrict(user.district)
+                    prefsManager.setAdmin(user.admin!!)
+                    prefsManager.setDeviceName(user.deviceName!!)
                 }
             }
 

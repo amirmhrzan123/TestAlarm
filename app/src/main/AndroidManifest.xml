@@ -36,6 +36,7 @@
 
         <activity android:name=".ui.landingScreen.LandingActivity">
 
+
         </activity>
 
 
@@ -46,13 +47,13 @@
 
         <activity android:name=".ui.PreSetupActivity"
             android:theme="@style/landingPageTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
 
 
 
@@ -68,6 +69,10 @@
         <activity android:name=".ui.myProfile.MyProfileActivity"/>
 
         <activity android:name=".ui.history.HistoryActivity"/>
+
+        <activity android:name=".ui.device.DeviceListActivity"/>
+
+        <activity android:name=".ui.device.AddDeviceActivity"/>
 
         <service
             android:name=".data.firebase.MyFirebaseMessagingService"

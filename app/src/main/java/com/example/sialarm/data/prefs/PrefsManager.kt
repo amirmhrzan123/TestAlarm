@@ -1,10 +1,7 @@
 package com.example.sialarm.data.prefs
 
 interface PrefsManager {
-    fun getAccessToken(): String
-    fun setAccessToken(token: String)
-    fun setRefreshToken(refreshToken: String)
-    fun getRefreshToken(): String
+
     fun setUserId(userId: String)
     fun getUserId(): String
     fun setUserName(userName: String)
@@ -13,13 +10,11 @@ interface PrefsManager {
     fun getUserImage():String
     fun setLoginStatus(status: Boolean)
     fun isLogin(): Boolean
-    fun setLoginAs(loginAs: Int)
-    fun getLoginAs(): Int
+
     fun getPhoneNumber(): String
     fun setPhoneNumber(number: String)
     fun clear()
-    fun isDeviceRegistered(): Boolean
-    fun setIsDeviceRegistered(boolean: Boolean)
+
     fun setDeviceId(deviceId:String)
     fun getDeviceId():String
     fun setPreSetupComplete(boolean:Boolean)
@@ -34,5 +29,11 @@ interface PrefsManager {
     fun getEmail():String
     fun setDistrict(district:String)
     fun getDistrict():String
+    fun setInstruction(status:Boolean)
+    fun getInstruction():Boolean
+    fun getDeviceName():String
+    fun setDeviceName(device:String)
+    fun isAdmin():Boolean
+    fun setAdmin(admin:Boolean)
 
 }

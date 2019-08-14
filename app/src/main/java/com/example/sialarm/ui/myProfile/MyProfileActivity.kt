@@ -13,10 +13,12 @@ import com.example.sialarm.base.BaseActivity
 import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityMyProfileBinding
+import com.example.sialarm.ui.device.DeviceListActivity
 import com.example.sialarm.ui.district.SearchDistrictActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.customViews.CustomSpinnerDialog
 import com.example.sialarm.utils.customViews.CustomSpinnerWardAdapter
+import com.example.sialarm.utils.extensions.Device
 import com.example.sialarm.utils.extensions.District
 import com.example.sialarm.utils.extensions.loadImage
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -30,7 +32,6 @@ import java.util.ArrayList
 
 class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBinding>(),IMyProfileNavigator{
 
-
     private val prefs: PrefsManager by inject()
 
     var stateList = arrayListOf<String>()
@@ -42,6 +43,8 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
     override fun getViewModel(): MyProfileViewModel = myProfileViewModel
 
     override fun getBindingVariable(): Int = BR.viewModel
+
+    var deviceId = ""
 
     companion object {
         fun newInstance(activity: Activity){
@@ -66,6 +69,7 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
         etState.setText(prefs.getState())
         etWardNumber.setText(prefs.getWardNo())
         etDistrict.setText(prefs.getDistrict())
+        etDevice.setText(prefs.getDeviceName())
         myProfileViewModel.selectedWardId = prefs.getWardNo().toInt()
         myProfileViewModel.selectedStateId = stateList.indexOf(prefs.getState())
 
@@ -95,6 +99,10 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
             if(requestCode==3){
                 val district = Gson().fromJson(data!!.getStringExtra("Extra"), District::class.java)
                 etDistrict.setText(district.name)
+            }else{
+                val device = Gson().fromJson(data!!.getStringExtra("Extra"), Device::class.java)
+                etDevice.setText(device.name)
+                deviceId=device.id
             }
         }
     }
@@ -106,7 +114,9 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
             state = etState.text.toString(),
             district = etDistrict.text.toString(),
             ward = etWardNumber.text.toString().toInt(),
-            tole = etStreet.text.toString())
+            tole = etStreet.text.toString(),
+            device = deviceId,
+            deviceName = etDevice.text.toString())
     }
 
     override fun onWardClicked() {
@@ -125,6 +135,12 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
     override fun onDistrictClicked() {
         startActivityForResult(Intent(this,SearchDistrictActivity::class.java),3)
     }
+
+    override fun onDeviceClicked() {
+
+        startActivityForResult(Intent(this,DeviceListActivity::class.java),4)
+    }
+
 
     override fun onStateClicked() {
 

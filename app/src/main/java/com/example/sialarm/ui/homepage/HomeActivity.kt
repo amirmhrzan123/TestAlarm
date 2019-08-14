@@ -22,6 +22,7 @@ import com.aurelhubert.ahbottomnavigation.notification.AHNotification
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
+import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityMainBinding
 import com.example.sialarm.ui.instructions.InstructionFragment
 import com.example.sialarm.utils.CommonUtils
@@ -33,6 +34,7 @@ import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -50,6 +52,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
     private var tabPosition = 0
 
 
+    private val prefs: PrefsManager by inject()
 
 
     // UI
@@ -80,9 +83,14 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
         toolbar.title = "Alert"
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
         initUI()
+        if(!prefs.getInstruction()){
+            bl_menu.visibility = View.VISIBLE
+            prefs.setInstruction(true)
+        }
 
     }
 
@@ -212,6 +220,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
 
             if(tabPosition>1){
                 iv_info.visibility = View.GONE
+
             }else{
                 iv_info.visibility = View.VISIBLE
             }
@@ -232,6 +241,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     fun openInformationFragment() {
         InstructionFragment.newInstance(tabPosition).show(supportFragmentManager,"")
+        bl_menu.visibility = View.GONE
 
     }
 

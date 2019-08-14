@@ -31,8 +31,9 @@
             android:layout_marginEnd="@dimen/dimen_42px_14dp"
             android:layout_marginStart="@dimen/dimen_42px_14dp"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:fontFamily="@font/roboto_regular"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto_medium"
+            android:padding="@dimen/space_10dp"
             android:textColor="@color/colorDark"
             tools:text="Country Name" />
 

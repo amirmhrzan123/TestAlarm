@@ -41,6 +41,11 @@ fun ImageView.loadImage(url: String, placeholder: Int) {
     GlideApp.with(this.context).load(url).placeholder(R.drawable.ic_profile).into(this)
 }
 
+fun ImageView.loadDrawable(url: Int) {
+
+    GlideApp.with(this.context).load(url).into(this)
+}
+
 
 fun String.getNumber():String{
     var replacenumber = ""
@@ -302,6 +307,13 @@ data class District(val id: Int,
 
 data class State(val id:Int,
                  val name:String)
+
+data class Device(val id:String="",
+                  val name:String="",
+                  val latitude:String="",
+                  val longitude:String="",
+                  val district:String="",
+                  val ward:Int=0)
 
 
 

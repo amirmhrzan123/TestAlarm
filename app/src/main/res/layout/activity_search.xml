@@ -7,7 +7,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/activity_search"
         android:layout_width="match_parent"
-        android:background="@color/white"
+        android:background="@drawable/wallpaper"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -24,6 +24,7 @@
                     android:id="@+id/icBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/white"
                     app:srcCompat="@drawable/ic_back"/>
 
 
@@ -35,14 +36,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/place_autocomplete_search_hint"
-                android:paddingEnd="@dimen/dimen_14dp"
-                android:paddingStart="@dimen/dimen_14dp"
                 app:searchBackIcon="@drawable/ic_back" />
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/white"
             android:layout_weight="1">
 
             <ListView

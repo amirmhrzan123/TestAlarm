@@ -94,145 +94,77 @@
             android:textColor="@color/color_blue_3cacd6" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/ll_description"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/ll_bottom"
-        android:minHeight="120dp"
-        android:orientation="vertical">
+        android:id="@+id/ll_description"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_bottom">
+
+        <ImageView
+            android:id="@+id/ivPicture"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="40dp"
+            android:rotation="-5"
+            android:src="@drawable/signup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_desc_body"/>
 
         <TextView
             android:id="@+id/tv_desc_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
-            android:textSize="22sp"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_desc_body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="@string/app_name" />
 
         <Button
             android:id="@+id/btn_permission"
-            android:background="@drawable/button_rounded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="10dp"
+            android:layout_below="@+id/tv_desc_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/button_rounded"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Grant permissions"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:visibility="gone"
-            android:textAllCaps="false"
-            android:layout_centerHorizontal="true"
-            android:text="Grant permissions"
-            android:layout_below="@+id/tv_desc_title"/>
+            app:layout_constraintBottom_toTopOf="@+id/tv_desc_body"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tv_desc_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/tv_desc_title"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:padding="24dp"
-            android:textSize="14sp"
-            tools:text="This is text! How are you?" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/ll_description">
-
-        <TextView
-            android:id="@+id/tvPermissions"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/rl_images"
             android:layout_centerHorizontal="true"
-            android:padding="10dp"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:text="You need to grant the permission for messages and location in order to go ahead" />
+            android:padding="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="This is text! How are you?" />
 
-
-
-        <ImageView
-            android:id="@+id/iv_on_boarding"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:contentDescription="@null"
-            android:scaleType="fitXY"
-            />
-
-      <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/rl_images"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible">
-
-
-            <ImageView
-                android:id="@+id/iv_mid_circle"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:tint="@color/white"
-                android:contentDescription="@null"
-                android:src="@drawable/shape_circle_on_boarding_main"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/ivAddFriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/transition_event"
-                android:contentDescription="@null"
-                android:padding="24dp"
-                android:tint="@color/white"
-                app:layout_constraintCircle="@id/iv_mid_circle"
-                app:layout_constraintCircleAngle="60"
-                app:layout_constraintCircleRadius="80dp" />
-
-            <ImageView
-                android:id="@+id/iv_register"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/transition_group"
-                android:contentDescription="@null"
-                android:padding="24dp"
-                android:tint="@color/white"
-                app:layout_constraintCircle="@id/iv_mid_circle"
-                app:layout_constraintCircleAngle="180"
-                app:layout_constraintCircleRadius="80dp" />
-
-            <ImageView
-                android:id="@+id/iv_send_alert"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/transition_messaging"
-                android:contentDescription="@null"
-                android:padding="24dp"
-                app:layout_constraintCircle="@id/iv_mid_circle"
-                app:layout_constraintCircleAngle="300"
-                app:layout_constraintCircleRadius="80dp" />
-
-          <ImageView
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:layout_marginTop="@dimen/space_10dp"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintEnd_toEndOf="parent"
-              android:rotation="-5"
-              android:src="@drawable/signup"/>
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

@@ -12,6 +12,16 @@ import com.example.sialarm.databinding.FragmentNotificationBinding
 import com.example.sialarm.utils.Status
 import kotlinx.android.synthetic.main.fragment_notification.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import android.content.Intent
+import android.net.Uri
+import com.example.sialarm.data.firebase.Users
+import com.example.sialarm.utils.extensions.showValidationDialog
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.auth.User
+
 
 class NotificationFragment:BaseFragment<NotificationViewModel,FragmentNotificationBinding>(),SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
@@ -26,7 +36,35 @@ class NotificationFragment:BaseFragment<NotificationViewModel,FragmentNotificati
     }
 
     private val notificationAdapter: NotificationAdaptor by lazy{
-        NotificationAdaptor()
+        NotificationAdaptor(click = {
+
+
+
+            if(it.notification_type_id=="2"){
+
+                FirebaseDatabase.getInstance().getReference("users").child(it.sender_id).addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onCancelled(p0: DatabaseError) {
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if(p0.exists()){
+                            val user = p0.getValue(Users::class.java)
+                            if(user!!.safeStatus!!){
+                                activity!!.showValidationDialog("SI alarm","It seems your SI friend is already safe.")
+                            }else{
+                                val url ="http://maps.google.com/?q=${it.latitude},${it.longitude}&z=10"
+                                val i = Intent(Intent.ACTION_VIEW)
+                                i.data = Uri.parse(url)
+                                startActivity(i)
+                            }
+                        }
+                    }
+
+                })
+
+
+            }
+        })
     }
 
     private val notificationViewModel: NotificationViewModel by viewModel()

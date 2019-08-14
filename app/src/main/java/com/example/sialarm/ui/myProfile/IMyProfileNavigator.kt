@@ -11,4 +11,6 @@ interface IMyProfileNavigator {
     fun onStateClicked()
 
     fun onUpdateClicked()
+
+    fun onDeviceClicked()
 }

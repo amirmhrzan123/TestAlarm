@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
+import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.FragmentAlertBinding
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.utils.Status
@@ -38,6 +39,7 @@ import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import kotlinx.android.synthetic.main.fragment_alert.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.DateFormat
@@ -55,6 +57,8 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
     private val mainViewModel: MainViewModel by sharedViewModel()
 
     override fun getBindingVariable(): Int = BR.viewModel
+
+    private val prefs: PrefsManager by inject()
 
     var down : Long = 0
     var runnable:Runnable?=null
@@ -158,6 +162,9 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
         })
 
 
+        println("device id"+prefs.getDeviceId())
+        val number = "+977${prefs.getDeviceId()}"
+        println("device id "+ number)
         KotlinPermissions.with(activity!!)
             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
             .onAccepted { permissions ->
@@ -321,7 +328,10 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
                         .permissions(Manifest.permission.SEND_SMS)
                         .onAccepted { permissions ->
                             val smsManager = SmsManager.getDefault() as SmsManager
-                            smsManager.sendTextMessage("+9779808878368", null, "SISA1234|${mCurrentLocation.latitude}|${mCurrentLocation.longitude}*", null, null)
+                            var lats = String.format("%.7f", mCurrentLocation.latitude)
+                            var longs = String.format("%.7f", mCurrentLocation.longitude)
+                            smsManager.sendTextMessage("+977${prefs.getDeviceId()}", null,
+                                "SISA1234|$lats|$longs|11*", null, null)
                             stopLocationUpdates()
                         }
                         .onDenied {

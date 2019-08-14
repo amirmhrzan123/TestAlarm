@@ -9,4 +9,6 @@ interface ISettingNavigator {
     fun onSendSafeAlertClicked()
 
     fun onHistoryClicked()
+
+    fun onAddDeviceClicked()
 }

@@ -17,6 +17,7 @@
         android:background="@drawable/wallpaper"
         android:animateLayoutChanges="true"
         android:layout_height="match_parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -244,7 +245,6 @@
                                 android:cursorVisible="false"
                                 android:onClick="@{()->viewModel.onWardClicked()}"
                                 android:layout_width="match_parent"
-                                android:text="0"
                                 android:focusable="false"
                                 android:hint="@string/wardNo"
                                 android:inputType="number"/>
@@ -291,14 +291,17 @@
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/textInputStyle"
                             android:layout_width="match_parent"
+                            android:onClick="@{()->viewModel.onDeviceClicked()}"
                             app:hintEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etDevice"
                                 style="@style/textInputEdiTextStyle"
                                 android:layout_width="match_parent"
+                                android:onClick="@{()->viewModel.onDeviceClicked()}"
                                 android:hint="@string/deviceNumber"
-                                android:enabled="false"
-                                android:text="Device 1"
+                                android:focusable="false"
+
                                 android:inputType="textCapSentences"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -319,7 +322,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/cvDevice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Next"
+                        android:text="Update"
                         android:textColor="#ffffff"
                         android:textAllCaps="false" />
 

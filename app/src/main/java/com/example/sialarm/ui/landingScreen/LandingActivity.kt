@@ -25,6 +25,7 @@ import com.facebook.accountkit.ui.AccountKitActivity
 import com.facebook.accountkit.ui.AccountKitConfiguration
 import com.facebook.accountkit.ui.LoginType
 import com.facebook.accountkit.ui.SkinManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_landing.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -62,6 +63,9 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
         super.onCreate(savedInstanceState)
 
         setupUI(main_layout,this)
+
+
+
 
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this@LandingActivity) { instanceIdResult ->
             val newToken = instanceIdResult.token
@@ -157,11 +161,14 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
                             landingViewModel.number = phoneNumber.toString().getNumber()
                             landingViewModel.userName = etUserName.text.toString()
                             val phoneNumberString = phoneNumber.toString()
+
                             FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this@LandingActivity) { instanceIdResult ->
                                 val newToken = instanceIdResult.token
                                 landingViewModel.token = newToken
                                 Log.d("newToken", newToken)
                                 landingViewModel.isValid.value = true
+
+
                             }
                         }
 

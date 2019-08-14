@@ -4,16 +4,16 @@
         <shape android:shape="oval">
             <solid android:color="@color/color_light_yellow_e4d048" />
             <size
-                android:width="100dp"
-                android:height="100dp" />
+                android:width="130dp"
+                android:height="130dp" />
         </shape>
     </item>
     <item>
         <shape android:shape="oval">
             <solid android:color="@color/color_grey_on_boarding" />
             <size
-                android:width="100dp"
-                android:height="100dp" />
+                android:width="130dp"
+                android:height="130dp" />
         </shape>
     </item>
 </transition>

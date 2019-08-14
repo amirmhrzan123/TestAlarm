@@ -230,6 +230,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
             notification: {
                 title: "SI Emergency Alert",
                 body: "Your SI Friend "+capitalizeFirstLetter(userName) + "is in need of help.",
+                sound: "default"
 
             },
             data: {
@@ -546,103 +547,218 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
     cors(req,res,()=>{
 
         var senderId = req.body.sender_id
+        console.log(senderId)
         var notificationTypeId = "2"
         var geoLatitude = req.body.latitude
         var geoLongitude = req.body.longitude
-        admin.database().ref('/users/'+senderId).once('value',function(snap){
-            if(snap.exists){
-                var userName = snap.child('username').val()
-                var receiverIds = []
-        var registrationTokens = []
-        var payload = {
-            notification: {
-                title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help.",
-                sound : "default"
-
-            },
-            data: {
-                username: userName,
-                sender_id: senderId,
-                notification_type_id: notificationTypeId,
-                latitude: geoLatitude,
-                longitude: geoLongitude
-            }
-        };
-
-        admin.database().ref('/friends/'+senderId).once('value',function(snap){
-            if(snap.exists){
-                snap.forEach((child)=>{
-                    receiverIds.push(child.val().number)
-                })
-
-                receiverIds.forEach((id)=>{
-                    admin.database().ref('/users/'+id).once('value',async function(snap){
-                        if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
-                            registrationTokens.push(snap.child('notification_token').val())
-                        }else{
-                            registrationTokens.push("kjgkjjk")
-                        }
-                        console.log(registrationTokens)
-                        if(receiverIds.length===registrationTokens.length){
-                            const response = await admin.messaging().sendToDevice(registrationTokens, payload)
-                                console.log("Successfully sent message: ", response);
-                                receiverIds.forEach((id)=>{
-                                    var newData = {
-                                        "notification_type_id": notificationTypeId,
-                                        "sender_id": senderId,
-                                        "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Click here to get your friend location.",
-                                        "timeStamp": new Date().getTime(),
-                                        "link":"http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=10",
-                                        "latitude":geoLatitude,
-                                        "longitude":geoLongitude
-                                    }
-                                    admin.database().ref("Notification").child(id).push(newData)
-
-                                    admin.database().ref('/users/'+senderId).update({
-                                        safeStatus: false
-                                    })
-                                    admin.database().ref('/users/'+senderId).once('value',function(snap){
-                                        if(snap.exists){
-                                            console.log(snap.child('device').val())
-                                            admin.database().ref('deviceStatus').child(snap.child('device').val())
-                                            .update({status:true,
-                                            sender_id:senderId})
-                                            res.status(200).json({
-                                                statusCode: 200,
-                                                message: "*success#"
-                                            })
-                                        }else[
-                                            res.status(302).json({
-                                                statusCode: 301,
-                                                message: "*No device found"
-                                            })
-                                        ]
+        var riskStatus = req.body.risk_status
+        
+        if(riskStatus==="11"){
+            admin.database().ref('/users/'+senderId).once('value',function(snap){
+                if(snap.exists){
+                    var userName = snap.child('username').val()
+                    console.log(userName)
+                    var receiverIds = []
+            var registrationTokens = []
+            var payload = {
+                notification: {
+                    title: "SI Emergency Alert",
+                    body: "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help.",
+                    sound : "default"
+    
+                },
+                data: {
+                    username: userName,
+                    sender_id: senderId,
+                    notification_type_id: notificationTypeId,
+                    latitude: geoLatitude,
+                    longitude: geoLongitude
+                }
+            };
+    
+            admin.database().ref('/friends/'+senderId).once('value',function(snap){
+                if(snap.exists){
+                    snap.forEach((child)=>{
+                        receiverIds.push(child.val().number)
+                    })
+    
+                    receiverIds.forEach((id)=>{
+                        admin.database().ref('/users/'+id).once('value',async function(snap){
+                            if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
+                                registrationTokens.push(snap.child('notification_token').val())
+                            }else{
+                                registrationTokens.push("kjgkjjk")
+                            }
+                            console.log(registrationTokens)
+                            if(receiverIds.length===registrationTokens.length){
+                                const response = await admin.messaging().sendToDevice(registrationTokens, payload)
+                                    console.log("Successfully sent message: ", response);
+                                    receiverIds.forEach((id)=>{
+                                        var newData = {
+                                            "notification_type_id": notificationTypeId,
+                                            "sender_id": senderId,
+                                            "title":"SI emergency alert",
+                                            "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Click here to get your friend location.",
+                                            "timeStamp": new Date().getTime(),
+                                            "link":"http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=10",
+                                            "latitude":geoLatitude,
+                                            "longitude":geoLongitude
+                                        }
+                                        admin.database().ref("Notification").child(id).push(newData) 
                                 })
-                            
-                            });
+
+                                var historyDate = {
+                                    "title":"Emergency Alert",
+                                    "total_message_sent":registrationTokens.length,
+                                    "message":"You sent emergency alert messages to "+registrationTokens.length+" SI friends.",
+                                    "timeStamp": new Date().getTime(),
+                                    "paid":false
+                                }
+                                admin.database().ref("History").child(senderId).push(historyDate)
+
+                                admin.database().ref('/users/'+senderId).update({
+                                    safeStatus: false
+                                })
+                                admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                    if(snap.exists){
+                                        console.log(snap.child('device').val())
+                                        admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                        .update({status:true,
+                                        sender_id:senderId})
+                                        res.status(200).json({
+                                            statusCode: 200,
+                                            message: "*success#"
+                                        })
+                                    }else[
+                                        res.status(302).json({
+                                            statusCode: 301,
+                                            message: "*No device found"
+                                        })
+                                    ]
+                            })
+                        
+                            }
+                        })
+                    })
+                }else{
+                    res.status(301).json({
+                        statusCode:301,
+                        message: "Failure"
+                    })
+                }
+            })
+    
+    
+                }else{
+    
+                    res.status(301).json({
+                        statusCode:301,
+                        message: "Failure"
+                    })
+                }
+    
+            })
+        }else{
+            admin.database().ref('/users/'+senderId).once('value',function(snap){
+                if(snap.exists){
+                    var notificationTypeId = "4"
+                    var userName = snap.child('username').val()
+                    var receiverIds = []
+                    var message = ""
+                    var registrationTokens = []
+                    var payload = {
+                        notification:{
+                            title: "SI safe alert",
+                            body: " Your SI friend "+capitalizeFirstLetter(userName)+ " is safe now.",
+                            sound : "default"
+    
+                        },
+                        data:{
+                            username: userName,
+                            sender_id: senderId,
+                            notification_type_id: notificationTypeId,
+                        }
+                    }
+            
+                    admin.database().ref('/friends/'+senderId).once('value',function(snap){
+                        if(snap.exists){
+                            snap.forEach((child)=>{
+                                receiverIds.push(child.val().number)
+                            })
+            
+                            receiverIds.forEach((id)=>{
+                                admin.database().ref('/users/'+id).once('value', async function(snap){
+                                    if(snap.child('notification_token').val()!==null && snap.child('notification_token').val()!==""){
+                                        registrationTokens.push(snap.child('notification_token').val())
+                                    }else{
+                                        registrationTokens.push("kjgkjjk")
+                                    }
+                                    console.log(registrationTokens)
+                                    if(receiverIds.length===registrationTokens.length){
+                                        const response = await admin.messaging().sendToDevice(registrationTokens, payload)
+                                            console.log("Successfully sent message: ", response);
+                                            receiverIds.forEach((id)=>{
+                                                var newData = {
+                                                    "notification_type_id": notificationTypeId,
+                                                    "sender_id": senderId,
+                                                    "title":"SI safe alert",
+                                                    "message": "Your SI Friend "+userName + " is safe now",
+                                                    "timeStamp": new Date().getTime()
+                                                }
+                                                admin.database().ref("Notification").child(id).push(newData)
+
+                                            })
+                                            var historyDate = {
+                                                "title":"SI Safe Alert",
+                                                "total_message_sent":registrationTokens.length,
+                                                "message":"You sent safe alert messages to "+registrationTokens.length+" SI friends.",
+                                                "timeStamp": new Date().getTime(),
+                                                "paid":false
+                                            }
+                                            admin.database().ref("History").child(senderId).push(historyDate)
+            
+
+                                            admin.database().ref('/users/'+senderId).update({
+                                                safeStatus: true
+                                            })
+
+                                            admin.database().ref('/users/'+senderId).once('value',function(snap){
+                                                if(snap.exists){
+                                                    console.log(snap.child('device').val())
+                                                    admin.database().ref('deviceStatus').child(snap.child('device').val())
+                                                    .update({status:false,
+                                                    sender_id:senderId})
+                                                    res.status(200).json({
+                                                        statusCode: 200,
+                                                        message: "*success#"
+                                                    })
+                                                }else[
+                                                    res.status(302).json({
+                                                        statusCode: 301,
+                                                        message: "*No device found"
+                                                    })
+                                                ]
+                                        })
+                                           
+                                    }
+                                })
+                            })
+                        }else{
+                            res.status(301).json({
+                                statusCode:301,
+                                message: "Failure"
+                            })
                         }
                     })
-                })
-            }else{
-                res.status(301).json({
-                    statusCode:301,
-                    message: "Failure"
-                })
-            }
-        })
-
-
-            }else{
-
-                res.status(301).json({
-                    statusCode:301,
-                    message: "Failure"
-                })
-            }
-
-        })
+                }else{
+                    res.status(301).json({
+                        statusCode: 301,
+                        message: "Failure"
+                    })
+                }
+            })
+        }
+      
             
     })
 })

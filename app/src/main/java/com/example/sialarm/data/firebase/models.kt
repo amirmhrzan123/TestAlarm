@@ -21,7 +21,10 @@ data class Users(
     val tole:String="",
     val ward:Int= 0,
     val state:String="",
-    val district:String=""
+    val district:String="",
+    val deviceName:String?="",
+    val admin: Boolean?=false,
+    val safeStatus:Boolean?=true
 )
 
 data class PhoneNumber(

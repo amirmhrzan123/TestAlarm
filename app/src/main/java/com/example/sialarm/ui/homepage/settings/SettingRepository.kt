@@ -36,4 +36,18 @@ class SettingRepository constructor(private val apiServices: ApiServices,
     }
 
 
+    fun logout():LiveData<Resource<String>>{
+        val logoutResponse = MutableLiveData<Resource<String>>()
+        firebaseDatabase.getReference("users").child(prefsManager.getUserId())
+            .child("notification_token").setValue("")
+            .addOnCompleteListener {
+                logoutResponse.postValue(Resource.success("Logout","You are logout successfully.",""))
+            }
+            .addOnFailureListener {
+                logoutResponse.postValue(Resource.error("Logout","Something went wrong",""))
+            }
+        return logoutResponse
+    }
+
+
 }

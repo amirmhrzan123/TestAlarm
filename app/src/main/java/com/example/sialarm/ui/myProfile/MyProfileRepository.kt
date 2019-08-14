@@ -27,11 +27,16 @@ class MyProfileRepository constructor(private val viewModelScope:CoroutineScope,
                 firebaseDatabase.getReference("users/"+prefsManager.getUserId()+"/tole").setValue(user.tole)
                 firebaseDatabase.getReference("users/"+prefsManager.getUserId()+"/ward").setValue(user.ward)
                 firebaseDatabase.getReference("users/"+prefsManager.getUserId()+"/username").setValue(user.username)
+                firebaseDatabase.getReference("users/"+prefsManager.getUserId()+"/device").setValue(user.device)
+                firebaseDatabase.getReference("users/"+prefsManager.getUserId()+"/deviceName").setValue(user.deviceName)
                 prefsManager.setEmail(user.email)
                 prefsManager.setState(user.state)
                 prefsManager.setDistrict(user.district)
                 prefsManager.setWardNo(user.ward.toString())
                 prefsManager.setTole(user.tole)
+                prefsManager.setDeviceName(user.deviceName!!)
+                prefsManager.setDeviceId(user.device!!)
+                prefsManager.setAdmin(false)
                 response.postValue(Resource.success("","",null))
             }catch(e:Exception){
                 response.postValue(Resource.error("","",null))
@@ -40,6 +45,7 @@ class MyProfileRepository constructor(private val viewModelScope:CoroutineScope,
         return response
 
     }
+
 
 
 }

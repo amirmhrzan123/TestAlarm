@@ -200,7 +200,6 @@ dependencies {
     implementation "com.daimajia.androidanimations:library:$daimajiaAnimation"
 
     //firebase
-    implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.firebase:firebase-auth:18.1.0'
     implementation 'com.google.firebase:firebase-firestore:20.2.0'

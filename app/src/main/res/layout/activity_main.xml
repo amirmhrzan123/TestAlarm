@@ -43,13 +43,13 @@
 
             <com.example.sialarm.utils.tooltips.BubbleLayout
                 android:id="@+id/bl_menu"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:padding="8dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:bl_arrowDirection="top"
-                app:bl_arrowHeight="8dp"
+                app:bl_arrowHeight="12dp"
                 app:bl_arrowWidth="16dp"
                 android:layout_marginStart="8dp"
                 app:bl_bubbleColor="@color/light_blue"

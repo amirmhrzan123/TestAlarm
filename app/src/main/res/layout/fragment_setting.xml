@@ -22,258 +22,277 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/white"
+            android:background="@color/transparent_white"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
            >
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp">
 
-
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rlMyProfile"
                     android:onClick="@{()->viewModel.onProfileClick()}"
                     android:layout_width="0dp"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+                    <ImageView
+                        android:id="@+id/profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:tint="@color/colorDark"
+                        android:src="@drawable/ic_avatar"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:fontFamily="@font/roboto_medium"
-                        android:textColor="@color/dark_grey"
-                        android:layout_centerVertical="true"
+                        android:textColor="@color/colorDark"
                         android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/imageView3"
-                        android:padding="16dp"
+                        android:padding="24dp"
                         android:text="@string/my_profile" />
 
-                    <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="16dp"
-                        android:tint="@color/dark_grey"
-                        app:srcCompat="@drawable/ic_arrow_right" />
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageView3"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
+                </LinearLayout>
+
+               <View
+                   android:layout_width="match_parent"
+                   android:layout_height="0.5dp"
+                   android:layout_marginStart="8dp"
+                   android:layout_marginEnd="8dp"
+                   app:layout_constraintBottom_toBottomOf="@+id/rlMyProfile"
+                   android:background="@color/colorDark"/>
 
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rlNotify"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:onClick="@{()->viewModel.onSafeAlertClick()}"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rlMyProfile">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_notify"
+                        android:tint="@color/colorDark"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/colorDark"
                         android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/imageView6"
-                        android:padding="16dp"
+                        android:padding="24dp"
                         android:text="@string/notify_you_are_safe"
                         />
 
-                    <ImageView
-                        android:id="@+id/imageView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/dark_grey"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="16dp"
-                        app:srcCompat="@drawable/ic_arrow_right" />
+                </LinearLayout>
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageView6"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlNotify"
+                    android:background="@color/colorDark"/>
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rlHistory"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
+                    android:orientation="horizontal"
                     android:paddingEnd="16dp"
                     android:onClick="@{()->viewModel.onHistoryClick()}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rlNotify">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_history"
+                        android:layout_gravity="center"
+                        android:tint="@color/colorDark"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
+                        android:textColor="@color/colorDark"
                         android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/imageView7"
-                        android:padding="16dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:padding="24dp"
                         android:text="@string/history" />
 
-                    <ImageView
-                        android:id="@+id/imageView7"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/dark_grey"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="16dp"
-                        app:srcCompat="@drawable/ic_arrow_right" />
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageView7"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlHistory"
+                    android:background="@color/colorDark"/>
 
                 <RelativeLayout
                     android:id="@+id/rlLanguageSetting"
                     android:foreground="?attr/selectableItemBackground"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rlHistory">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:id="@+id/ivPassword"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:padding="2dp"
+                        android:tint="@color/colorDark"
+                        android:src="@drawable/ic_password_enable"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
+                        android:layout_toEndOf="@+id/ivPassword"
+                        android:textColor="@color/colorDark"
                         android:layout_marginEnd="8dp"
-                        android:layout_toStartOf="@id/switches"
-                        android:padding="16dp"
-                        android:text="@string/language" />
+                        android:padding="24dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/password" />
 
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switches"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:gravity="end"
 
                         />
 
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/switches"
-                        android:layout_marginTop="16dp" />
+
                 </RelativeLayout>
 
-                <RelativeLayout
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlLanguageSetting"
+                    android:background="@color/colorDark"/>
+
+                <LinearLayout
                     android:id="@+id/rlTemsCondition"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rlLanguageSetting">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/colorDark"
+                        android:id="@+id/terms"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_terms_conditions"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
-                        android:layout_toStartOf="@id/imageView10"
-                        android:padding="16dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/colorDark"
+                        android:padding="24dp"
                         android:text="@string/terms_and_conditions" />
 
-                    <ImageView
-                        android:id="@+id/imageView10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="16dp"
-                        android:tint="@color/dark_grey"
-                        app:srcCompat="@drawable/ic_arrow_right" />
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageView10"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
+                </LinearLayout>
 
-                <RelativeLayout
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlTemsCondition"
+                    android:background="@color/colorDark"/>
+
+                <LinearLayout
                     android:id="@+id/rlPrivacyPolicy"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rlTemsCondition">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_privacy"
+                        android:tint="@color/colorDark"
+                        android:layout_gravity="center"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
-                        android:layout_toStartOf="@id/imageView10"
-                        android:padding="16dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/colorDark"
+                        android:padding="24dp"
                         android:text="@string/privacyPolicy" />
+                </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imageView11"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="16dp"
-                        android:tint="@color/dark_grey"
-                        app:srcCompat="@drawable/ic_arrow_right" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlPrivacyPolicy"
+                    android:background="@color/colorDark"/>
 
-                    <include
-                        layout="@layout/view_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageView11"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
-
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/rlLogout"
                     android:foreground="?attr/selectableItemBackground"
                     android:layout_width="0dp"
@@ -281,37 +300,66 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rlPrivacyPolicy">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_logout"
+                        android:layout_gravity="center"
+                        android:tint="@color/colorDark"/>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:textSize="18sp"
-                        android:textColor="@color/dark_grey"
-                        android:layout_toStartOf="@id/imageView10"
-                        android:padding="16dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/colorDark"
+                        android:padding="24dp"
                         android:text="@string/logout" />
 
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/rlAddDevice"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:visibility="gone"
+                    android:onClick="@{()->viewModel.onAddDeviceClicked()}"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rlLogout">
+
                     <ImageView
-                        android:id="@+id/imageview12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="16dp"
-                        android:tint="@color/dark_grey"
-                        app:srcCompat="@drawable/ic_arrow_right" />
+                        android:src="@drawable/ic_logout"
+                        android:layout_gravity="center"
+                        android:tint="@color/colorDark"/>
 
-                    <include
-                        layout="@layout/view_divider"
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/imageview12"
-                        android:layout_marginTop="16dp" />
-                </RelativeLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textColor="@color/colorDark"
+                        android:padding="24dp"
+                        android:text="@string/add_device" />
+
+
+                </LinearLayout>
+
 
 
 

@@ -93,11 +93,6 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                 prefsManager.setUserName(user.username)
                                 prefsManager.setPhoneNumber(number)
                                 prefsManager.setUserImage(user.image)
-                                prefsManager.setEmail(user.email)
-                                prefsManager.setTole(user.tole)
-                                prefsManager.setDistrict(user.district)
-                                prefsManager.setWardNo(user.ward.toString())
-                                prefsManager.setState(user.state)
                                 insertResponse.postValue(Resource.success("","",""))
 
                             }

@@ -1,5 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="match_parent">
 
-</LinearLayout>
+<layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:background="@drawable/wallpaper"
+        android:layout_height="match_parent">
+
+        <com.example.sialarm.utils.customViews.CenteredToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="Device"
+            android:layout_height="wrap_content">
+
+
+
+        </com.example.sialarm.utils.customViews.CenteredToolbar>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvDeviceName"
+            style="@style/cardViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            >
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/textInputStyle"
+                android:layout_width="match_parent"
+                android:textColorHint="@color/light_blue"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/deviceName"
+                    style="@style/textInputEdiTextStyle"
+                    android:layout_width="match_parent"
+                    android:hint="@string/deviceName"
+                    android:inputType="textCapWords"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvNumber"
+            style="@style/cardViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
+            app:layout_constraintTop_toBottomOf="@+id/cvDeviceName">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/textInputStyle"
+                android:layout_width="match_parent"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPhone"
+                    style="@style/textInputEdiTextStyle"
+                    android:layout_width="match_parent"
+                    android:hint="@string/number"
+                    android:inputType="number"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvDistrict"
+            style="@style/cardViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
+            app:layout_constraintTop_toBottomOf="@+id/cvNumber">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/district"
+                style="@style/textInputStyle"
+                android:layout_width="match_parent"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/textInputEdiTextStyle"
+                    android:id="@+id/etDistrict"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:text="@string/kathmandu"
+                    android:hint="@string/district"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvWardNumber"
+            style="@style/cardViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
+            app:layout_constraintTop_toBottomOf="@+id/cvDistrict">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ward"
+                style="@style/textInputStyle"
+                android:layout_width="match_parent"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etWardNumber"
+                    style="@style/textInputEdiTextStyle"
+                    android:cursorVisible="false"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:hint="@string/wardNo"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_rounded"
+            android:text="SET"
+            app:layout_constraintBottom_toBottomOf="@+id/tvLatLong"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
+            app:layout_constraintTop_toTopOf="@+id/tvLatLong" />
+
+        <TextView
+            android:id="@+id/tvLatLong"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginEnd="8dp"
+            android:text="Lat:27.9908099, Lon:85.9900887"
+            android:textColor="@color/light_blue"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/set"
+            app:layout_constraintStart_toStartOf="@+id/leftGuideLine"
+            app:layout_constraintTop_toBottomOf="@+id/cvWardNumber" />
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/leftGuideLine"
+            app:layout_constraintEnd_toEndOf="@id/rightGuideLine"
+            android:layout_marginTop="19dp"
+            android:text="Add device"
+            android:background="@drawable/button_rounded"
+            app:layout_constraintTop_toBottomOf="@id/tvLatLong"/>
+
+
+
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

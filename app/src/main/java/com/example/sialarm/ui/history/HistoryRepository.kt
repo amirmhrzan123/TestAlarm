@@ -34,6 +34,7 @@ class HistoryRepository constructor(private val firebaseDatabase: FirebaseDataba
                                 val history : HistoryResponseModel? = data.getValue(HistoryResponseModel::class.java)
                                 listHistory.add(history!!)
                             }
+                            listHistory.reverse()
                             historyResponse.postValue(Resource.success("","",listHistory,null))
                         }else{
                             historyResponse.postValue(Resource.success("","",listHistory,null))

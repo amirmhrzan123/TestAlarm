@@ -7,10 +7,11 @@ import com.example.sialarm.BR.model
 import com.example.sialarm.databinding.ItemNotificationBinding
 
 
-class NotificationAdaptor constructor(private val listNotification:MutableList<NotificationResponseModel> = mutableListOf())
+class NotificationAdaptor constructor(private val listNotification:MutableList<NotificationResponseModel> = mutableListOf(),
+                                      private val click:(NotificationResponseModel)->Unit)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-         return Viewholder(ItemNotificationBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+         return Viewholder(ItemNotificationBinding.inflate(LayoutInflater.from(parent.context),parent,false),click)
     }
 
     override fun getItemCount(): Int = listNotification.size
@@ -19,11 +20,16 @@ class NotificationAdaptor constructor(private val listNotification:MutableList<N
         (holder as Viewholder).onBind(position)
     }
 
-    inner class Viewholder(private val itemNotificationBinding:ItemNotificationBinding):RecyclerView.ViewHolder(itemNotificationBinding.root){
+    inner class Viewholder(private val itemNotificationBinding:ItemNotificationBinding,
+    private val click:(NotificationResponseModel)->Unit):RecyclerView.ViewHolder(itemNotificationBinding.root){
         fun onBind(position:Int){
             with(itemNotificationBinding){
                 model= listNotification[position]
+                root.setOnClickListener {
+                    click(listNotification[position])
+                }
             }
+
         }
     }
 

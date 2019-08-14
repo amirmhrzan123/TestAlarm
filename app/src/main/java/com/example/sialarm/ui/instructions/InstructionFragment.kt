@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.sialarm.R
+import com.example.sialarm.utils.extensions.loadDrawable
+import com.example.sialarm.utils.extensions.loadImage
 
 
 class InstructionFragment :DialogFragment(){
@@ -57,8 +59,10 @@ class InstructionFragment :DialogFragment(){
         var descriptoin = v.findViewById<TextView>(R.id.tvDescription)
         if(tabPosition==0){
             title.setText("ALARM")
+            imageview.loadDrawable(R.drawable.press)
         }else{
             title.setText("FRIENDS")
+            imageview.loadDrawable(R.drawable.ic_swipe)
         }
         v.findViewById<Button>(R.id.button).setOnClickListener {
             dismiss()

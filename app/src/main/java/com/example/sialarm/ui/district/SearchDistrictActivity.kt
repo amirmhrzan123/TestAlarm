@@ -74,6 +74,7 @@ class SearchDistrictActivity : BaseActivity<MainViewModel, ActivitySearchBinding
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_district, menu)
         val item = menu.findItem(R.id.action_search)
+
         search_view.setMenuItem(item)
         return true
     }

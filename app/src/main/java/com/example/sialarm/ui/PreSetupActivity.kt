@@ -17,7 +17,10 @@ import com.example.sialarm.R
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.ui.landingScreen.LandingActivity
+import com.example.sialarm.utils.extensions.loadDrawable
+import com.example.sialarm.utils.extensions.loadImage
 import com.kotlinpermissions.KotlinPermissions
+import kotlinx.android.synthetic.main.activity_pre_setup.*
 import org.koin.android.ext.android.inject
 import java.util.*
 
@@ -28,7 +31,6 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
     private var tvNext: TextView? = null
     private var tvDescTitle: TextView? = null
     private var tvDescBody: TextView? = null
-    private var tvPermissions: TextView? = null
 
     private var btnPermissions: Button? = null
 
@@ -38,19 +40,12 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
     private var ibMessaging: ImageButton? = null
     private var ibPermissions: ImageButton? = null
 
-    private var llDescription: RelativeLayout? = null
+    private var llDescription: ConstraintLayout? = null
 
     private var viewState: ViewState? = null
 
     private var clImages: ConstraintLayout? = null
 
-    private var ivOnBoarding: ImageView? = null
-    private var ivRegister: ImageView? = null
-    private var ivSendAlert: ImageView? = null
-    private var ivAddSiFriend: ImageView? = null
-    private var ivMain: ImageView? = null
-
-    private var degreeEnd = 120f
 
     private var detector: GestureDetector? = null
 
@@ -61,9 +56,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         when (v.id) {
             R.id.tv_previous -> {
                 when (getViewState()) {
-                    PreSetupActivity.ViewState.ON_BOARD -> {
+                    PreSetupActivity.ViewState.INTRODUCTION -> {
                     }
-                    PreSetupActivity.ViewState.EVENTS -> {
+                    PreSetupActivity.ViewState.SIGNUP -> {
                         //Bottom layout
                         tvPrev!!.visibility = View.INVISIBLE
                         ibOnBoard!!.isSelected = true
@@ -72,32 +67,25 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                         ibMessaging!!.isSelected = false
                         //Text change
                         YoYo.with(Techniques.SlideOutRight)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
+                            .duration(ANIMATION_INTRODUCTION_DURATION_EXIT.toLong())
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.app_name)
                                 tvDescBody!!.text = "First"
+                                ivPicture.loadDrawable(R.drawable.signup)
                                 YoYo.with(Techniques.SlideInLeft)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
+                                    .duration(ANIMATION_INTRODUCTION_DURATION_ENTER.toLong())
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
 
                         //Main layout
-                        YoYo.with(Techniques.SlideOutRight)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
-                            .onEnd {
-                                clImages!!.visibility = View.INVISIBLE
-                                ivOnBoarding!!.visibility = View.VISIBLE
-                                YoYo.with(Techniques.SlideInLeft)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
-                                    .playOn(ivOnBoarding)
-                            }
-                            .playOn(clImages)
-                        viewState = ViewState.ON_BOARD
+                        viewState = ViewState.INTRODUCTION
+
+
                     }
-                    ViewState.GUEST_LIST -> {
-                        degreeEnd = 0f
-                        animationSetPrev(degreeEnd)
+                    ViewState.ADDFRIENDS -> {
+                        //degreeEnd = 0f
+                        //animationSetPrev(degreeEnd)
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = true
@@ -109,16 +97,19 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_register)
                                 tvDescBody!!.text = "Test register"
+                                ivPicture.visibility = View.VISIBLE
+                                ivPicture.loadDrawable(R.drawable.phone)
                                 YoYo.with(Techniques.SlideInLeft)
                                     .duration(300)
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-                        viewState = ViewState.EVENTS
+
+                        viewState = ViewState.SIGNUP
                     }
-                    PreSetupActivity.ViewState.CALENDAR -> {
-                        degreeEnd = 120f
-                        animationSetPrev(degreeEnd)
+                    PreSetupActivity.ViewState.SENDALERT -> {
+                        //degreeEnd = 120f
+                        //animationSetPrev(degreeEnd)
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = false
@@ -130,18 +121,20 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_add_contacts)
                                 tvDescBody!!.text = "Test Friends"
+                                ivPicture.loadDrawable(R.drawable.add_friends)
                                 YoYo.with(Techniques.SlideInLeft)
                                     .duration(300)
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-                        viewState = ViewState.GUEST_LIST
+
+                        viewState = ViewState.ADDFRIENDS
                         tvNext!!.setText(R.string.tv_next)
                     }
 
                     ViewState.PERMiSSIONS -> {
-                        degreeEnd = 240f
-                        animationSetPrev(degreeEnd)
+                        //degreeEnd = 240f
+                        //animationSetPrev(degreeEnd)
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = false
                         ibEvents!!.isSelected = false
@@ -149,37 +142,28 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                         ibPermissions!!.isSelected = false
                         //Text change
                         YoYo.with(Techniques.SlideOutRight)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
+                            .duration(ANIMATION_INTRODUCTION_DURATION_EXIT.toLong())
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_send_alert)
                                 tvDescBody!!.text = "Test alert"
+                                ivPicture.visibility = View.VISIBLE
+                                ivPicture.loadDrawable(R.drawable.sent_alert)
                                 btnPermissions!!.visibility = View.INVISIBLE
                                 tvDescBody!!.visibility = View.VISIBLE
+
                                 YoYo.with(Techniques.SlideInLeft)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
+                                    .duration(ANIMATION_INTRODUCTION_DURATION_ENTER.toLong())
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-
-                        //Main view
-                        YoYo.with(Techniques.SlideOutRight)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
-                            .onEnd {
-                                clImages!!.visibility = View.VISIBLE
-                                tvPermissions!!.visibility = View.INVISIBLE
-                                YoYo.with(Techniques.SlideInLeft)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
-                                    .playOn(clImages)
-                            }
-                            .playOn(tvPermissions)
-                        viewState = ViewState.CALENDAR
+                        viewState = ViewState.SENDALERT
                         tvNext!!.setText("Next")
                     }
                 }//Not possible
             }
             R.id.tv_next -> {
                 when (getViewState()) {
-                    PreSetupActivity.ViewState.ON_BOARD -> {
+                    PreSetupActivity.ViewState.INTRODUCTION -> {
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = true
@@ -187,32 +171,22 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                         ibMessaging!!.isSelected = false
                         //Text change
                         YoYo.with(Techniques.SlideOutLeft)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
+                            .duration(ANIMATION_INTRODUCTION_DURATION_EXIT.toLong())
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_register)
                                 tvDescBody!!.text = "Test register"
+                                ivPicture.visibility = View.VISIBLE
+                                ivPicture.loadDrawable(R.drawable.phone)
                                 YoYo.with(Techniques.SlideInRight)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
+                                    .duration(ANIMATION_INTRODUCTION_DURATION_ENTER.toLong())
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-
-                        //Main view
-                        YoYo.with(Techniques.SlideOutLeft)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
-                            .onEnd {
-                                ivOnBoarding!!.visibility = View.INVISIBLE
-                                clImages!!.visibility = View.VISIBLE
-                                YoYo.with(Techniques.SlideInRight)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
-                                    .playOn(clImages)
-                            }
-                            .playOn(ivOnBoarding)
-                        viewState = ViewState.EVENTS
+                        viewState = ViewState.SIGNUP
                     }
-                    ViewState.EVENTS -> {
-                        degreeEnd = 120f
-                        animationSetNext(degreeEnd)
+                    ViewState.SIGNUP -> {
+                        //degreeEnd = 120f
+                        //animationSetNext(degreeEnd)
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = false
@@ -224,16 +198,18 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_add_contacts)
                                 tvDescBody!!.text = "Test contacts"
+                                ivPicture.loadDrawable(R.drawable.add_friends)
                                 YoYo.with(Techniques.SlideInRight)
                                     .duration(300)
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-                        viewState = ViewState.GUEST_LIST
+
+                        viewState = ViewState.ADDFRIENDS
                     }
-                    ViewState.GUEST_LIST -> {
-                        degreeEnd = 240f
-                        animationSetNext(degreeEnd)
+                    ViewState.ADDFRIENDS -> {
+                       // degreeEnd = 240f
+                        //animationSetNext(degreeEnd)
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = false
@@ -245,14 +221,16 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_send_alert)
                                 tvDescBody!!.text = "Test alert"
+                                ivPicture.loadDrawable(R.drawable.sent_alert)
+
                                 YoYo.with(Techniques.SlideInRight)
                                     .duration(300)
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
-                        viewState = ViewState.CALENDAR
+                        viewState = ViewState.SENDALERT
                     }
-                    ViewState.CALENDAR -> {
+                    ViewState.SENDALERT -> {
                         tvPrev!!.visibility = View.VISIBLE
                         ibOnBoard!!.isSelected = false
                         ibGroups!!.isSelected = false
@@ -262,27 +240,20 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
                         ibPermissions!!.isSelected = true
                         //Text change
                         YoYo.with(Techniques.SlideOutLeft)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
+                            .duration(ANIMATION_INTRODUCTION_DURATION_EXIT.toLong())
                             .onEnd {
                                 tvDescTitle!!.text = getString(R.string.tv_permissions)
+                                tvDescTitle!!.visibility = View.GONE
                                 tvDescBody!!.text = "Test permissions"
-                                tvPermissions!!.visibility = View.VISIBLE
+                                ivPicture.loadDrawable(R.drawable.location)
                                 tvDescBody!!.visibility = View.INVISIBLE
                                 btnPermissions!!.visibility = View.VISIBLE
                                 YoYo.with(Techniques.SlideInRight)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
+                                    .duration(ANIMATION_INTRODUCTION_DURATION_ENTER.toLong())
                                     .playOn(llDescription)
                             }
                             .playOn(llDescription)
 
-                        YoYo.with(Techniques.SlideOutLeft)
-                            .duration(ANIMATION_ON_BOARD_DURATION_EXIT.toLong())
-                            .onEnd {
-                                YoYo.with(Techniques.SlideInRight)
-                                    .duration(ANIMATION_ON_BOARD_DURATION_ENTER.toLong())
-                                    .playOn(tvPermissions)
-                            }
-                            .playOn(clImages)
                         viewState = ViewState.PERMiSSIONS
                         tvNext!!.setText(R.string.tv_done)
 
@@ -314,73 +285,17 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         }
     }
 
-    private val scaleAnimatorNextList: List<Animator>
-        get() {
-            val list = ArrayList<Animator>()
-            when (getViewState()) {
-                ViewState.EVENTS -> {
-                    val backgroundReverse = ivRegister!!.background as TransitionDrawable
-                    backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivRegister!!))
-                    list.add(getScaleDownYAnimator(ivRegister!!))
 
-                    val background = ivAddSiFriend!!.background as TransitionDrawable
-                    background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivAddSiFriend!!))
-                    list.add(getScaleUpYAnimator(ivAddSiFriend!!))
-                }
-                ViewState.GUEST_LIST -> {
-                    val backgroundReverse = ivAddSiFriend!!.background as TransitionDrawable
-                    backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivAddSiFriend!!))
-                    list.add(getScaleDownYAnimator(ivAddSiFriend!!))
 
-                    val background = ivSendAlert!!.background as TransitionDrawable
-                    background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivSendAlert!!))
-                    list.add(getScaleUpYAnimator(ivSendAlert!!))
-                }
-            }
-            return list
-        }
 
-    private val scaleAnimatorPreviousList: List<Animator>
-        get() {
-            val list = ArrayList<Animator>()
-            when (getViewState()) {
-                ViewState.GUEST_LIST -> {
-                    val backgroundReverse = ivAddSiFriend!!.background as TransitionDrawable
-                    backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivAddSiFriend!!))
-                    list.add(getScaleDownYAnimator(ivAddSiFriend!!))
-
-                    val background = ivRegister!!.background as TransitionDrawable
-                    background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivRegister!!))
-                    list.add(getScaleUpYAnimator(ivRegister!!))
-                }
-                ViewState.CALENDAR -> {
-                    val backgroundReverse = ivSendAlert!!.background as TransitionDrawable
-                    backgroundReverse.reverseTransition(ANIMATION_DURATION)
-                    list.add(getScaleDownXAnimator(ivSendAlert!!))
-                    list.add(getScaleDownYAnimator(ivSendAlert!!))
-
-                    val background = ivAddSiFriend!!.background as TransitionDrawable
-                    background.startTransition(ANIMATION_DURATION)
-                    list.add(getScaleUpXAnimator(ivAddSiFriend!!))
-                    list.add(getScaleUpYAnimator(ivAddSiFriend!!))
-                }
-            }
-            return list
-        }
 
     private enum class ViewState {
-        ON_BOARD, EVENTS, GUEST_LIST, CALENDAR, PERMiSSIONS
+        INTRODUCTION, SIGNUP, ADDFRIENDS, SENDALERT, PERMiSSIONS
     }
 
     private fun getViewState(): ViewState {
         if (viewState == null) {
-            viewState = ViewState.ON_BOARD
+            viewState = ViewState.INTRODUCTION
         }
         return viewState!!
     }
@@ -412,19 +327,11 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         ibMessaging = findViewById(R.id.ib_messaging)
         ibPermissions = findViewById(R.id.ib_permissions)
 
-        ivOnBoarding = findViewById(R.id.iv_on_boarding)
-        clImages = findViewById(R.id.rl_images)
-        //Image
-        ivRegister = findViewById(R.id.iv_register)
-        ivAddSiFriend = findViewById(R.id.ivAddFriends)
-        ivSendAlert = findViewById(R.id.iv_send_alert)
-        ivMain = findViewById(R.id.iv_mid_circle)
 
         //Text part
         llDescription = findViewById(R.id.ll_description)
         tvDescTitle = findViewById(R.id.tv_desc_title)
         tvDescBody = findViewById(R.id.tv_desc_body)
-        tvPermissions = findViewById(R.id.tvPermissions)
 
         //Button
         btnPermissions = findViewById(R.id.btn_permission)
@@ -458,330 +365,9 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         return detector!!.onTouchEvent(event)
     }
 
-    private fun animationSetNext(degreeEnd: Float) {
-        val set = AnimatorSet()
-
-        val list = ArrayList<Animator>()
-        list.addAll(getRotationAnimatorNextList(degreeEnd))
-        list.addAll(scaleAnimatorNextList)
-
-        set.playTogether(list)
-        set.start()
-    }
-
-    private fun animationSetPrev(degreeEnd: Float) {
-        val set = AnimatorSet()
-
-        val list = ArrayList<Animator>()
-        list.addAll(getRotationAnimatorPreviousList(degreeEnd))
-        list.addAll(scaleAnimatorPreviousList)
-
-        set.playTogether(list)
-        set.start()
-    }
-
-    private fun getRotationAnimatorNextList(degreeEnd: Float): List<Animator> {
-        val listRotationAnimators = ArrayList<Animator>()
-
-        val animatorAllView = ObjectAnimator.ofFloat(clImages, View.ROTATION, degreeEnd)
-        animatorAllView.repeatCount = 0
-        animatorAllView.duration = ANIMATION_DURATION.toLong()
-        animatorAllView.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                clImages!!.rotation = degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        listRotationAnimators.add(animatorAllView)
-
-        val rotateGroup = ObjectAnimator.ofFloat(ivRegister, View.ROTATION, -degreeEnd)
-        rotateGroup.repeatCount = 0
-        rotateGroup.duration = ANIMATION_DURATION.toLong()
-        rotateGroup.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivRegister!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        listRotationAnimators.add(rotateGroup)
-
-        val rotateEvent = ObjectAnimator.ofFloat(ivAddSiFriend, View.ROTATION, -degreeEnd)
-        rotateEvent.repeatCount = 0
-        rotateEvent.duration = ANIMATION_DURATION.toLong()
-        rotateEvent.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivAddSiFriend!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        listRotationAnimators.add(rotateEvent)
-
-        val rotateMessaging = ObjectAnimator.ofFloat(ivSendAlert, View.ROTATION, -degreeEnd)
-        rotateMessaging.repeatCount = 0
-        rotateMessaging.duration = ANIMATION_DURATION.toLong()
-        rotateMessaging.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivSendAlert!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        listRotationAnimators.add(rotateMessaging)
-
-        return listRotationAnimators
-    }
-
-    private fun getRotationAnimatorPreviousList(degreeEnd: Float): List<Animator> {
-        val list = ArrayList<Animator>()
-        val animatorAllView = ObjectAnimator.ofFloat(clImages, View.ROTATION, degreeEnd)
-        animatorAllView.repeatCount = 0
-        animatorAllView.duration = ANIMATION_DURATION.toLong()
-        animatorAllView.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                clImages!!.rotation = degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        list.add(animatorAllView)
-
-        val animatorGroup = ObjectAnimator.ofFloat(ivRegister, View.ROTATION, -degreeEnd)
-        animatorGroup.repeatCount = 0
-        animatorGroup.duration = ANIMATION_DURATION.toLong()
-        animatorGroup.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivRegister!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        list.add(animatorGroup)
-
-        val animatorEvent = ObjectAnimator.ofFloat(ivAddSiFriend, View.ROTATION, -degreeEnd)
-        animatorEvent.repeatCount = 0
-        animatorEvent.duration = ANIMATION_DURATION.toLong()
-        animatorEvent.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivAddSiFriend!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        list.add(animatorEvent)
-
-        val animatorMessaging = ObjectAnimator.ofFloat(ivSendAlert, View.ROTATION, -degreeEnd)
-        animatorMessaging.repeatCount = 0
-        animatorMessaging.duration = ANIMATION_DURATION.toLong()
-        animatorMessaging.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                ivSendAlert!!.rotation = -degreeEnd
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        list.add(animatorMessaging)
-        return list
-    }
-
-    private fun getScaleDownXAnimator(imageView: ImageView): ObjectAnimator {
-        val scaleDownX = ObjectAnimator.ofFloat(imageView, View.SCALE_X, SCALE_DOWN_RATIO)
-        scaleDownX.repeatCount = 0
-        scaleDownX.duration = ANIMATION_DURATION.toLong()
-        scaleDownX.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                when (imageView.id) {
-                    R.id.iv_register -> ivRegister!!.scaleX = SCALE_DOWN_RATIO
-                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleX = SCALE_DOWN_RATIO
-                    R.id.iv_send_alert -> ivSendAlert!!.scaleX = SCALE_DOWN_RATIO
-                }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        return scaleDownX
-    }
-
-    private fun getScaleDownYAnimator(imageView: ImageView): ObjectAnimator {
-        val scaleDownY = ObjectAnimator.ofFloat(imageView, View.SCALE_Y, SCALE_DOWN_RATIO)
-        scaleDownY.repeatCount = 0
-        scaleDownY.duration = ANIMATION_DURATION.toLong()
-        scaleDownY.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                when (imageView.id) {
-                    R.id.iv_register -> ivRegister!!.scaleY = SCALE_DOWN_RATIO
-                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleY = SCALE_DOWN_RATIO
-                    R.id.iv_send_alert -> ivSendAlert!!.scaleY = SCALE_DOWN_RATIO
-                }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        return scaleDownY
-    }
-
-    private fun getScaleUpXAnimator(imageView: ImageView): ObjectAnimator {
-        val background = imageView.background as TransitionDrawable
-        background.reverseTransition(ANIMATION_DURATION)
-        val scaleUpX = ObjectAnimator.ofFloat(imageView, View.SCALE_X, SCALE_UP_RATIO)
-        scaleUpX.repeatCount = 0
-        scaleUpX.duration = ANIMATION_DURATION.toLong()
-        scaleUpX.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                when (imageView.id) {
-                    R.id.iv_register -> ivRegister!!.scaleX = SCALE_UP_RATIO
-                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleX = SCALE_UP_RATIO
-                    R.id.iv_send_alert -> ivSendAlert!!.scaleX = SCALE_UP_RATIO
-                }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        return scaleUpX
-    }
-
-    private fun getScaleUpYAnimator(imageView: ImageView): ObjectAnimator {
-        val scaleUpY = ObjectAnimator.ofFloat(imageView, View.SCALE_Y, SCALE_UP_RATIO)
-        scaleUpY.repeatCount = 0
-        scaleUpY.duration = ANIMATION_DURATION.toLong()
-        scaleUpY.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                when (imageView.id) {
-                    R.id.iv_register -> ivRegister!!.scaleY = SCALE_UP_RATIO
-                    R.id.ivAddFriends -> ivAddSiFriend!!.scaleY = SCALE_UP_RATIO
-                    R.id.iv_send_alert -> ivSendAlert!!.scaleY = SCALE_UP_RATIO
-                }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
-            }
-        })
-        return scaleUpY
-    }
 
     private fun initViews() {
-        viewState = ViewState.ON_BOARD
+        viewState = ViewState.INTRODUCTION
         tvPrev!!.visibility = View.INVISIBLE
 
         tvDescTitle!!.text = getString(R.string.app_name)
@@ -793,20 +379,6 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
         ibMessaging!!.isSelected = false
         ibPermissions!!.isSelected = false
 
-        ivRegister!!.scaleX = SCALE_UP_RATIO
-        ivRegister!!.scaleY = SCALE_UP_RATIO
-
-        ivAddSiFriend!!.scaleX = SCALE_DOWN_RATIO
-        ivAddSiFriend!!.scaleY = SCALE_DOWN_RATIO
-
-        ivSendAlert!!.scaleX = SCALE_DOWN_RATIO
-        ivSendAlert!!.scaleY = SCALE_DOWN_RATIO
-
-        val backgroundReverse1 = ivAddSiFriend!!.background as TransitionDrawable
-        backgroundReverse1.reverseTransition(100)
-
-        val backgroundReverse2 = ivSendAlert!!.background as TransitionDrawable
-        backgroundReverse2.reverseTransition(100)
     }
 
     override fun onDown(e: MotionEvent): Boolean {
@@ -856,13 +428,13 @@ class PreSetupActivity : AppCompatActivity(), GestureDetector.OnGestureListener 
 
         private val ANIMATION_DURATION = 400
 
-        private val ANIMATION_ON_BOARD_DURATION_ENTER = 100
+        private val ANIMATION_INTRODUCTION_DURATION_ENTER = 100
 
-        private val ANIMATION_ON_BOARD_DURATION_EXIT = 150
+        private val ANIMATION_INTRODUCTION_DURATION_EXIT = 150
 
-        private val SCALE_DOWN_RATIO = 0.60f
+        private val SCALE_DOWN_RATIO = 1.0f
 
-        private val SCALE_UP_RATIO = 1.0f
+        private val SCALE_UP_RATIO = 2.0f
 
         private val SWIPE_MIN_DISTANCE = 120
 

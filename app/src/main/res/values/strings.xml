@@ -60,11 +60,15 @@
     <string name="kathmandu">Kathmandu</string>
     <string name="wardNo">Ward No.</string>
     <string name="tole">Tole</string>
-    <string name="deviceNumber">Device Id</string>
+    <string name="deviceNumber">Device Name</string>
     <string name="siAlarm">SI Alarm</string>
     <string name="place_autocomplete_search_hint">Search</string>
     <string name="search_hint_country">Search</string>
     <string name="returnToHome">Return to home</string>
+    <string name="password">Password</string>
+    <string name="add_device">Add device</string>
+    <string name="deviceName">Device name</string>
+    <string name="number">Number</string>
 
 
     <array name="state">
