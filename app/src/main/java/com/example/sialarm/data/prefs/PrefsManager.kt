@@ -35,5 +35,11 @@ interface PrefsManager {
     fun setDeviceName(device:String)
     fun isAdmin():Boolean
     fun setAdmin(admin:Boolean)
+    fun setPinCode(pinCode:Boolean)
+    fun isPinCodeSet():Boolean
+    fun setPinCodeNumber(number:String)
+    fun getPinCodeNumber():String
+    fun isFirstTime():Boolean
+    fun setFirstTime(firstTime:Boolean)
 
 }

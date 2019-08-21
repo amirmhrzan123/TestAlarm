@@ -3,6 +3,25 @@ package com.example.sialarm.data.prefs
 import android.content.SharedPreferences
 
 class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
+    override fun isFirstTime(): Boolean = pref.firstTime
+
+
+    override fun setFirstTime(firstTime: Boolean) {
+        pref.firstTime = firstTime
+    }
+
+    override fun setPinCode(pinCode: Boolean) {
+        pref.pinCodeSet = pinCode
+    }
+
+    override fun isPinCodeSet(): Boolean = pref.pinCodeSet
+
+    override fun setPinCodeNumber(number: String) {
+        pref.pinCodeNumber = number
+    }
+
+    override fun getPinCodeNumber(): String = pref.pinCodeNumber
+
     override fun getDeviceName(): String {
         return pref.deviceName
     }
@@ -108,6 +127,9 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         const val DEVICETYPE = "deviceType"
         const val ADMIN = "admin"
         const val DEVICENAME = "deviceName"
+        const val PINCODESET = "pinCodeSet"
+        const val PINCODENUMBER = "pinCodeNumber"
+        const val FIRSTTIME = "firstTime"
     }
 
     override fun setUserId(userId: String) {
@@ -122,12 +144,33 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
 
     override fun getUserName(): String = pref.userName
 
+    private var SharedPreferences.pinCodeSet
+        get() = getBoolean(PINCODESET, false)
+        set(value) {
+            putValue(PINCODESET, value)
+        }
+
+
+    private var SharedPreferences.pinCodeNumber
+        get() = getString(PINCODENUMBER, "")
+        set(value) {
+            putValue(PINCODENUMBER, value)
+        }
+
+    private var SharedPreferences.firstTime
+        get() = getBoolean(FIRSTTIME, false)
+        set(value) {
+            putValue(FIRSTTIME, value)
+        }
+
+
 
     private var SharedPreferences.admin
         get() = getBoolean(ADMIN, false)
         set(value) {
             putValue(ADMIN, value)
         }
+
 
     private var SharedPreferences.deviceId
         get()= getString(DEVICE_ID,"")

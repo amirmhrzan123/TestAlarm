@@ -11,4 +11,8 @@ interface ISettingNavigator {
     fun onHistoryClicked()
 
     fun onAddDeviceClicked()
+
+    fun onChangePasswordClicked()
+
+    fun onEnablePasswordClicked()
 }

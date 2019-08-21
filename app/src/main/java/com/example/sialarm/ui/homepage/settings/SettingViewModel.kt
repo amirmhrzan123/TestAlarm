@@ -40,6 +40,14 @@ class SettingViewModel constructor(private val repository: SettingRepository):Ba
         getNavigator().onAddDeviceClicked()
     }
 
+    fun onChangePasswordClicked(){
+        getNavigator().onChangePasswordClicked()
+    }
+
+    fun onEnablePasswordClicked(){
+        getNavigator().onEnablePasswordClicked()
+    }
+
     val sendSafeAlert: LiveData<Resource<String>> = Transformations
         .switchMap(settingValid){settingValid->
             repository.sendSafeAlertMessage(settingValid)

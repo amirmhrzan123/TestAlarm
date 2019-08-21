@@ -1,42 +1,57 @@
 package com.example.sialarm.ui.homepage.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.telephony.SmsManager
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseFragment
-import com.example.sialarm.data.api.SendAlertMessages
 import com.example.sialarm.data.api.SendSafeAlertMessages
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.FragmentSettingBinding
 import com.example.sialarm.ui.device.AddDeviceActivity
 import com.example.sialarm.ui.history.HistoryActivity
-import com.example.sialarm.ui.homepage.MainViewModel
-import com.example.sialarm.ui.homepage.home.HomeFragment
 import com.example.sialarm.ui.landingScreen.LandingActivity
+import com.example.sialarm.ui.lillipin.CustomPinActivity
 import com.example.sialarm.ui.myProfile.MyProfileActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.isConnectingToInternet
 import com.example.sialarm.utils.extensions.showConfirmationDialog
 import com.example.sialarm.utils.extensions.showValidationDialog
 import com.facebook.accountkit.AccountKit
+import com.github.omadahealth.lollipin.lib.managers.AppLock
 import kotlinx.android.synthetic.main.fragment_setting.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 
 
 class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),ISettingNavigator {
+
+    private val prefs: PrefsManager by inject()
+
+
+    override fun onChangePasswordClicked() {
+        val intent = Intent(activity!!,CustomPinActivity::class.java)
+        intent.putExtra(AppLock.EXTRA_TYPE, AppLock.CHANGE_PIN)
+        startActivity(intent)
+    }
+
+    override fun onEnablePasswordClicked() {
+        if(!prefs.isPinCodeSet()){
+            switches.isEnabled = true
+            prefs.setPinCode(true)
+        }else{
+            switches.isEnabled = false
+            prefs.setPinCode(false)
+        }
+    }
+
     override fun onAddDeviceClicked() {
         AddDeviceActivity.newInstance(activity!!)
     }
 
 
-    private val prefs: PrefsManager by inject()
 
     override fun onHistoryClicked() {
         HistoryActivity.newInstance(activity!!)

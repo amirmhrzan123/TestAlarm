@@ -15,8 +15,10 @@ import androidx.lifecycle.Observer
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
+import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
+import com.example.sialarm.ui.lillipin.CustomPinActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.getNumber
 import com.example.sialarm.utils.extensions.setupUI
@@ -25,9 +27,11 @@ import com.facebook.accountkit.ui.AccountKitActivity
 import com.facebook.accountkit.ui.AccountKitConfiguration
 import com.facebook.accountkit.ui.LoginType
 import com.facebook.accountkit.ui.SkinManager
+import com.github.omadahealth.lollipin.lib.managers.AppLock
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_landing.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -42,6 +46,8 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
     override fun getViewModel(): LandingScreenViewModel = landingViewModel
 
     override fun getBindingVariable(): Int = BR.viewModel
+
+    private val prefs : PrefsManager by inject()
 
 
 
@@ -61,6 +67,28 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
+        val intent = Intent(this,CustomPinActivity::class.java)
+
+        if(!prefs.isFirstTime()){
+            prefs.setFirstTime(true)
+            intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK)
+            startActivityForResult(intent, 11)
+
+        }else {
+            if(!prefs.isPinCodeSet()){
+                intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
+                startActivity(intent)
+            }else{
+                if(prefs.isLogin()){
+                    HomeActivity.newInstance(this)
+                    finish()
+                }
+            }
+
+        }
+
+
+
 
         setupUI(main_layout,this)
 
