@@ -230,9 +230,10 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
             notification: {
                 title: "SI Emergency Alert",
                 body: "Your SI Friend "+capitalizeFirstLetter(userName) + "is in need of help.",
-                sound: "default"
+                sound: "alert.mp3"
 
             },
+        
             data: {
                 username: userName,
                 sender_id: senderId,

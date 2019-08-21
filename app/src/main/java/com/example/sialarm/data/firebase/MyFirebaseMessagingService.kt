@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -25,6 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import android.media.AudioAttributes
+
+
+
+
+
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -164,22 +171,28 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT)
 
         val channelId = getString(R.string.default_notification_channel_id)
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.alert)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
-            .setSound(defaultSoundUri)
+            .setSound(sound)
             .setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val attributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build()
+
             val channel = NotificationChannel(channelId,
                 "Channel human readable title",
                 NotificationManager.IMPORTANCE_DEFAULT)
+            channel.enableVibration(true)
+            channel.setSound(sound, attributes)
             notificationManager.createNotificationChannel(channel)
         }
 
