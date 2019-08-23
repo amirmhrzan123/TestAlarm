@@ -166,9 +166,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 intent = Intent(this, HomeActivity::class.java)
                 intent.putExtra(Extras.FROMNOTIFICATION, true)
 
+        val uniqueInt = (System.currentTimeMillis() and 0xff).toInt()
+
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT)
+            PendingIntent.FLAG_UPDATE_CURRENT)
 
         val channelId = getString(R.string.default_notification_channel_id)
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.alert)
@@ -190,8 +193,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             val channel = NotificationChannel(channelId,
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_HIGH)
             channel.enableVibration(true)
+            channel.vibrationPattern=longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+
             channel.setSound(sound, attributes)
             notificationManager.createNotificationChannel(channel)
         }
