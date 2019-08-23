@@ -15,8 +15,6 @@ import uk.me.lewisdeane.ldialogs.CustomDialog;
  */
 public class CustomPinActivity extends AppLockActivity {
 
-
-
     @Override
     public void showForgotDialog() {
         Resources res = getResources();

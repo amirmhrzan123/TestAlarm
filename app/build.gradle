@@ -232,9 +232,6 @@ dependencies {
 
     implementation 'uk.me.lewisdeane.ldialogs:ldialogs:1.2.0@aar'
 
-
-
-
 }
 
 apply plugin: 'com.google.gms.google-services'

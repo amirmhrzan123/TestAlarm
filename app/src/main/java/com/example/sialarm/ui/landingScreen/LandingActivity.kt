@@ -75,13 +75,13 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
             startActivityForResult(intent, 11)
 
         }else {
-            if(!prefs.isPinCodeSet()){
-                intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
-                startActivity(intent)
+            if(prefs.isLogin()){
+                HomeActivity.newInstance(this)
+                finish()
             }else{
-                if(prefs.isLogin()){
-                    HomeActivity.newInstance(this)
-                    finish()
+                if(prefs.isPinCodeSet()){
+                    intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
+                    startActivity(intent)
                 }
             }
 

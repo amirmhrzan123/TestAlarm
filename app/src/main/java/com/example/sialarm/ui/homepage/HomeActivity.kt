@@ -25,10 +25,12 @@ import com.example.sialarm.base.BaseActivity
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityMainBinding
 import com.example.sialarm.ui.instructions.InstructionFragment
+import com.example.sialarm.ui.lillipin.CustomPinActivity
 import com.example.sialarm.utils.CommonUtils
 import com.example.sialarm.utils.extensions.convertDpToPixel
 import com.example.sialarm.utils.extensions.getNumber
 import com.example.sialarm.utils.extensions.showValidationDialog
+import com.github.omadahealth.lollipin.lib.managers.AppLock
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
@@ -83,6 +85,12 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        if(prefs.isPinCodeSet()){
+            val intent = Intent(this, CustomPinActivity::class.java)
+            intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
+            startActivity(intent)
+        }
 
         toolbar.title = "Alert"
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))

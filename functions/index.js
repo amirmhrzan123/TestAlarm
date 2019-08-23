@@ -82,6 +82,15 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                         notification_type_id: notificationTypeId
                     }
                 };
+
+                const options = {
+	
+                    priority: 'high',
+                    
+                    timeToLive: 60 * 60 * 24, // 1 day
+                    
+                  };
+
                 if (notificationToken !== "") {
                     var newData = {
                         "notification_type_id": notificationTypeId,
@@ -91,7 +100,7 @@ exports.sendFriendRequest = functions.https.onRequest((req, res) => {
                         "timeStamp": new Date().getTime()
                     }
                     admin.database().ref("Notification").child(receiverId).push(newData)
-                    const response = await admin.messaging().sendToDevice(notificationToken, payload);
+                    const response = await admin.messaging().sendToDevice(notificationToken, payload, options);
                     console.log("Successfully sent message: ", response);
                     res.status(200).json({
                         statusCode: 200,
@@ -144,6 +153,13 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                 notification_type_id: notificationTypeId,
             }
         }
+        const options = {
+	
+            priority: 'high',
+            
+            timeToLive: 60 * 60 * 24, // 1 day
+            
+          };
 
         admin.database().ref('/friends/'+senderId).once('value',function(snap){
             if(snap.exists){
@@ -161,7 +177,7 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            const response=  await admin.messaging().sendToDevice(registrationTokens, payload)
+                            const response=  await admin.messaging().sendToDevice(registrationTokens, payload, options)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -216,7 +232,6 @@ exports.sendSafeAlert = functions.https.onRequest((req,res)=>{
     })
 })
 
-
 exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
     cors(req,res,()=>{
         var senderId = req.body.sender_id
@@ -229,8 +244,8 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName) + "is in need of help.",
-                sound: "alert.mp3"
+                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help.",
+                sound: "default"
 
             },
         
@@ -242,6 +257,11 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                 longitude: geoLongitude
             }
         };
+
+        const options = {
+            priority: 'high',
+            timeToLive: 60 * 60 * 24, // 1 day 
+          };
 
 
         admin.database().ref('/friends/'+senderId).once('value',function(snap){
@@ -259,7 +279,7 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                         }
                         console.log(registrationTokens)
                         if(receiverIds.length===registrationTokens.length){
-                            const response = await admin.messaging().sendToDevice(registrationTokens, payload)
+                            const response = await admin.messaging().sendToDevice(registrationTokens, payload, options)
                                 console.log("Successfully sent message: ", response);
                                 receiverIds.forEach((id)=>{
                                     var newData = {
@@ -397,6 +417,12 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                         notification_type_id: notificationTypeId
                     }
                 };
+
+                const options = {
+                    priority: 'high',
+                    timeToLive: 60 * 60 * 24, // 1 day
+                  };
+
                 console.log("notificationtoken", notificationToken)
                 if(status>2){
                     res.status(200).json({
@@ -414,7 +440,7 @@ exports.acceptDenyInvitation = functions.https.onRequest((req, res) => {
                             "timeStamp": new Date().getTime()
                         }
                         admin.database().ref("Notification").child(receiverId).push(newData)
-                        const response =  await admin.messaging().sendToDevice(notificationToken, payload)
+                        const response =  await admin.messaging().sendToDevice(notificationToken, payload, options)
                         console.log("Successfully sent message: ", response);
                        
                                 res.status(200).json({
@@ -468,6 +494,11 @@ exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
                         notification_type_id: notificationTypeId,
                     }
                 }
+
+                const options = {
+                    priority: 'high',
+                    timeToLive: 60 * 60 * 24, // 1 day
+                  };
         
                 admin.database().ref('/friends/'+senderId).once('value',function(snap){
                     if(snap.exists){
@@ -484,7 +515,7 @@ exports.sendOfflineSafeAlert = functions.https.onRequest((req,res)=>{
                                 }
                                 console.log(registrationTokens)
                                 if(receiverIds.length===registrationTokens.length){
-                                    return admin.messaging().sendToDevice(registrationTokens, payload)
+                                    return admin.messaging().sendToDevice(registrationTokens, payload, options)
                                     .then(response => {
                                         console.log("Successfully sent message: ", response);
                                         receiverIds.forEach((id)=>{
@@ -576,6 +607,11 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                     longitude: geoLongitude
                 }
             };
+
+            const options = {
+                priority: 'high',
+                timeToLive: 60 * 60 * 24, // 1 day
+              };
     
             admin.database().ref('/friends/'+senderId).once('value',function(snap){
                 if(snap.exists){
@@ -592,7 +628,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                             }
                             console.log(registrationTokens)
                             if(receiverIds.length===registrationTokens.length){
-                                const response = await admin.messaging().sendToDevice(registrationTokens, payload)
+                                const response = await admin.messaging().sendToDevice(registrationTokens, payload, options)
                                     console.log("Successfully sent message: ", response);
                                     receiverIds.forEach((id)=>{
                                         var newData = {
@@ -696,7 +732,7 @@ exports.sendOfflineAlertMessages = functions.https.onRequest((req,res)=>{
                                     }
                                     console.log(registrationTokens)
                                     if(receiverIds.length===registrationTokens.length){
-                                        const response = await admin.messaging().sendToDevice(registrationTokens, payload)
+                                        const response = await admin.messaging().sendToDevice(registrationTokens, payload, options)
                                             console.log("Successfully sent message: ", response);
                                             receiverIds.forEach((id)=>{
                                                 var newData = {

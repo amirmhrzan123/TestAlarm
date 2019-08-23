@@ -39,10 +39,10 @@ class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),
 
     override fun onEnablePasswordClicked() {
         if(!prefs.isPinCodeSet()){
-            switches.isEnabled = true
+            switches.isChecked = true
             prefs.setPinCode(true)
         }else{
-            switches.isEnabled = false
+            switches.isChecked = false
             prefs.setPinCode(false)
         }
     }
@@ -110,6 +110,10 @@ class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),
         if(prefs.isAdmin()){
             rlAddDevice.visibility = View.VISIBLE
         }
+
+        switches.isChecked = prefs.isPinCodeSet()
+
+
 
         settingViewModel.sendSafeAlert.observe(this,androidx.lifecycle.Observer {
            when(it.status){

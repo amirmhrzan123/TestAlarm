@@ -155,6 +155,8 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
         createLocationCallback()
         createLocationRequest()
         buildLocationSettingsRequest()
+
+
         mainViewModel.stopTimer.observe(this@HomeFragment,Observer{
             counDownTimer=null
             btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
