@@ -1,5 +1,6 @@
 package com.example.sialarm.ui.tutorial
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,9 @@ import com.example.sialarm.R
 
 class ThirdStepFragment: Fragment() {
 
+    lateinit var listener: FragmentListener
+
+
     companion object {
         val TAG = ThirdStepFragment::class.java.simpleName
 
@@ -17,8 +21,15 @@ class ThirdStepFragment: Fragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        if(context is FragmentListener){
+            listener = context
+        }
+        super.onAttach(context)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_third_step,container,false)
+        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_third_tutorial,container,false)
         return view
     }
 

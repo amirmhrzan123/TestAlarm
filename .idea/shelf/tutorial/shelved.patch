@@ -1,0 +1,1084 @@
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/FirstStepFragment.kt
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/FirstStepFragment.kt	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/FirstStepFragment.kt	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
+@@ -1,29 +0,0 @@
+-package com.example.sialarm.ui.tutorial
+-
+-import android.os.Bundle
+-import android.view.LayoutInflater
+-import android.view.View
+-import android.view.ViewGroup
+-import androidx.fragment.app.Fragment
+-import com.example.sialarm.R
+-
+-class FirstStepFragment: Fragment() {
+-
+-    companion object {
+-        val TAG = FirstStepFragment::class.java.simpleName
+-
+-        fun newInstance():FirstStepFragment{
+-            return FirstStepFragment()
+-        }
+-    }
+-
+-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+-        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_first_step,container,false)
+-        return view
+-    }
+-
+-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+-        super.onViewCreated(view, savedInstanceState)
+-
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepFragment.kt	(date 1566809650456)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepFragment.kt	(date 1566809650456)
+@@ -0,0 +1,136 @@
++package com.example.sialarm.ui.tutorial.firstTutorial
++
++import android.Manifest
++import android.content.Context
++import android.content.Intent
++import android.os.Bundle
++import android.provider.ContactsContract
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.core.app.ActivityCompat.startActivityForResult
++import androidx.fragment.app.Fragment
++import androidx.lifecycle.Observer
++import com.example.sialarm.BR
++import com.example.sialarm.R
++import com.example.sialarm.base.BaseFragment
++import com.example.sialarm.databinding.FragmentFirstTutorialBinding
++import com.example.sialarm.ui.tutorial.FragmentListener
++import com.example.sialarm.ui.tutorial.TutorialViewModel
++import com.example.sialarm.utils.CommonUtils
++import com.example.sialarm.utils.Status
++import com.example.sialarm.utils.extensions.isNetworkConnected
++import com.example.sialarm.utils.extensions.showConfirmationDialog
++import com.example.sialarm.utils.extensions.showValidationDialog
++import com.kotlinpermissions.KotlinPermissions
++import kotlinx.android.synthetic.main.activity_main.*
++import org.koin.androidx.viewmodel.ext.android.sharedViewModel
++import org.koin.androidx.viewmodel.ext.android.viewModel
++
++class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBinding>() {
++
++    private val firstStepViewModel : FirstStepViewModel by viewModel()
++
++
++    override fun getLayoutId(): Int = R.layout.fragment_first_tutorial
++
++    override fun getViewModel(): FirstStepViewModel = firstStepViewModel
++
++    override fun getBindingVariable(): Int = BR.viewModel
++
++    lateinit var listener: FragmentListener
++
++    private val tutorialViewModel: TutorialViewModel by sharedViewModel()
++
++    companion object {
++        val TAG = FirstStepFragment::class.java.simpleName
++
++        fun newInstance(): FirstStepFragment {
++            return FirstStepFragment()
++        }
++    }
++
++
++    override fun onAttach(context: Context) {
++        if(context is FragmentListener){
++            listener = context
++        }
++        super.onAttach(context)
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++        tutorialViewModel.getContactsValid.value = true
++        tutorialViewModel.getContacts.observe(this, Observer {
++            when(it.status){
++                Status.SUCCESS->{
++                    tutorialViewModel.listContacts.clear()
++                    tutorialViewModel.listContacts.addAll(it.data!!)
++                }
++            }
++        })
++
++        tutorialViewModel.insertContacts.observe(this, Observer {
++            when(it.status){
++                Status.LOADING->{
++                    showLoading("")
++                }
++                Status.SUCCESS->{
++                    hideLoading()
++                    activity!!.showConfirmationDialog("SI Alarm", "You have successfully added your friend.", ok = {
++                        listener.openSecondTutorial()
++                    })
++                }
++                Status.ERROR->{
++                    hideLoading()
++                    activity!!.showValidationDialog("SI Alarm",it.message!!)
++                }
++            }
++        })
++
++        floating_action_button.setOnClickListener {
++            KotlinPermissions.with(activity!!)
++                    .permissions(Manifest.permission.READ_CONTACTS)
++                    .onAccepted { permissions ->
++                        CommonUtils.openChooserDialog(activity!!) {
++                            when(it){
++                                CommonUtils.OPTION.ADDFROMCONTACT->{
++                                    val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
++                                    intent.putExtra("finishActivityOnSaveCompleted", true)
++                                    startActivityForResult(intent, 1)
++                                }
++                                CommonUtils.OPTION.ADDANOTHERCONTACT->{
++                                    CommonUtils.getAddNumberDialog(activity!!,{ number, userName->
++                                        tutorialViewModel.contactName = userName
++                                        tutorialViewModel.contactNumber = number
++                                        val list = tutorialViewModel.listContacts.filter { contact-> contact.number==tutorialViewModel.contactNumber }
++                                        if(list.isNotEmpty()){
++                                            activity!!.showValidationDialog("SI Alarm","You already have added this friend.")
++                                        }else{
++                                            if(context!!.isNetworkConnected()){
++                                                tutorialViewModel.insertContactValid.value = true
++                                            }else{
++                                                activity!!.showValidationDialog("SI Alarm","You need to connect to internet to perform this action.")
++                                            }
++                                        }
++                                    },{message->
++                                    }).show()
++                                }
++                            }
++                        }
++                    }
++                    .onDenied {
++                        //List of denied permissions
++                    }
++                    .onForeverDenied { permissions ->
++                        //List of forever denied permissions
++                    }
++                    .ask()
++
++
++        }
++
++
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/ThirdStepFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.tutorial\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.Fragment\r\nimport com.example.sialarm.R\r\n\r\nclass ThirdStepFragment: Fragment() {\r\n\r\n    companion object {\r\n        val TAG = ThirdStepFragment::class.java.simpleName\r\n\r\n        fun newInstance():ThirdStepFragment{\r\n            return ThirdStepFragment()\r\n        }\r\n    }\r\n\r\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {\r\n        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_third_step,container,false)\r\n        return view\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/ThirdStepFragment.kt	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/ThirdStepFragment.kt	(date 1566799752763)
+@@ -1,5 +1,6 @@
+ package com.example.sialarm.ui.tutorial
+ 
++import android.content.Context
+ import android.os.Bundle
+ import android.view.LayoutInflater
+ import android.view.View
+@@ -9,6 +10,9 @@
+ 
+ class ThirdStepFragment: Fragment() {
+ 
++    lateinit var listener: FragmentListener
++
++
+     companion object {
+         val TAG = ThirdStepFragment::class.java.simpleName
+ 
+@@ -17,8 +21,15 @@
+         }
+     }
+ 
++    override fun onAttach(context: Context) {
++        if(context is FragmentListener){
++            listener = context
++        }
++        super.onAttach(context)
++    }
++
+     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+-        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_third_step,container,false)
++        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_third_tutorial,container,false)
+         return view
+     }
+ 
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/TutorialActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.tutorial\r\n\r\nimport android.os.Bundle\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport com.example.sialarm.R\r\n\r\nclass TutorialActivity:AppCompatActivity(){\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_tutorial)\r\n\r\n    }\r\n\r\n    fun openFirstTutorial(){\r\n\r\n    }\r\n\r\n    fun openSecondTutorial(){\r\n\r\n    }\r\n\r\n    fun openThirdTutorial(){\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/TutorialActivity.kt	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/TutorialActivity.kt	(date 1566809650526)
+@@ -1,10 +1,23 @@
+ package com.example.sialarm.ui.tutorial
+ 
++import android.content.Intent
+ import android.os.Bundle
+-import androidx.appcompat.app.AppCompatActivity
++import com.example.sialarm.BR
+ import com.example.sialarm.R
++import com.example.sialarm.base.BaseActivity
++import com.example.sialarm.databinding.ActivityTutorialBinding
++import com.example.sialarm.ui.tutorial.firstTutorial.FirstStepFragment
++import org.koin.androidx.viewmodel.ext.android.viewModel
++
++class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>(),FragmentListener{
++
++    private val tutorialViewModel: TutorialViewModel by viewModel()
++
++    override fun getLayoutId(): Int = R.layout.activity_tutorial
+ 
+-class TutorialActivity:AppCompatActivity(){
++    override fun getViewModel(): TutorialViewModel = tutorialViewModel
++
++    override fun getBindingVariable(): Int = BR.viewModel
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+@@ -12,15 +25,36 @@
+ 
+     }
+ 
+-    fun openFirstTutorial(){
++    override fun openFirstTutorial(){
++        supportFragmentManager
++            .beginTransaction()
++            .disallowAddToBackStack()
++            .setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right)
++            .replace(R.id.container, FirstStepFragment.newInstance())
++            .commit()
++    }
++
++    override fun openSecondTutorial(){
++        supportFragmentManager
++            .beginTransaction()
++            .disallowAddToBackStack()
++            .setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right)
++            .replace(R.id.container,SecondStepFragment.newInstance())
++            .commit()
+ 
+     }
+ 
+-    fun openSecondTutorial(){
++    override fun openThirdTutorial(){
++        supportFragmentManager
++            .beginTransaction()
++            .disallowAddToBackStack()
++            .setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right)
++            .replace(R.id.container,ThirdStepFragment.newInstance())
++            .commit()
+ 
+     }
+ 
+-    fun openThirdTutorial(){
+-
++    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
++        super.onActivityResult(requestCode, resultCode, data)
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/SecondStepFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.sialarm.ui.tutorial\r\n\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport androidx.fragment.app.Fragment\r\nimport com.example.sialarm.R\r\n\r\nclass SecondStepFragment: Fragment() {\r\n\r\n    companion object {\r\n        val TAG = SecondStepFragment::class.java.simpleName\r\n\r\n        fun newInstance():SecondStepFragment{\r\n            return SecondStepFragment()\r\n        }\r\n    }\r\n\r\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {\r\n        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_second_step,container,false)\r\n        return view\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/SecondStepFragment.kt	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/SecondStepFragment.kt	(date 1566809650557)
+@@ -1,14 +1,49 @@
+ package com.example.sialarm.ui.tutorial
+ 
++import android.Manifest
++import android.content.Context
++import android.content.Intent
+ import android.os.Bundle
++import android.os.CountDownTimer
++import android.provider.ContactsContract
++import android.util.Log
+ import android.view.LayoutInflater
++import android.view.MotionEvent
+ import android.view.View
+ import android.view.ViewGroup
+ import androidx.fragment.app.Fragment
++import androidx.lifecycle.Observer
+ import com.example.sialarm.R
++import com.example.sialarm.utils.CommonUtils
++import com.example.sialarm.utils.Status
++import com.example.sialarm.utils.extensions.isNetworkConnected
++import com.example.sialarm.utils.extensions.showConfirmationDialog
++import com.example.sialarm.utils.extensions.showValidationDialog
++import com.kotlinpermissions.KotlinPermissions
++import kotlinx.android.synthetic.main.activity_main.*
++import kotlinx.android.synthetic.main.fragment_alert.*
++import kotlinx.android.synthetic.main.fragment_alert.btnStopTracking
++import kotlinx.android.synthetic.main.fragment_alert.btnUrgent
++import kotlinx.android.synthetic.main.fragment_alert.ll_alert
++import kotlinx.android.synthetic.main.fragment_alert.progress
++import kotlinx.android.synthetic.main.fragment_first_tutorial.*
++import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+ 
+ class SecondStepFragment: Fragment() {
+ 
++    lateinit var listener: FragmentListener
++
++    var down : Long = 0
++    var runnable:Runnable?=null
++    var counDownTimer : CountDownTimer?=null
++    var time:Long  = 1500
++    var alertSend = false
++    var buttonPressed = false
++
++    private val secondViewModel : TutorialViewModel by sharedViewModel()
++
++
++
+     companion object {
+         val TAG = SecondStepFragment::class.java.simpleName
+ 
+@@ -17,12 +52,104 @@
+         }
+     }
+ 
++    override fun onAttach(context: Context) {
++        if(context is FragmentListener){
++            listener = context
++        }
++        super.onAttach(context)
++    }
++
+     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+-        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_second_step,container,false)
++        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_second_tutorial,container,false)
+         return view
+     }
+ 
+     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+         super.onViewCreated(view, savedInstanceState)
++
++        btnStopTracking.setOnClickListener {
++            alertSend = false
++            progress.progress = 0
++            progress.visibility = View.INVISIBLE
++            ll_alert.visibility = View.INVISIBLE
++            btnUrgent.visibility = View.VISIBLE
++        }
++
++        runnable = Runnable{
++            btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
++        }
++
++        next.setOnClickListener {
++            listener.openThirdTutorial()
++        }
++
++        secondViewModel.sendAlertMessages.observe(this, Observer {
++            when(it.status){
++                Status.SUCCESS->{
++                    activity!!.showConfirmationDialog("","You have successfully sent test notification to your friends",ok = {
++                        listener.openThirdTutorial()
++                    })
++                }
++            }
++        })
++
++        btnUrgent.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
++
++            KotlinPermissions.with(activity!!)
++                    .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS)
++                    .onAccepted { permissions ->
++                        when (motionEvent.action) {
++                            MotionEvent.ACTION_DOWN -> {
++                                if(counDownTimer==null){
++                                    progress.visibility = View.VISIBLE
++                                    counDownTimer =object: CountDownTimer(time,10){
++                                        override fun onFinish() {
++                                            counDownTimer=null
++                                            btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
++                                            btnUrgent.visibility = View.INVISIBLE
++                                            ll_alert.visibility = View.VISIBLE
++                                            alertSend = true
++                                            progress.progress = 100
++                                            buttonPressed = true
++                                            secondViewModel.sendALertValid.value = true
++                                            next.visibility = View.VISIBLE
++
++                                        }
++
++                                        override fun onTick(millisUntilFinished: Long) {
++                                            val finishedSeconds = time - millisUntilFinished
++                                            val total = (finishedSeconds.toFloat() / time.toFloat()  * 100.0).toInt()
++                                            progress.progress = total
++                                            Log.d("time",total.toString())
++                                        }
++                                    }.start()
++                                }
++                                btnUrgent.setBackgroundResource(R.drawable.button_pressed)
++                                progress.visibility = View.VISIBLE
++                                down = System.currentTimeMillis()
++
++                            }
++                            MotionEvent.ACTION_UP -> {
++                                btnUrgent.setBackgroundResource(R.drawable.button_unpressed)
++                                counDownTimer?.cancel()
++                                counDownTimer = null
++                                if(!alertSend){
++                                    progress.visibility = View.INVISIBLE
++                                    progress.progress = 0
++                                }
++                            }
++                        }
++                    }
++                    .onDenied {
++                        //List of denied permissions
++                    }
++                    .onForeverDenied { permissions ->
++                        //List of forever denied permissions
++                    }
++                    .ask()
++
++            false
++        })
++
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepViewModel.kt	(date 1566809650586)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/FirstStepViewModel.kt	(date 1566809650586)
+@@ -0,0 +1,6 @@
++package com.example.sialarm.ui.tutorial.firstTutorial
++
++import com.example.sialarm.base.BaseViewModel
++
++class FirstStepViewModel : BaseViewModel<IFirstStepNavigator>(){
++}
+\ No newline at end of file
+Index: .idea/codeStyles/Project.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ProjectCodeStyleConfiguration\">\r\n  <code_scheme name=\"Project\" version=\"173\">\r\n    <JetCodeStyleSettings>\r\n      <option name=\"CODE_STYLE_DEFAULTS\" value=\"KOTLIN_OFFICIAL\" />\r\n    </JetCodeStyleSettings>\r\n    <codeStyleSettings language=\"kotlin\">\r\n      <option name=\"CODE_STYLE_DEFAULTS\" value=\"KOTLIN_OFFICIAL\" />\r\n    </codeStyleSettings>\r\n  </code_scheme>\r\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/codeStyles/Project.xml	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ .idea/codeStyles/Project.xml	(date 1566797093368)
+@@ -3,6 +3,30 @@
+     <JetCodeStyleSettings>
+       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+     </JetCodeStyleSettings>
++    <DBN-PSQL>
++      <case-options enabled="true">
++        <option name="KEYWORD_CASE" value="lower" />
++        <option name="FUNCTION_CASE" value="lower" />
++        <option name="PARAMETER_CASE" value="lower" />
++        <option name="DATATYPE_CASE" value="lower" />
++        <option name="OBJECT_CASE" value="preserve" />
++      </case-options>
++      <formatting-settings enabled="false" />
++    </DBN-PSQL>
++    <DBN-SQL>
++      <case-options enabled="true">
++        <option name="KEYWORD_CASE" value="lower" />
++        <option name="FUNCTION_CASE" value="lower" />
++        <option name="PARAMETER_CASE" value="lower" />
++        <option name="DATATYPE_CASE" value="lower" />
++        <option name="OBJECT_CASE" value="preserve" />
++      </case-options>
++      <formatting-settings enabled="false">
++        <option name="STATEMENT_SPACING" value="one_line" />
++        <option name="CLAUSE_CHOP_DOWN" value="chop_down_if_statement_long" />
++        <option name="ITERATION_ELEMENTS_WRAPPING" value="chop_down_if_not_single" />
++      </formatting-settings>
++    </DBN-SQL>
+     <codeStyleSettings language="kotlin">
+       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+     </codeStyleSettings>
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/IFirstStepNavigator.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/IFirstStepNavigator.kt	(date 1566808104027)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/firstTutorial/IFirstStepNavigator.kt	(date 1566808104027)
+@@ -0,0 +1,4 @@
++package com.example.sialarm.ui.tutorial.firstTutorial
++
++interface IFirstStepNavigator {
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/FragmentListener.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/FragmentListener.kt	(date 1566793765777)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/FragmentListener.kt	(date 1566793765777)
+@@ -0,0 +1,9 @@
++package com.example.sialarm.ui.tutorial
++
++interface FragmentListener {
++
++    fun openFirstTutorial()
++    fun openSecondTutorial()
++    fun openThirdTutorial()
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/ITutorialNavigator.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/ITutorialNavigator.kt	(date 1566801658962)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/ITutorialNavigator.kt	(date 1566801658962)
+@@ -0,0 +1,4 @@
++package com.example.sialarm.ui.tutorial
++
++interface ITutorialNavigator {
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_tutorial.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:background=\"@drawable/wallpaper\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <com.example.sialarm.utils.customViews.CenteredToolbar\r\n        android:id=\"@+id/toolbar\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:title=\"Tutorial\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n    </com.example.sialarm.utils.customViews.CenteredToolbar>\r\n\r\n    <FrameLayout\r\n        android:id=\"@+id/container\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"0dp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/toolbar\">\r\n\r\n\r\n    </FrameLayout>\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_tutorial.xml	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/res/layout/activity_tutorial.xml	(date 1566799752790)
+@@ -1,33 +1,39 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    android:layout_width="match_parent"
+-    android:background="@drawable/wallpaper"
+-    android:layout_height="match_parent">
++
++<layout>
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        xmlns:android="http://schemas.android.com/apk/res/android"
++        xmlns:app="http://schemas.android.com/apk/res-auto"
++        android:layout_width="match_parent"
++        android:background="@drawable/wallpaper"
++        android:layout_height="match_parent">
+ 
+-    <com.example.sialarm.utils.customViews.CenteredToolbar
+-        android:id="@+id/toolbar"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:title="Tutorial"
+-        app:layout_constraintTop_toTopOf="parent">
++        <com.example.sialarm.utils.customViews.CenteredToolbar
++            android:id="@+id/toolbar"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:title="Tutorial"
++            app:layout_constraintTop_toTopOf="parent">
+ 
+-    </com.example.sialarm.utils.customViews.CenteredToolbar>
++        </com.example.sialarm.utils.customViews.CenteredToolbar>
+ 
+-    <FrameLayout
+-        android:id="@+id/container"
+-        android:layout_width="match_parent"
+-        android:layout_height="0dp"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
++        <FrameLayout
++            android:id="@+id/container"
++            android:layout_width="match_parent"
++            android:layout_height="0dp"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+ 
+ 
+-    </FrameLayout>
++        </FrameLayout>
+ 
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++</layout>
++
+Index: app/src/main/java/com/example/sialarm/ui/tutorial/TutorialViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/sialarm/ui/tutorial/TutorialViewModel.kt	(date 1566809650493)
++++ app/src/main/java/com/example/sialarm/ui/tutorial/TutorialViewModel.kt	(date 1566809650493)
+@@ -0,0 +1,66 @@
++package com.example.sialarm.ui.tutorial
++
++import androidx.lifecycle.LiveData
++import androidx.lifecycle.MutableLiveData
++import androidx.lifecycle.Transformations
++import com.example.sialarm.base.BaseViewModel
++import com.example.sialarm.data.api.AcceptDenyRequestModel
++import com.example.sialarm.data.firebase.Friends
++import com.example.sialarm.ui.homepage.contacts.ContactsRepository
++import com.example.sialarm.ui.homepage.home.HomeRepository
++import com.example.sialarm.utils.AbsentLiveData
++import com.example.sialarm.utils.Resource
++import com.example.sialarm.utils.SingleLiveEvent
++
++class TutorialViewModel constructor(private val contactRepository: ContactsRepository,
++                                    private val sendAlertRepository: HomeRepository):BaseViewModel<ITutorialNavigator>() {
++
++
++    var contactNumber =  ""
++    var contactName = ""
++    var insertContactValid = MutableLiveData<Boolean>()
++    var contactTrigger = SingleLiveEvent<Boolean>()
++
++    var getContactsValid = MutableLiveData<Boolean>()
++    var acceptDenyValid = MutableLiveData<AcceptDenyRequestModel>()
++    var listContacts :  MutableList<Friends> = mutableListOf()
++    var latitude = ""
++    var longitude = ""
++    val sendALertValid = MutableLiveData<Boolean>()
++
++    val sendAlertMessages: LiveData<Resource<String>>  = Transformations
++            .switchMap(sendALertValid){sendALertValid->
++                if(sendALertValid){
++                    sendAlertRepository.sendAlertToAll(latitude,longitude)
++                }else{
++                    AbsentLiveData.create()
++                }
++            }
++
++    fun sendLocationUpdates( latitudes:String, longitudes:String){
++        sendAlertRepository.sendUptoDateLatLong(latitudes,longitudes)
++    }
++
++    val getContacts : LiveData<Resource<List<Friends>>> = Transformations
++            .switchMap(getContactsValid){ getContactsValid->
++                if(getContactsValid){
++                    contactRepository.getFriendsList()
++                }else{
++                    AbsentLiveData.create()
++                }
++
++            }
++
++
++
++    val insertContacts  : LiveData<Resource<List<Friends>>> = Transformations
++            .switchMap(insertContactValid){insertContactValid->
++                if(insertContactValid){
++                    contactRepository.insertFriends(contactName,contactNumber)
++                }else{
++                    AbsentLiveData.create()
++                }
++
++            }
++
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_third_step.xml
+===================================================================
+--- app/src/main/res/layout/fragment_third_step.xml	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/res/layout/fragment_third_tutorial.xml	(date 1566799752988)
+@@ -1,57 +1,63 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    android:layout_width="match_parent"
+-    android:background="@drawable/wallpaper"
+-    android:layout_height="match_parent">
++
++<layout>
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        xmlns:android="http://schemas.android.com/apk/res/android"
++        xmlns:app="http://schemas.android.com/apk/res-auto"
++        android:layout_width="match_parent"
++        android:background="@drawable/wallpaper"
++        android:layout_height="match_parent">
+ 
+-    <TextView
+-        android:id="@+id/tvPermission"
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        android:layout_marginTop="8dp"
+-        android:layout_marginEnd="32dp"
+-        android:layout_marginStart="32dp"
+-        android:textSize="16sp"
+-        app:layout_constraintTop_toBottomOf="@+id/guideline"
+-        android:text="You need to grant permission for sending sms, uploading profile photos, adding contacts and track the realtime location"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        />
++        <TextView
++            android:id="@+id/tvPermission"
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="8dp"
++            android:layout_marginEnd="32dp"
++            android:layout_marginStart="32dp"
++            android:textSize="16sp"
++            app:layout_constraintTop_toBottomOf="@+id/guideline"
++            android:text="You need to grant permission for sending sms, uploading profile photos, adding contacts and track the realtime location"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            />
+ 
+-    <TextView
+-        android:id="@+id/tvProfile"
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        app:layout_constraintTop_toBottomOf="@+id/tvPermission"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        android:textSize="16sp"
+-        android:layout_marginTop="24dp"
+-        android:layout_marginStart="32dp"
+-        android:layout_marginEnd="32dp"
+-        android:text="Make sure to register yourself to device of your locality and also complete your profile."/>
++        <TextView
++            android:id="@+id/tvProfile"
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            app:layout_constraintTop_toBottomOf="@+id/tvPermission"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            android:textSize="16sp"
++            android:layout_marginTop="24dp"
++            android:layout_marginStart="32dp"
++            android:layout_marginEnd="32dp"
++            android:text="Make sure to register yourself to device of your locality and also complete your profile."/>
+ 
+-    <androidx.constraintlayout.widget.Guideline
+-        android:id="@+id/guideline"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:orientation="horizontal"
+-        app:layout_constraintGuide_percent=".2"/>
++        <androidx.constraintlayout.widget.Guideline
++            android:id="@+id/guideline"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:orientation="horizontal"
++            app:layout_constraintGuide_percent=".2"/>
+ 
+-    <Button
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        app:layout_constraintTop_toBottomOf="@+id/tvProfile"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        android:layout_marginTop="32dp"
+-        android:layout_marginStart="24dp"
+-        android:text="Grant Permission"
+-        android:layout_marginEnd="24dp"
+-        style="@style/circularButton" />
++        <Button
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            app:layout_constraintTop_toBottomOf="@+id/tvProfile"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            android:layout_marginTop="32dp"
++            android:layout_marginStart="24dp"
++            android:text="Grant Permission"
++            android:layout_marginEnd="24dp"
++            style="@style/circularButton" />
+ 
+ 
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++</layout>
++
+Index: app/src/main/res/layout/fragment_second_step.xml
+===================================================================
+--- app/src/main/res/layout/fragment_second_step.xml	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/res/layout/fragment_second_tutorial.xml	(date 1566799752900)
+@@ -1,29 +1,49 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    android:background="@drawable/wallpaper"
+-    xmlns:app="http://schemas.android.com/apk/res-auto">
++
++<layout>
++
++
++    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@drawable/wallpaper"
++        xmlns:app="http://schemas.android.com/apk/res-auto">
+ 
+-    <ImageView
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:src="@drawable/downarrow"
+-        android:tint="@color/light_blue"
+-        app:layout_constraintBottom_toTopOf="@+id/floating_action_button"
+-        app:layout_constraintEnd_toEndOf="parent" />
++
++        <TextView
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            android:layout_marginStart="32dp"
++            android:layout_marginEnd="32dp"
++            android:text="Add your SI friend either from contacts or you can add manually."
++            android:textSize="22sp"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent"
++            app:layout_constraintVertical_bias="0.36" />
++
++        <ImageView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:src="@drawable/downarrow"
++            android:tint="@color/light_blue"
++            app:layout_constraintBottom_toTopOf="@+id/floating_action_button"
++            app:layout_constraintEnd_toEndOf="parent" />
+ 
+ 
+-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+-        android:id="@+id/floating_action_button"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_marginEnd="20dp"
+-        android:visibility="visible"
+-        android:layout_marginBottom="40dp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:srcCompat="@drawable/ic_add"
+-        app:useCompatPadding="true" />
++        <com.google.android.material.floatingactionbutton.FloatingActionButton
++            android:id="@+id/floating_action_button"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_marginEnd="20dp"
++            android:visibility="visible"
++            android:layout_marginBottom="40dp"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:srcCompat="@drawable/ic_add"
++            app:useCompatPadding="true" />
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
++    </androidx.constraintlayout.widget.ConstraintLayout>
++</layout>
++
+Index: app/src/main/res/layout/fragment_first_step.xml
+===================================================================
+--- app/src/main/res/layout/fragment_first_step.xml	(revision 9b72d27ea9a757f24c5dc6c986b905b9a3ff870f)
++++ app/src/main/res/layout/fragment_first_tutorial.xml	(date 1566799752854)
+@@ -1,95 +1,126 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+-              android:orientation="vertical"
+-              android:layout_width="match_parent"
+-              android:layout_height="match_parent">
++
++<layout>
++
++    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++        xmlns:app="http://schemas.android.com/apk/res-auto"
++        xmlns:tools="http://schemas.android.com/tools"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:orientation="vertical">
+ 
+ 
+-    <androidx.constraintlayout.widget.ConstraintLayout
++        <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+-            android:animateLayoutChanges="true"
+-            android:layout_height="match_parent">
++            android:layout_height="match_parent"
++            android:animateLayoutChanges="true">
++
++            <TextView
++                android:layout_width="0dp"
++                android:layout_height="wrap_content"
++                android:layout_marginStart="32dp"
++                android:layout_marginEnd="32dp"
++                android:layout_marginBottom="32dp"
++                android:text="Press the button for 3 seconds to send the alert messages"
++                android:textSize="18sp"
++                app:layout_constraintBottom_toTopOf="@id/btnUrgent"
++                app:layout_constraintEnd_toEndOf="parent"
++                app:layout_constraintStart_toStartOf="parent" />
+ 
+-        <ImageButton
++            <ImageButton
+                 android:id="@+id/btnUrgent"
+                 android:layout_width="0dp"
+                 android:layout_height="0dp"
+-                app:layout_constraintDimensionRatio="1:1"
++                android:layout_marginStart="40dp"
+                 android:layout_marginTop="36dp"
+-                android:visibility="visible"
+                 android:layout_marginEnd="40dp"
+-                android:layout_marginStart="40dp"
+                 android:layout_marginBottom="16dp"
++                android:background="@drawable/btn_state"
+                 android:translationZ="-100dip"
+-                android:background="@drawable/btn_state"
++                android:visibility="visible"
+                 app:layout_constraintBottom_toBottomOf="@id/progress"
++                app:layout_constraintDimensionRatio="1:1"
+                 app:layout_constraintEnd_toEndOf="@id/progress"
+                 app:layout_constraintStart_toStartOf="@id/progress"
+                 app:layout_constraintTop_toTopOf="@id/progress"
+                 tools:targetApi="lollipop" />
+ 
+-        <LinearLayout
++            <LinearLayout
+                 android:id="@+id/ll_alert"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginStart="8dp"
++                android:gravity="center"
+                 android:orientation="vertical"
+                 android:visibility="gone"
+                 app:layout_constraintBottom_toBottomOf="@+id/progress"
+                 app:layout_constraintEnd_toEndOf="@+id/progress"
+                 app:layout_constraintStart_toStartOf="parent"
+-                android:gravity="center"
+                 app:layout_constraintTop_toTopOf="@+id/progress">
+ 
+-            <TextView
++                <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+-                    android:textColor="@color/white"
++                    android:fontFamily="@font/roboto_medium"
+                     android:padding="8dp"
+-                    android:fontFamily="@font/roboto_medium"
+                     android:text="@string/alert_sent"
+-                    android:textSize="22sp"/>
++                    android:textColor="@color/white"
++                    android:textSize="22sp" />
+ 
+-            <TextView
++                <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
++                    android:layout_gravity="center"
++                    android:padding="8dp"
++                    android:text="Your location is being tracked."
+                     android:textColor="@color/white"
+-                    android:textSize="16sp"
+-                    android:padding="8dp"
+-                    android:layout_gravity="center"
+-                    android:text="Your location is being tracked."/>
++                    android:textSize="16sp" />
+ 
+-            <Button
++                <Button
+                     android:id="@+id/btnStopTracking"
++                    style="@style/circularButton"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+-                    style="@style/circularButton"
+-                    android:paddingTop="8dp"
+-                    android:paddingBottom="8dp"
+                     android:paddingStart="16dp"
++                    android:paddingTop="8dp"
+                     android:paddingEnd="16dp"
+-                    android:text="Stop tracking"/>
++                    android:paddingBottom="8dp"
++                    android:text="Stop tracking" />
+ 
+-        </LinearLayout>
++            </LinearLayout>
+ 
+-        <ProgressBar
++            <ProgressBar
+                 android:id="@+id/progress"
+                 style="?android:attr/progressBarStyleHorizontal"
+                 android:layout_width="0dp"
+                 android:layout_height="0dp"
+-                app:layout_constraintDimensionRatio="1:1"
+-                app:layout_constraintStart_toStartOf="parent"
+-                app:layout_constraintTop_toTopOf="parent"
+-                app:layout_constraintEnd_toEndOf="parent"
+-                app:layout_constraintBottom_toBottomOf="parent"
+                 android:elevation="5dp"
+                 android:max="100"
+-                android:visibility="invisible"
+                 android:progressDrawable="@drawable/circular_progress"
+                 android:secondaryProgress="100"
+-        />
++                android:visibility="invisible"
++                app:layout_constraintBottom_toBottomOf="parent"
++                app:layout_constraintDimensionRatio="1:1"
++                app:layout_constraintEnd_toEndOf="parent"
++                app:layout_constraintStart_toStartOf="parent"
++                app:layout_constraintTop_toTopOf="parent" />
++
++            <Button
++                android:id="@+id/next"
++                style="@style/circularButton"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_marginStart="24dp"
++                android:layout_marginTop="32dp"
++                android:layout_marginEnd="24dp"
++                android:text="NEXT"
++                android:visibility="gone"
++                app:layout_constraintTop_toBottomOf="@id/btnUrgent" />
+ 
+-    </androidx.constraintlayout.widget.ConstraintLayout>
++        </androidx.constraintlayout.widget.ConstraintLayout>
+ 
+-</LinearLayout>
+\ No newline at end of file
++    </LinearLayout>
++
++</layout>
++
++
