@@ -1,5 +1,6 @@
 package com.example.sialarm.data.firebase
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -27,9 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import android.media.AudioAttributes
-
-
-
 
 
 
@@ -83,16 +81,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
 
-        remoteMessage?.data?.isNotEmpty()?.let {
-
-        }
-
-
 
         // Check if message contains a notification payload.
         remoteMessage?.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            sendNotification(it.title!!,it.body!!)
+            var notificationTypeId = 0
+            remoteMessage.data?.isNotEmpty()?.let {
+                for(key in remoteMessage.data.entries){
+                    //Log.d(key,intent.extras!!.getString(key))
+                    if(key.key.contains("notification_type_id")) {
+                        notificationTypeId = key.value.toString().toInt()
+                    }
+                    }
+            }
+
+
+
+            sendNotification(it.title!!,it.body!!,notificationTypeId)
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -159,7 +163,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         private const val TAG = "MyFirebaseMsgService"
     }
 
-    private fun sendNotification(title:String,message:String) {
+    private fun sendNotification(title:String,message:String,notificationTypeId:Int) {
 
         var intent : Intent? = null
 
@@ -173,15 +177,28 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
             PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val channelId = getString(R.string.default_notification_channel_id)
-        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.alert)
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+        var channelId = ""
+        var notificationBuilder:NotificationCompat.Builder?=null
+
+        var defaultSoundUri:Uri?=null
+        if(notificationTypeId==2){
+            defaultSoundUri = Uri.parse("android.resource://" + packageName + "/" + R.raw.alert)
+            channelId = "AlertMessage"
+
+        }else{
+            defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            channelId = getString(R.string.default_notification_channel_id)
+
+
+        }
+         notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
-            .setSound(sound)
+            .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
+
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -192,12 +209,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .build()
 
             val channel = NotificationChannel(channelId,
-                "Channel human readable title",
+                "SIALARM",
                 NotificationManager.IMPORTANCE_HIGH)
+
             channel.enableVibration(true)
             channel.vibrationPattern=longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
-
-            channel.setSound(sound, attributes)
+            channel.setSound(defaultSoundUri, attributes)
             notificationManager.createNotificationChannel(channel)
         }
 

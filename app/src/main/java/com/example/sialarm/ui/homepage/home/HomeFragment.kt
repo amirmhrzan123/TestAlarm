@@ -168,9 +168,10 @@ class HomeFragment:BaseFragment<HomeViewModel,FragmentAlertBinding>() {
         val number = "+977${prefs.getDeviceId()}"
         println("device id "+ number)
         KotlinPermissions.with(activity!!)
-            .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+            .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS)
             .onAccepted { permissions ->
-                if(permissions.size==2){
+                if(permissions.size==4){
                     createLocationCallback()
                     createLocationRequest()
                     buildLocationSettingsRequest()

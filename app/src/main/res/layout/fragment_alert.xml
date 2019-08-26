@@ -17,8 +17,6 @@
         android:layout_height="match_parent"
        >
 
-
-
         <ImageButton
             android:id="@+id/btnUrgent"
             android:layout_width="0dp"

@@ -99,16 +99,17 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
             if(requestCode==3){
                 val district = Gson().fromJson(data!!.getStringExtra("Extra"), District::class.java)
                 etDistrict.setText(district.name)
-            }else{
+            }else if(requestCode==4){
                 val device = Gson().fromJson(data!!.getStringExtra("Extra"), Device::class.java)
                 etDevice.setText(device.name)
                 deviceId=device.id
+            }else{
+
             }
         }
     }
 
     override fun onUpdateClicked() {
-
         myProfileViewModel.userObserver.value = Users(email = email.text.toString(),
             username = userName.text.toString(),
             state = etState.text.toString(),
