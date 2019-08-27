@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_alert.btnStopTracking
 import kotlinx.android.synthetic.main.fragment_alert.btnUrgent
 import kotlinx.android.synthetic.main.fragment_alert.ll_alert
 import kotlinx.android.synthetic.main.fragment_alert.progress
-import kotlinx.android.synthetic.main.fragment_first_tutorial.*
+import kotlinx.android.synthetic.main.fragment_second_tutorial.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class SecondStepFragment: Fragment() {

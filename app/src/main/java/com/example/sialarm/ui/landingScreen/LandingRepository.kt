@@ -56,14 +56,15 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         image = "",
                                         state = "",
                                         ward = 0,
-                                        district = "")
+                                        district = "",
+                                        firsttime = false)
 
                                     userDatabase.getReference(FireKey.USERS).child(number).setValue(user).addOnCompleteListener {
                                         prefsManager.setLoginStatus(true)
                                         prefsManager.setUserId(number)
                                         prefsManager.setPhoneNumber(number)
                                         prefsManager.setUserName(userName)
-                                        insertResponse.postValue(Resource.success("","",""))
+                                        insertResponse.postValue(Resource.success("","","FirstTime"))
 
                                     }
 
@@ -79,6 +80,10 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                         for(data in p0.children){
                             user = data.getValue(Users::class.java)
                         }
+                        var firstime= true
+                        if(user?.firsttime!=null){
+                            firstime = user.firsttime!!
+                        }
 
                         userDatabase.getReference(FireKey.USERS).child(number)
                             .setValue(Users(active = true,tole = user!!.tole,
@@ -87,13 +92,20 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                 notification_token = token,phone_number = user.phone_number,
                                 username = userName,  timeStamp = user.timeStamp,device = user.device,
                                 image = user.image, district = user.district,state = user.state,
+                                firsttime = false,
                                 ward = user.ward)).addOnCompleteListener {
                                 prefsManager.setLoginStatus(true)
                                 prefsManager.setUserId(number)
                                 prefsManager.setUserName(user.username)
                                 prefsManager.setPhoneNumber(number)
                                 prefsManager.setUserImage(user.image)
-                                insertResponse.postValue(Resource.success("","",""))
+                                if(firstime){
+                                    insertResponse.postValue(Resource.success("","","FirstTime"))
+
+                                }else{
+                                    insertResponse.postValue(Resource.success("","",""))
+
+                                }
 
                             }
                     }

@@ -239,12 +239,20 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
         var userName = req.body.userName
         var geoLatitude = req.body.latitude
         var geoLongitude = req.body.longitude
+        var test = req.body.test
         var receiverIds = []
         var registrationTokens = []
+        var bodyMessage = ""
+        if(test){
+            bodyMessage = "Your SI Friend "+capitalizeFirstLetter(userName) + " has started using SI Alarm."
+        }else{
+            bodyMessage = "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help."
+
+        }
         var payload = {
             notification: {
                 title: "SI Emergency Alert",
-                body: "Your SI Friend "+capitalizeFirstLetter(userName) + " is in need of help.",
+                body: bodyMessage,
                 sound: "alert",
                 channelId: "AlertMessage"
 
@@ -278,6 +286,15 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                             registrationTokens.push("kjgkjjk")
                         }
                         console.log(registrationTokens)
+                        var notificationMessage = ""
+                        var titleMessage = ""
+                        if(test){
+                            titleMessage = "Test Notification"
+                            notificationMessage = "Your SI Friend "+capitalizeFirstLetter(userName)  + " has starting using SI Alarm."
+                        }else{
+                            titleMessage = "SI Emergency Alert"
+                            notificationMessage = "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Please click here to know your friend current location"
+                        }
                         if(receiverIds.length===registrationTokens.length){
                             const response = await admin.messaging().sendToDevice(registrationTokens, payload, options)
                                 console.log("Successfully sent message: ", response);
@@ -285,8 +302,8 @@ exports.sendAlertMessages = functions.https.onRequest((req,res)=>{
                                     var newData = {
                                         "notification_type_id": notificationTypeId,
                                         "sender_id": senderId,
-                                        "title":"SI emergency alert",
-                                        "message": "Your SI Friend "+capitalizeFirstLetter(userName)  + " is in need of help. Please click here to know your friend current location",
+                                        "title":titleMessage,
+                                        "message": notificationMessage,
                                         "timeStamp": new Date().getTime(),
                                         "link":"http://maps.google.com/?q="+geoLatitude+","+geoLongitude+"&z=10",
                                         "latitude":geoLatitude,

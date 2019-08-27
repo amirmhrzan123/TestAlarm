@@ -12,7 +12,8 @@ data class SendAlertMessages(
     var sender_id:String="",
     var userName:String="",
     var latitude:String="",
-    var longitude:String=""
+    var longitude:String="",
+    var test:Boolean?=null
 )
 
 data class SendSafeAlertMessages(

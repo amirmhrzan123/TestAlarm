@@ -1,3 +1,4 @@
+
 package com.example.sialarm.di
 
 import com.example.sialarm.ui.history.HistoryViewModel
@@ -8,6 +9,8 @@ import com.example.sialarm.ui.homepage.notification.NotificationViewModel
 import com.example.sialarm.ui.homepage.settings.SettingViewModel
 import com.example.sialarm.ui.landingScreen.LandingScreenViewModel
 import com.example.sialarm.ui.myProfile.MyProfileViewModel
+import com.example.sialarm.ui.tutorial.TutorialViewModel
+import com.example.sialarm.ui.tutorial.firstTutorial.FirstStepViewModel
 import com.example.sialarm.utils.FirebaseData
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -30,6 +33,9 @@ val viewModelModule = module {
 
     viewModel { HistoryViewModel(get()) }
 
+    viewModel { TutorialViewModel(get(),get())}
+
+    viewModel { FirstStepViewModel() }
 
 
 }

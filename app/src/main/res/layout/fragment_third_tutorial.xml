@@ -51,7 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="32dp"
             android:layout_marginStart="24dp"
-            android:text="Grant Permission"
+            android:text="DONE"
             android:layout_marginEnd="24dp"
             style="@style/circularButton" />
 

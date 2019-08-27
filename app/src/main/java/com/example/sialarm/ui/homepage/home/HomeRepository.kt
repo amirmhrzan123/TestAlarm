@@ -17,13 +17,13 @@ class HomeRepository constructor(private val apiServices: ApiServices,
                                  private val prefsManager: PrefsManager,
                                  private val firebaseDatabase: FirebaseDatabase) {
 
-    fun sendAlertToAll(latitude:String,longitude:String):LiveData<Resource<String>>{
+    fun sendAlertToAll(latitude:String,longitude:String, test:Boolean = false):LiveData<Resource<String>>{
         val sendAlertResponse  = MutableLiveData<Resource<String>>()
         viewMOdelScope.launch {
             try{
                 sendAlertResponse.postValue(Resource.loading(null))
                 val response = apiServices.sendAlertMessages(SendAlertMessages(prefsManager.getUserId(),
-                    prefsManager.getUserName(),latitude,longitude))
+                    prefsManager.getUserName(),latitude,longitude, test))
                 sendAlertResponse.postValue(Resource.success("","",null))
 
             }catch(e:Exception){

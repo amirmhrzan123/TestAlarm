@@ -19,6 +19,7 @@ import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.ui.lillipin.CustomPinActivity
+import com.example.sialarm.ui.tutorial.TutorialActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.getNumber
 import com.example.sialarm.utils.extensions.setupUI
@@ -76,7 +77,9 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
 
         }else {
             if(prefs.isLogin()){
-                HomeActivity.newInstance(this)
+                TutorialActivity.newInstance(this@LandingActivity)
+
+               // HomeActivity.newInstance(this)
                 finish()
             }else{
                 if(prefs.isPinCodeSet()){
@@ -88,12 +91,7 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
         }
 
 
-
-
         setupUI(main_layout,this)
-
-
-
 
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this@LandingActivity) { instanceIdResult ->
             val newToken = instanceIdResult.token
@@ -108,7 +106,11 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
             when(it.status){
                 Status.SUCCESS->{
                     hideLoading()
-                    HomeActivity.newInstance(this@LandingActivity)
+                  /*  if(it.data!!.isEmpty()){
+                        HomeActivity.newInstance(this@LandingActivity)
+                    }else{*/
+                        TutorialActivity.newInstance(this@LandingActivity)
+                    //}
                     finish()
                 }
             }
@@ -195,8 +197,6 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
                                 landingViewModel.token = newToken
                                 Log.d("newToken", newToken)
                                 landingViewModel.isValid.value = true
-
-
                             }
                         }
 

@@ -31,7 +31,7 @@ class TutorialViewModel constructor(private val contactRepository: ContactsRepos
     val sendAlertMessages: LiveData<Resource<String>>  = Transformations
             .switchMap(sendALertValid){sendALertValid->
                 if(sendALertValid){
-                    sendAlertRepository.sendAlertToAll(latitude,longitude)
+                    sendAlertRepository.sendAlertToAll(latitude,longitude,true)
                 }else{
                     AbsentLiveData.create()
                 }

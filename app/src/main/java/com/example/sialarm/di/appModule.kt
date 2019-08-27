@@ -75,3 +75,4 @@ fun provideHistoryRepository(viewModelScope: CoroutineScope,
                              firebaseDatabase: FirebaseDatabase,
                              prefsManager: PrefsManager):HistoryRepository
 = HistoryRepository(firebaseDatabase,prefsManager,viewModelScope)
+

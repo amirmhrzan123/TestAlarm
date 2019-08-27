@@ -5,11 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.sialarm.BR
 import com.example.sialarm.R
@@ -23,7 +19,7 @@ import com.example.sialarm.utils.extensions.isNetworkConnected
 import com.example.sialarm.utils.extensions.showConfirmationDialog
 import com.example.sialarm.utils.extensions.showValidationDialog
 import com.kotlinpermissions.KotlinPermissions
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_first_tutorial.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -70,6 +66,21 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
             }
         })
 
+        tutorialViewModel.contactTrigger.observe(this, Observer {
+            val list = tutorialViewModel.listContacts.filter { contact-> contact.number==tutorialViewModel.contactNumber }
+            if(list.isNotEmpty()){
+                activity!!.showConfirmationDialog("SI Alarm", "Congratulation, you have added your SI friend",ok = {
+                    listener.openSecondTutorial()
+                })
+            }else{
+                if(context!!.isNetworkConnected()){
+                    tutorialViewModel.insertContactValid.value = true
+                }else{
+                    activity!!.showValidationDialog("SI Alarm","You need to connect to internet to perform this action.")
+                }
+            }
+        })
+
         tutorialViewModel.insertContacts.observe(this, Observer {
             when(it.status){
                 Status.LOADING->{
@@ -105,8 +116,9 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
                                         tutorialViewModel.contactNumber = number
                                         val list = tutorialViewModel.listContacts.filter { contact-> contact.number==tutorialViewModel.contactNumber }
                                         if(list.isNotEmpty()){
-                                            activity!!.showValidationDialog("SI Alarm","You already have added this friend.")
-                                        }else{
+                                            activity!!.showConfirmationDialog("SI Alarm", "Congratulation, you have added your SI friend",ok = {
+                                                listener.openSecondTutorial()
+                                            })}else{
                                             if(context!!.isNetworkConnected()){
                                                 tutorialViewModel.insertContactValid.value = true
                                             }else{

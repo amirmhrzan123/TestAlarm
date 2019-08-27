@@ -86,6 +86,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
+
         if(prefs.isPinCodeSet()){
             val intent = Intent(this, CustomPinActivity::class.java)
             intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)

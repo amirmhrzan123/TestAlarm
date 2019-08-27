@@ -24,7 +24,8 @@ data class Users(
     val district:String="",
     val deviceName:String?="",
     val admin: Boolean?=false,
-    val safeStatus:Boolean?=true
+    val safeStatus:Boolean?=true,
+    val firsttime:Boolean?=true
 )
 
 data class PhoneNumber(
