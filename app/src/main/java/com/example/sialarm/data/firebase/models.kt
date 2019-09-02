@@ -25,7 +25,8 @@ data class Users(
     val deviceName:String?="",
     val admin: Boolean?=false,
     val safeStatus:Boolean?=true,
-    val firsttime:Boolean?=true
+    val firsttime:Boolean?=true,
+    val isProfileComplete:Boolean?=false
 )
 
 data class PhoneNumber(

@@ -27,7 +27,6 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
 
     private val firstStepViewModel : FirstStepViewModel by viewModel()
 
-
     override fun getLayoutId(): Int = R.layout.fragment_first_tutorial
 
     override fun getViewModel(): FirstStepViewModel = firstStepViewModel
@@ -37,6 +36,8 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
     lateinit var listener: FragmentListener
 
     private val tutorialViewModel: TutorialViewModel by sharedViewModel()
+
+    private var added = false
 
     companion object {
         val TAG = FirstStepFragment::class.java.simpleName
@@ -66,7 +67,7 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
             }
         })
 
-        tutorialViewModel.contactTrigger.observe(this, Observer {
+        /*tutorialViewModel.contactTrigger.observe(this, Observer {
             val list = tutorialViewModel.listContacts.filter { contact-> contact.number==tutorialViewModel.contactNumber }
             if(list.isNotEmpty()){
                 activity!!.showConfirmationDialog("SI Alarm", "Congratulation, you have added your SI friend",ok = {
@@ -79,25 +80,32 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
                     activity!!.showValidationDialog("SI Alarm","You need to connect to internet to perform this action.")
                 }
             }
-        })
+        })*/
 
-        tutorialViewModel.insertContacts.observe(this, Observer {
-            when(it.status){
-                Status.LOADING->{
-                    showLoading("")
+            tutorialViewModel.insertContacts.observe(this, Observer {
+                when(it.status){
+                    Status.LOADING->{
+                        showLoading("")
+                    }
+                    Status.SUCCESS->{
+                        hideLoading()
+                        if(!added){
+                            added = true
+
+                            activity!!.showConfirmationDialog("SI Alarm", "You have successfully added your friend.", ok = {
+                                listener.openSecondTutorial()
+                            })
+                        }
+
+                    }
+                    Status.ERROR->{
+                        hideLoading()
+                        activity!!.showValidationDialog("SI Alarm",it.message!!)
+                    }
                 }
-                Status.SUCCESS->{
-                    hideLoading()
-                    activity!!.showConfirmationDialog("SI Alarm", "You have successfully added your friend.", ok = {
-                        listener.openSecondTutorial()
-                    })
-                }
-                Status.ERROR->{
-                    hideLoading()
-                    activity!!.showValidationDialog("SI Alarm",it.message!!)
-                }
-            }
-        })
+            })
+
+
 
         floating_action_button.setOnClickListener {
             KotlinPermissions.with(activity!!)
@@ -108,7 +116,7 @@ class FirstStepFragment: BaseFragment<FirstStepViewModel,FragmentFirstTutorialBi
                                 CommonUtils.OPTION.ADDFROMCONTACT->{
                                     val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
                                     intent.putExtra("finishActivityOnSaveCompleted", true)
-                                    startActivityForResult(intent, 1)
+                                    activity!!.startActivityForResult(intent, 1)
                                 }
                                 CommonUtils.OPTION.ADDANOTHERCONTACT->{
                                     CommonUtils.getAddNumberDialog(activity!!,{ number, userName->

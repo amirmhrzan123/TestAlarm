@@ -8,10 +8,15 @@ import android.util.Log
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
+import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityTutorialBinding
+import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.ui.tutorial.firstTutorial.FirstStepFragment
 import com.example.sialarm.utils.extensions.getNumber
+import com.example.sialarm.utils.extensions.isNetworkConnected
+import com.example.sialarm.utils.extensions.showConfirmationDialog
 import com.example.sialarm.utils.extensions.showValidationDialog
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>(),FragmentListener{
@@ -23,6 +28,8 @@ class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>()
     override fun getViewModel(): TutorialViewModel = tutorialViewModel
 
     override fun getBindingVariable(): Int = BR.viewModel
+
+    private val prefs:PrefsManager by inject()
 
     companion object {
         fun newInstance(activity: Activity){
@@ -46,6 +53,7 @@ class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>()
     }
 
     override fun openSecondTutorial(){
+
         supportFragmentManager
             .beginTransaction()
             .disallowAddToBackStack()
@@ -56,6 +64,7 @@ class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>()
     }
 
     override fun openThirdTutorial(){
+        prefs.setFirstTutorial(true)
         supportFragmentManager
             .beginTransaction()
             .disallowAddToBackStack()
@@ -122,12 +131,25 @@ class TutorialActivity:BaseActivity<TutorialViewModel,ActivityTutorialBinding>()
                 if(contactNumber.isEmpty()){
                     showValidationDialog("SI Alarm",getString(R.string.number_error))
                 }else{
-                    tutorialViewModel.contactNumber = contactNumber.getNumber()
                     tutorialViewModel.contactName = contactName
-                    tutorialViewModel.contactTrigger.value = true
+                    tutorialViewModel.contactNumber = contactNumber
+                    val list = tutorialViewModel.listContacts.filter { contact-> contact.number==tutorialViewModel.contactNumber }
+                    if(list.isNotEmpty()){
+                        showConfirmationDialog("SI Alarm", "Congratulation, you have added your SI friend",ok = {
+                            openSecondTutorial()
+                        })}else{
+                        if(isNetworkConnected()){
+                            tutorialViewModel.insertContactValid.value = true
+                        }else{
+                            showValidationDialog("SI Alarm","You need to connect to internet to perform this action.")
+                        }
+                    }
                 }
                 Log.d("Contactname", "Contact Name: " + contactName)
             }
+        }else if(requestCode  == 2){
+            HomeActivity.newInstance(this)
+            finish()
         }
     }
 }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -14,13 +15,17 @@ import com.example.sialarm.data.firebase.Users
 import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityMyProfileBinding
 import com.example.sialarm.ui.device.DeviceListActivity
+import com.example.sialarm.ui.device.DeviceListLowActivity
+import com.example.sialarm.ui.district.DistrictListLowActivity
 import com.example.sialarm.ui.district.SearchDistrictActivity
+import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.customViews.CustomSpinnerDialog
 import com.example.sialarm.utils.customViews.CustomSpinnerWardAdapter
 import com.example.sialarm.utils.extensions.Device
 import com.example.sialarm.utils.extensions.District
 import com.example.sialarm.utils.extensions.loadImage
+import com.example.sialarm.utils.extensions.showValidationDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.gson.Gson
 import com.kotlinpermissions.KotlinPermissions
@@ -44,11 +49,16 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
 
     override fun getBindingVariable(): Int = BR.viewModel
 
+    private val initial : Boolean by lazy{
+        intent!!.getBooleanExtra("extra",false)
+    }
+
     var deviceId = ""
 
     companion object {
-        fun newInstance(activity: Activity){
+        fun newInstance(activity: Activity, initial:Boolean=false){
             val intent = Intent(activity,MyProfileActivity::class.java)
+            intent.putExtra("extra",initial)
             activity.startActivity(intent)
         }
     }
@@ -60,7 +70,6 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-
         stateList = arrayListOf<String>("Province No. 1","Province No. 2",
             "Province No. 3","Gandaki Pradesh","Province No. 5","Karnali Pradesh","Sudurpashchim Pradesh")
         userName.setText(prefs.getUserName())
@@ -70,11 +79,19 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
         etWardNumber.setText(prefs.getWardNo())
         etDistrict.setText(prefs.getDistrict())
         etDevice.setText(prefs.getDeviceName())
-        myProfileViewModel.selectedWardId = prefs.getWardNo().toInt()
-        myProfileViewModel.selectedStateId = stateList.indexOf(prefs.getState())
+        if(prefs.getWardNo().isNotEmpty()){
+            myProfileViewModel.selectedWardId = prefs.getWardNo().toInt()
+        }else{
+            myProfileViewModel.selectedWardId = -1
+        }
+        if(prefs.getState().isNotEmpty()){
+            myProfileViewModel.selectedStateId = stateList.indexOf(prefs.getState())
+        }else{
+            myProfileViewModel.selectedStateId = -1
+        }
+
 
         circleImageView2.loadImage(prefs.getUserImage(),0)
-
 
         myProfileViewModel.updateProfile.observe(this, Observer{
             when(it.status){
@@ -83,7 +100,14 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
                 }
                 Status.SUCCESS->{
                     hideLoading()
-                    finish()
+                    if(initial){
+                        HomeActivity.newInstance(this)
+                        finish()
+                    }else{
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    }
+
                 }
                 Status.ERROR->{
                     hideLoading()
@@ -104,20 +128,34 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
                 etDevice.setText(device.name)
                 deviceId=device.id
             }else{
-
+                HomeActivity.newInstance(this)
             }
         }
     }
 
     override fun onUpdateClicked() {
-        myProfileViewModel.userObserver.value = Users(email = email.text.toString(),
-            username = userName.text.toString(),
-            state = etState.text.toString(),
-            district = etDistrict.text.toString(),
-            ward = etWardNumber.text.toString().toInt(),
-            tole = etStreet.text.toString(),
-            device = deviceId,
-            deviceName = etDevice.text.toString())
+
+        if(userName.text.toString().isEmpty()){
+            showValidationDialog("SI Alarm","Please write your username.")
+        }else if(etState.text.toString().isEmpty()){
+            showValidationDialog("SI Alarm","Please select your state.")
+        }else if(etDistrict.text.toString().isEmpty()){
+            showValidationDialog("SI Alarm", "Please select your district.")
+        }else if(etWardNumber.text.toString().isEmpty()){
+            showValidationDialog("SI Alarm","Please select your ward number.")
+        }else if(etDevice.text.toString().isEmpty()){
+            showValidationDialog("SI Alarm","Please select device of your locality.")
+        }else{
+            myProfileViewModel.userObserver.value = Users(email = email.text.toString(),
+                username = userName.text.toString(),
+                state = etState.text.toString(),
+                district = etDistrict.text.toString(),
+                ward = etWardNumber.text.toString().toInt(),
+                tole = etStreet.text.toString(),
+                device = deviceId,
+                deviceName = etDevice.text.toString())
+        }
+
     }
 
     override fun onWardClicked() {
@@ -134,12 +172,29 @@ class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBindi
     }
 
     override fun onDistrictClicked() {
-        startActivityForResult(Intent(this,SearchDistrictActivity::class.java),3)
+
+        if(Build.VERSION.SDK_INT<21){
+            startActivityForResult(Intent(this,DistrictListLowActivity::class.java),3)
+
+        }else{
+            startActivityForResult(Intent(this,DistrictListLowActivity::class.java),3)
+
+          //  startActivityForResult(Intent(this,SearchDistrictActivity::class.java),3)
+
+        }
     }
 
     override fun onDeviceClicked() {
 
-        startActivityForResult(Intent(this,DeviceListActivity::class.java),4)
+         if (Build.VERSION.SDK_INT < 21){
+             startActivityForResult(Intent(this,DeviceListLowActivity::class.java),4)
+
+         }else{
+             startActivityForResult(Intent(this,DeviceListLowActivity::class.java),4)
+
+            // startActivityForResult(Intent(this,DeviceListActivity::class.java),4)
+
+         }
     }
 
 

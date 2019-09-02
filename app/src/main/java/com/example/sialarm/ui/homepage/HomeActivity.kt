@@ -87,19 +87,22 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
 
-        if(prefs.isPinCodeSet()){
-            val intent = Intent(this, CustomPinActivity::class.java)
-            intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
-            startActivity(intent)
-        }
+            if(prefs.isPinCodeSet()){
+                val intent = Intent(this, CustomPinActivity::class.java)
+                intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
+                startActivity(intent)
+            }
+
+
+
 
         toolbar.title = "Alert"
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
         initUI()
-        if(!prefs.getInstruction()){
+       /* if(!prefs.getInstruction()){
             bl_menu.visibility = View.VISIBLE
             prefs.setInstruction(true)
-        }
+        }*/
 
     }
 
@@ -119,7 +122,7 @@ class HomeActivity: BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
         mainViewModel.saveUsers()
 
-        setPositionOfTooltip()
+        //setPositionOfTooltip()
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         viewPager = findViewById(R.id.view_pager)

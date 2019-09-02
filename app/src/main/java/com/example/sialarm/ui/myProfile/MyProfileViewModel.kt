@@ -33,6 +33,8 @@ class MyProfileViewModel constructor(private val repository:MyProfileRepository,
 
     var selectedStateId = 0
 
+    var isUploading = false
+
 
     val progress = ObservableField<Int>()
 
@@ -65,6 +67,7 @@ class MyProfileViewModel constructor(private val repository:MyProfileRepository,
     }
 
     fun onUpdateClicked(){
+
         getNavigator().onUpdateClicked()
     }
 
@@ -79,6 +82,7 @@ class MyProfileViewModel constructor(private val repository:MyProfileRepository,
 
     fun uploadImage(uri: Uri?) {
         visible.set(true)
+        isUploading = true
         viewModelscope.launch {
             try{
                 firebaseStorage.child("image/${uri?.lastPathSegment}").putFile(uri!!)
@@ -89,11 +93,12 @@ class MyProfileViewModel constructor(private val repository:MyProfileRepository,
                     }
                     .addOnCanceledListener {
                         visible.set(false)
-
+                        isUploading = false
                     }
                     .addOnSuccessListener{
                         firebaseStorage.child("image/${uri?.lastPathSegment}").downloadUrl
                             .addOnSuccessListener {
+                                isUploading = false
                                 it.toString()
                                 visible.set(false)
                                 var url = it.toString()

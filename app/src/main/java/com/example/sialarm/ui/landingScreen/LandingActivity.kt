@@ -19,6 +19,7 @@ import com.example.sialarm.data.prefs.PrefsManager
 import com.example.sialarm.databinding.ActivityLandingBinding
 import com.example.sialarm.ui.homepage.HomeActivity
 import com.example.sialarm.ui.lillipin.CustomPinActivity
+import com.example.sialarm.ui.myProfile.MyProfileActivity
 import com.example.sialarm.ui.tutorial.TutorialActivity
 import com.example.sialarm.utils.Status
 import com.example.sialarm.utils.extensions.getNumber
@@ -50,8 +51,6 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
 
     private val prefs : PrefsManager by inject()
 
-
-
     var APP_REQUEST_CODE = 99
 
     companion object {
@@ -70,26 +69,31 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
         super.onCreate(savedInstanceState)
         val intent = Intent(this,CustomPinActivity::class.java)
 
-        if(!prefs.isFirstTime()){
-            prefs.setFirstTime(true)
+        if(prefs.isFirstTime()){
+            prefs.setFirstTime(false)
             intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK)
             startActivityForResult(intent, 11)
-
-        }else {
-            if(prefs.isLogin()){
-                TutorialActivity.newInstance(this@LandingActivity)
-
-               // HomeActivity.newInstance(this)
-                finish()
-            }else{
-                if(prefs.isPinCodeSet()){
-                    intent.putExtra(AppLock.EXTRA_TYPE, AppLock.UNLOCK_PIN)
-                    startActivity(intent)
+        }else{
+            if(prefs.isLogin()) {
+                if(prefs.finishTutorial()){
+                    if(prefs.isProfileComplete()){
+                        HomeActivity.newInstance(this)
+                        finish()
+                    }else{
+                        MyProfileActivity.newInstance(this,true)
+                        finish()
+                    }
+                }else{
+                    TutorialActivity.newInstance(this)
+                    finish()
                 }
             }
-
         }
+       /*else{
+            if(prefs.)
+            prefs.setFirstTime(true)
 
+        }*/
 
         setupUI(main_layout,this)
 
@@ -106,11 +110,23 @@ class LandingActivity : BaseActivity<LandingScreenViewModel, ActivityLandingBind
             when(it.status){
                 Status.SUCCESS->{
                     hideLoading()
-                  /*  if(it.data!!.isEmpty()){
-                        HomeActivity.newInstance(this@LandingActivity)
-                    }else{*/
+
+                    if(it.data!!.equals("2")){
+                        prefs.setLoginStatus(true)
                         TutorialActivity.newInstance(this@LandingActivity)
-                    //}
+                        finish()
+                    }else if(it.data.equals("3")){
+                        prefs.setLoginStatus(true)
+                        prefs.setFirstTutorial(true)
+                        MyProfileActivity.newInstance(this@LandingActivity)
+                        finish()
+                    }else if(it.data.equals("4")){
+                        HomeActivity.newInstance(this@LandingActivity)
+                        finish()
+                        prefs.setLoginStatus(true)
+                        prefs.setFirstTutorial(true)
+                        prefs.setProfileComplete(true)
+                    }
                     finish()
                 }
             }

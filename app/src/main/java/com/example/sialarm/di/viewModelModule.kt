@@ -1,6 +1,7 @@
 
 package com.example.sialarm.di
 
+import com.example.sialarm.ui.device.DeviceListViewModel
 import com.example.sialarm.ui.history.HistoryViewModel
 import com.example.sialarm.ui.homepage.MainViewModel
 import com.example.sialarm.ui.homepage.contacts.ContactsViewModel
@@ -36,6 +37,8 @@ val viewModelModule = module {
     viewModel { TutorialViewModel(get(),get())}
 
     viewModel { FirstStepViewModel() }
+
+    viewModel { DeviceListViewModel() }
 
 
 }

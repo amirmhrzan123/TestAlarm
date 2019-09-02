@@ -14,7 +14,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:background="@drawable/wallpaper"
+        android:background="@color/white"
         android:layout_height="match_parent">
 
         <ImageView
@@ -39,7 +39,7 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="@font/roboto_medium"
             android:text="@string/sign_up"
-            android:textColor="@color/white"
+            android:textColor="@color/colorDarkBlack"
             android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +52,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:layout_marginBottom="40dp"
-            android:textColorHint="#ffffff"
+            android:textColorHint="@color/colorDarkBlack"
             app:hintEnabled="false"
             app:layout_constraintBottom_toTopOf="@id/btnLogin"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,9 +63,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/write_your_username"
+                android:singleLine="true"
                 android:paddingBottom="16dp"
-                android:textColor="#ffffff"
-                android:textColorHint="#ffffff"
+                android:textColor="@color/colorDarkBlack"
+                android:textColorHint="@color/colorDarkBlack"
                 android:textSize="16sp" />
 
         </com.google.android.material.textfield.TextInputLayout>

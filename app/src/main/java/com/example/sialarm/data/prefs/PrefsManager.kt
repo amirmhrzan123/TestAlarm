@@ -41,5 +41,9 @@ interface PrefsManager {
     fun getPinCodeNumber():String
     fun isFirstTime():Boolean
     fun setFirstTime(firstTime:Boolean)
+    fun finishTutorial():Boolean
+    fun setFirstTutorial(tutorial:Boolean)
+    fun isProfileComplete():Boolean
+    fun setProfileComplete(profile:Boolean)
 
 }

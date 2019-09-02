@@ -57,14 +57,15 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                         state = "",
                                         ward = 0,
                                         district = "",
-                                        firsttime = false)
+                                        firsttime = false,
+                                            isProfileComplete = false)
 
                                     userDatabase.getReference(FireKey.USERS).child(number).setValue(user).addOnCompleteListener {
                                         prefsManager.setLoginStatus(true)
                                         prefsManager.setUserId(number)
                                         prefsManager.setPhoneNumber(number)
                                         prefsManager.setUserName(userName)
-                                        insertResponse.postValue(Resource.success("","","FirstTime"))
+                                        insertResponse.postValue(Resource.success("","","2"))
 
                                     }
 
@@ -94,17 +95,19 @@ class LandingRepository constructor(private val viewModelScope:CoroutineScope,
                                 image = user.image, district = user.district,state = user.state,
                                 firsttime = false,
                                 ward = user.ward)).addOnCompleteListener {
-                                prefsManager.setLoginStatus(true)
                                 prefsManager.setUserId(number)
                                 prefsManager.setUserName(user.username)
                                 prefsManager.setPhoneNumber(number)
+                                    prefsManager.setLoginStatus(true)
                                 prefsManager.setUserImage(user.image)
                                 if(firstime){
-                                    insertResponse.postValue(Resource.success("","","FirstTime"))
-
+                                    insertResponse.postValue(Resource.success("","","2"))
                                 }else{
-                                    insertResponse.postValue(Resource.success("","",""))
-
+                                    if(user.isProfileComplete!!){
+                                        insertResponse.postValue(Resource.success("","","3"))
+                                    }else{
+                                        insertResponse.postValue(Resource.success("","","4"))
+                                    }
                                 }
 
                             }

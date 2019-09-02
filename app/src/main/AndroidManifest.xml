@@ -79,6 +79,12 @@
 
         <activity android:name=".ui.device.AddDeviceActivity"/>
 
+        <activity android:name=".ui.device.DeviceListLowActivity"/>
+
+        <activity android:name=".ui.district.DistrictListLowActivity"/>
+
+        <activity android:name=".ui.termsPrivacyPolicy.TermsPrivacyPolicy"/>
+
         <service
             android:name=".data.firebase.MyFirebaseMessagingService"
             android:exported="false">

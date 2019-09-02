@@ -3,11 +3,12 @@ package com.example.sialarm.ui.device
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import android.text.Editable
+import android.text.TextWatcher
 import com.example.sialarm.BR
 import com.example.sialarm.R
 import com.example.sialarm.base.BaseActivity
-import com.example.sialarm.databinding.ActivitySearchBinding
+import com.example.sialarm.databinding.ActivityDeviceListLowBinding
 import com.example.sialarm.utils.extensions.Device
 import com.example.sialarm.utils.extensions.setupUI
 import com.example.sialarm.utils.extensions.showValidationDialog
@@ -16,13 +17,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
-import com.miguelcatalan.materialsearchview.MaterialSearchView
-import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_device_list_low.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class DeviceListActivity : BaseActivity<DeviceListViewModel, ActivitySearchBinding>(), DeviceListAdapter.OnListItemClickListener{
+class DeviceListLowActivity: BaseActivity<DeviceListViewModel,ActivityDeviceListLowBinding>(),DeviceListAdapter.OnListItemClickListener {
 
     val gson =  Gson()
 
@@ -35,14 +35,14 @@ class DeviceListActivity : BaseActivity<DeviceListViewModel, ActivitySearchBindi
 
     companion object {
         fun newInstance(activity: Activity){
-            val intent = Intent(activity, DeviceListActivity::class.java)
+            val intent = Intent(activity, DeviceListLowActivity::class.java)
             activity.startActivity(intent);
         }
     }
 
     private val firebaseDatabase : FirebaseDatabase by inject()
 
-    override fun getLayoutId(): Int = R.layout.activity_search
+    override fun getLayoutId(): Int = R.layout.activity_device_list_low
 
     private val deviceListViewModel : DeviceListViewModel by viewModel()
 
@@ -58,40 +58,25 @@ class DeviceListActivity : BaseActivity<DeviceListViewModel, ActivitySearchBindi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupUI(activity_search,this)
-        setSupportActionBar(toolbars)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        icBack.setOnClickListener {
+        setupUI(activity_device_search,this)
+
+        ic_back.setOnClickListener {
             onBackPressed()
         }
 
         setDeviceListInAdapter()
 
-        toolbars.title = "Search"
-        search_view.setVoiceSearch(false)
-        search_view.setHint(getString(R.string.search_hint_country))
-        search_view.setEllipsize(true)
-
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_district, menu)
-        val item = menu.findItem(R.id.action_search)
-        search_view.setMenuItem(item)
-        return true
-    }
 
     override fun onBackPressed() {
-        if (search_view.isSearchOpen()) {
-            search_view.closeSearch()
-        } else {
+
             super.onBackPressed()
-        }
+
     }
 
     fun setDeviceListInAdapter(){
-        firebaseDatabase.getReference("deviceList").addValueEventListener(object:ValueEventListener{
+        firebaseDatabase.getReference("deviceList").addValueEventListener(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -104,21 +89,21 @@ class DeviceListActivity : BaseActivity<DeviceListViewModel, ActivitySearchBindi
                         deviceList.add(device!!)
                     }
                     listDevice = deviceList
-                    search_view.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
-                        override fun onQueryTextSubmit(query: String): Boolean {
-                            return false
+                    et_search.addTextChangedListener(object:TextWatcher{
+                        override fun afterTextChanged(s: Editable?) {
+
                         }
 
-                        override fun onQueryTextChange(newText: String): Boolean {
-                            adapter.filter.filter(newText.trim { it <= ' ' })
-                            //Do some magic
-                            return true
+                        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                         }
+
+                        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                            adapter.filter.filter(s)
+
+                        }
+
                     })
-
                     list_view.adapter = adapter
-                    search_view.showSearch(false)
-                    search_view.requestFocus()
 
                 }else{
                     showValidationDialog("SI alarm","No device found");
@@ -127,5 +112,4 @@ class DeviceListActivity : BaseActivity<DeviceListViewModel, ActivitySearchBindi
 
         })
     }
-
 }

@@ -9,6 +9,15 @@ class FireKey {
     }
 }
 
+class Navigation{
+    companion object {
+        val LANDING = 1
+        val TUTORIAL = 2
+        val PROFILE = 3
+        val HOME = 4
+    }
+}
+
 class FriendStatus{
     companion object {
         val FRIEND = 1

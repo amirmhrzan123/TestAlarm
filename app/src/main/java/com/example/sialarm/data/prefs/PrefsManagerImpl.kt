@@ -3,6 +3,18 @@ package com.example.sialarm.data.prefs
 import android.content.SharedPreferences
 
 class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
+    override fun isProfileComplete(): Boolean = pref.profileComplete
+
+    override fun setProfileComplete(profile: Boolean) {
+        pref.profileComplete = profile
+    }
+
+    override fun finishTutorial(): Boolean = pref.tutorial
+
+    override fun setFirstTutorial(tutorial: Boolean) {
+        pref.tutorial = tutorial
+    }
+
     override fun isFirstTime(): Boolean = pref.firstTime
 
 
@@ -130,6 +142,8 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         const val PINCODESET = "pinCodeSet"
         const val PINCODENUMBER = "pinCodeNumber"
         const val FIRSTTIME = "firstTime"
+        const val TUTORIALDONE = "tutorialDone"
+        const val PROFILECOMPLETE = "profileComplete"
     }
 
     override fun setUserId(userId: String) {
@@ -158,12 +172,10 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         }
 
     private var SharedPreferences.firstTime
-        get() = getBoolean(FIRSTTIME, false)
+        get() = getBoolean(FIRSTTIME, true)
         set(value) {
             putValue(FIRSTTIME, value)
         }
-
-
 
     private var SharedPreferences.admin
         get() = getBoolean(ADMIN, false)
@@ -258,6 +270,18 @@ class PrefsManagerImpl(private val pref: SharedPreferences) : PrefsManager {
         get() = getString(DISTRICT,"")
         set(value){
             putValue(DISTRICT,value)
+        }
+
+    private var SharedPreferences.tutorial
+        get() = getBoolean(TUTORIALDONE,false)
+        set(value){
+            putValue(TUTORIALDONE,value)
+        }
+
+    private var SharedPreferences.profileComplete
+        get() = getBoolean(PROFILECOMPLETE,false)
+        set(value){
+            putValue(PROFILECOMPLETE,value)
         }
 
 
