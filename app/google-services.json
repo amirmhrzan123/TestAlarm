@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1003225736159:android:51443506079fca1b",
+        "mobilesdk_app_id": "1:1003225736159:android:ae8db7185130388b98da6a",
         "android_client_info": {
-          "package_name": "com.example.sialarm"
+          "package_name": "com.si.sipanicalarm"
         }
       },
       "oauth_client": [

@@ -10,7 +10,7 @@
         android:background="@drawable/wallpaper"
         android:layout_height="match_parent">
 
-        <com.example.sialarm.utils.customViews.CenteredToolbar
+        <com.si.sipanicalarm.utils.customViews.CenteredToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,7 @@
 
 
 
-        </com.example.sialarm.utils.customViews.CenteredToolbar>
+        </com.si.sipanicalarm.utils.customViews.CenteredToolbar>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftGuideLine"

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.history.HistoryViewModel" />
+            type="com.si.sipanicalarm.ui.history.HistoryViewModel" />
 
     </data>
 
@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:background="@drawable/wallpaper"
             android:layout_height="match_parent">
-            <com.example.sialarm.utils.customViews.CenteredToolbar
+            <com.si.sipanicalarm.utils.customViews.CenteredToolbar
                 android:id="@+id/toolbar_history"
                 android:layout_width="match_parent"
                 app:title="History"
@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content">
 
 
-            </com.example.sialarm.utils.customViews.CenteredToolbar>
+            </com.si.sipanicalarm.utils.customViews.CenteredToolbar>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHistory"

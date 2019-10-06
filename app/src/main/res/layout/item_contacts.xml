@@ -8,15 +8,15 @@
 
         <variable
             name="model"
-            type="com.example.sialarm.data.firebase.Friends" />
+            type="com.si.sipanicalarm.data.firebase.Friends" />
 
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.homepage.contacts.ContactsItemViewModel" />
+            type="com.si.sipanicalarm.ui.homepage.contacts.ContactsItemViewModel" />
 
         <variable
             name="listenerType"
-            type="com.example.sialarm.ui.homepage.contacts.ContactsItemViewModel.ListenerType" />
+            type="com.si.sipanicalarm.ui.homepage.contacts.ContactsItemViewModel.ListenerType" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -33,7 +33,7 @@
             android:background="@color/white"
             android:layout_height="wrap_content">
 
-            <com.example.sialarm.utils.customViews.EasySwipeMenuLayout
+            <com.si.sipanicalarm.utils.customViews.EasySwipeMenuLayout
                 android:id="@+id/easySwipe"
                 android:layout_width="0dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +220,7 @@
 
 
 
-            </com.example.sialarm.utils.customViews.EasySwipeMenuLayout>
+            </com.si.sipanicalarm.utils.customViews.EasySwipeMenuLayout>
 
 
 

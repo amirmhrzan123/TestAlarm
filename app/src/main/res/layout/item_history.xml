@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.sialarm.ui.history.HistoryResponseModel" />
+            type="com.si.sipanicalarm.ui.history.HistoryResponseModel" />
     </data>
 
     <androidx.cardview.widget.CardView

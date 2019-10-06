@@ -8,7 +8,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.myProfile.MyProfileViewModel" />
+            type="com.si.sipanicalarm.ui.myProfile.MyProfileViewModel" />
 
     </data>
 
@@ -21,7 +21,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.example.sialarm.utils.customViews.CenteredToolbar
+            <com.si.sipanicalarm.utils.customViews.CenteredToolbar
                 android:id="@+id/toolbar_profiler"
                 android:layout_width="match_parent"
                 app:title="My Proflie"
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content">
 
 
-            </com.example.sialarm.utils.customViews.CenteredToolbar>
+            </com.si.sipanicalarm.utils.customViews.CenteredToolbar>
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="0dp"

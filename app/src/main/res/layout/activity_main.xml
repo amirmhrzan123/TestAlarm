@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.homepage.MainViewModel" />
+            type="com.si.sipanicalarm.ui.homepage.MainViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -17,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.example.sialarm.utils.customViews.CenteredToolbar
+            <com.si.sipanicalarm.utils.customViews.CenteredToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content">
 
 
-            </com.example.sialarm.utils.customViews.CenteredToolbar>
+            </com.si.sipanicalarm.utils.customViews.CenteredToolbar>
 
 
             <ImageView
@@ -41,7 +41,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/toolbar"
                 app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
-            <com.example.sialarm.utils.tooltips.BubbleLayout
+            <com.si.sipanicalarm.utils.tooltips.BubbleLayout
                 android:id="@+id/bl_menu"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 </RelativeLayout>
 
 
-            </com.example.sialarm.utils.tooltips.BubbleLayout>
+            </com.si.sipanicalarm.utils.tooltips.BubbleLayout>
 
 
 

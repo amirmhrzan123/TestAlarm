@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Main Strings -->
-    <string name="app_name">sialarm</string>
+    <string name="app_name">SI PANIC ALARM</string>
     <string name="drawer_header">Drawer Header</string>
     <string name="launch_demo">Launch Demo</string>
 
@@ -88,6 +88,10 @@
         <item>Jhapa</item>
     </array>
 
+    <string name="txt_terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="txt_privacy_policy">Privacy Policy</string>
+
+    <string name="terms_conditions">By continuing, you agree that you agree to our %1$s and %2$s</string>
 
 
     <string name="hello_world">Hello world!</string>
@@ -99,5 +103,6 @@
     <string name="activity_dialog_content">Tap \'OK\' to log out, when you log back in you\'ll be able to create a new Pincode.\n\nIf you remember your Pincode, tap \'Cancel\' to go back.</string>
     <string name="activity_appcompat_message">I am a PinCompatActivity!</string>
     <string name="change_password">Change password</string>
+    <string name="search">Search</string>
 
 </resources>

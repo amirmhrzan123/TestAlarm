@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.homepage.settings.SettingViewModel" />
+            type="com.si.sipanicalarm.ui.homepage.settings.SettingViewModel" />
 
 
     </data>
@@ -24,6 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@color/transparent_white"
             android:layout_width="0dp"
+            android:layout_marginBottom="32dp"
             android:layout_height="match_parent"
            >
 
@@ -207,6 +208,7 @@
                 </RelativeLayout>
 
                 <View
+                    android:id="@+id/viewPassword"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="8dp"
@@ -225,7 +227,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rlEnablePassword">
+                        app:layout_constraintTop_toBottomOf="@id/viewPassword">
 
                     <ImageView
                             android:id="@+id/ivPasswords"
@@ -251,6 +253,15 @@
 
                 </RelativeLayout>
 
+                <View
+                    android:id="@+id/viewss"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rlChangePassword"
+                    android:background="@color/colorDark"/>
+
 
                 <LinearLayout
                     android:id="@+id/rlTemsCondition"
@@ -259,10 +270,11 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:onClick="@{()->viewModel.onTermsClicked()}"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rlChangePassword">
+                    app:layout_constraintTop_toBottomOf="@id/viewss">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -300,6 +312,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:onClick="@{()->viewModel.onPrivacyClicked()}"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -339,6 +352,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    android:layout_marginBottom="32dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -372,6 +386,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:visibility="gone"
                     android:onClick="@{()->viewModel.onAddDeviceClicked()}"
                     android:orientation="horizontal"

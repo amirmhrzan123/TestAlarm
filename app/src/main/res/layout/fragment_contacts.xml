@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.homepage.contacts.ContactsViewModel" />
+            type="com.si.sipanicalarm.ui.homepage.contacts.ContactsViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
         android:layout_height="match_parent"

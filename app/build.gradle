@@ -25,7 +25,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.sialarm"
+        applicationId "com.si.sipanicalarm"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -106,15 +106,11 @@ dependencies {
         def gsonVersion = '2.8.2'
         def junitVersion = '4.12'
         def kotlinVersion = '1.3.11'
-        def ktlintVersion = '0.29.0'
         def ktxVersion = '1.0.1'
         def lifecycleVersion = '2.0.0'
         def materialVersion = '1.0.0'
-        def navigationVersion = '1.0.0-alpha08'
         def recyclerViewVersion = '1.0.0'
         def roomVersion = '2.1.0-alpha03'
-        def runnerVersion = '1.0.1'
-        def supportLibraryVersion = '1.0.2'
         def uiAutomatorVersion = '2.2.0-alpha4'
         def workVersion = '1.0.1'
         def koinVersion = '1.0.2'

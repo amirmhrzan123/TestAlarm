@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.sialarm.ui.instructions.InstructionViewModel" />
+            type="com.si.sipanicalarm.ui.instructions.InstructionViewModel" />
 
     </data>
 

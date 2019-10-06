@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.sialarm.ui.homepage.notification.NotificationResponseModel" />
+            type="com.si.sipanicalarm.ui.homepage.notification.NotificationResponseModel" />
     </data>
 
     <androidx.cardview.widget.CardView
