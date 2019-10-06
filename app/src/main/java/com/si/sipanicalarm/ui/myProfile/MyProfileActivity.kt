@@ -8,16 +8,17 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.gson.Gson
+import com.kotlinpermissions.KotlinPermissions
 import com.si.sipanicalarm.BR
 import com.si.sipanicalarm.R
 import com.si.sipanicalarm.base.BaseActivity
 import com.si.sipanicalarm.data.firebase.Users
 import com.si.sipanicalarm.data.prefs.PrefsManager
 import com.si.sipanicalarm.databinding.ActivityMyProfileBinding
-import com.si.sipanicalarm.ui.device.DeviceListActivity
 import com.si.sipanicalarm.ui.device.DeviceListLowActivity
 import com.si.sipanicalarm.ui.district.DistrictListLowActivity
-import com.si.sipanicalarm.ui.district.SearchDistrictActivity
 import com.si.sipanicalarm.ui.homepage.HomeActivity
 import com.si.sipanicalarm.utils.Status
 import com.si.sipanicalarm.utils.customViews.CustomSpinnerDialog
@@ -26,14 +27,11 @@ import com.si.sipanicalarm.utils.extensions.Device
 import com.si.sipanicalarm.utils.extensions.District
 import com.si.sipanicalarm.utils.extensions.loadImage
 import com.si.sipanicalarm.utils.extensions.showValidationDialog
-import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.gson.Gson
-import com.kotlinpermissions.KotlinPermissions
 import kotlinx.android.synthetic.main.activity_my_profile.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 class MyProfileActivity: BaseActivity<MyProfileViewModel, ActivityMyProfileBinding>(),IMyProfileNavigator{
 

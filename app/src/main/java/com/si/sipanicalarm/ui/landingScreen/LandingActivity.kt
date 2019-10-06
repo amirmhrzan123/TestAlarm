@@ -27,7 +27,6 @@ import com.si.sipanicalarm.data.prefs.PrefsManager
 import com.si.sipanicalarm.ui.homepage.HomeActivity
 import com.si.sipanicalarm.ui.lillipin.CustomPinActivity
 import com.si.sipanicalarm.ui.myProfile.MyProfileActivity
-import com.si.sipanicalarm.ui.termsPrivacyPolicy.TermsPrivacyPolicy
 import com.si.sipanicalarm.ui.tutorial.TutorialActivity
 import com.si.sipanicalarm.utils.LinkTouchMovementMethod
 import com.si.sipanicalarm.utils.Status
@@ -42,6 +41,7 @@ import com.facebook.accountkit.ui.SkinManager
 import com.github.omadahealth.lollipin.lib.managers.AppLock
 import com.google.firebase.iid.FirebaseInstanceId
 import com.si.sipanicalarm.databinding.ActivityLandingBinding
+import com.si.sipanicalarm.ui.termsPrivacyPolicy.TermsPrivacyPolicy
 import kotlinx.android.synthetic.main.activity_landing.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel

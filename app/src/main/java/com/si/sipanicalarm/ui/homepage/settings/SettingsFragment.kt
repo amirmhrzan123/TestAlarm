@@ -15,13 +15,13 @@ import com.si.sipanicalarm.ui.history.HistoryActivity
 import com.si.sipanicalarm.ui.landingScreen.LandingActivity
 import com.si.sipanicalarm.ui.lillipin.CustomPinActivity
 import com.si.sipanicalarm.ui.myProfile.MyProfileActivity
-import com.si.sipanicalarm.ui.termsPrivacyPolicy.TermsPrivacyPolicy
 import com.si.sipanicalarm.utils.Status
 import com.si.sipanicalarm.utils.extensions.isConnectingToInternet
 import com.si.sipanicalarm.utils.extensions.showConfirmationDialog
 import com.si.sipanicalarm.utils.extensions.showValidationDialog
 import com.facebook.accountkit.AccountKit
 import com.github.omadahealth.lollipin.lib.managers.AppLock
+import com.si.sipanicalarm.ui.termsPrivacyPolicy.TermsPrivacyPolicy
 import kotlinx.android.synthetic.main.fragment_setting.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,11 +29,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment: BaseFragment<SettingViewModel,FragmentSettingBinding>(),ISettingNavigator {
     override fun onPrivacyClicked() {
-        TermsPrivacyPolicy.newInstance(activity!!,TermsPrivacyPolicy.PRIVACYPOLICY)
+        TermsPrivacyPolicy.newInstance(activity!!, TermsPrivacyPolicy.PRIVACYPOLICY)
     }
 
     override fun onTermsConditionClicked() {
-        TermsPrivacyPolicy.newInstance(activity!!,TermsPrivacyPolicy.TERMSCONDITION)
+        TermsPrivacyPolicy.newInstance(activity!!, TermsPrivacyPolicy.TERMSCONDITION)
     }
 
     private val prefs: PrefsManager by inject()

@@ -29,8 +29,8 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        versionCode 1
-        versionName "0.1.6"
+        versionCode 2
+        versionName "0.1.7"
         vectorDrawables.useSupportLibrary true
         multiDexEnabled true
         resConfigs "en"
@@ -41,7 +41,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL", '"https://192.168.0.231:1234/api/v1/"')
-            buildConfigField("String", "BASE_IP", '"192.168.0.231:1234"')
             buildConfigField("String", "ASSEMBLY_URL", "\"https://test.api.promisepay.com/\"")
             buildConfigField("String", "BASIC_TOKEN_ASSEMBLY", "\"Basic c2F1cmF2a2FybjU0MUBnbWFpbC5jb206MTIzNDU2Nzg=\"")
 

@@ -37,12 +37,14 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="@dimen/dimen_16dp"
                 android:src="@drawable/ic_info"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/view_pager"
                 app:layout_constraintEnd_toEndOf="@+id/toolbar"
                 app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
             <com.si.sipanicalarm.utils.tooltips.BubbleLayout
                 android:id="@+id/bl_menu"
+
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
